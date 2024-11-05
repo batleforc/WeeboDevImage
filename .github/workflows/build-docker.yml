@@ -59,7 +59,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ${{steps.extract_folder.outputs.folder}}
+          file: ${{ matrix.manifest}}
           push: true
           tags: |
             ghcr.io/${{ needs.prepare.outputs.repository }}/${{steps.extract_folder.outputs.folder}}:${{ needs.prepare.outputs.branch }}
