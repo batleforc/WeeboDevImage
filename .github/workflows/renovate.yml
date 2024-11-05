@@ -13,5 +13,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Setup Go environment
+        uses: actions/setup-go@v5.1.0
+      - name: Run prepare
+        run: |
+          cd src-template
+          go run main.go
       - name: Renovate Bot GitHub Action
         uses: renovatebot/github-action@v40.3.5
