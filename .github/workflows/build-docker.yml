@@ -19,7 +19,7 @@ jobs:
       - name: Finding files and store to output
         id: finding-files
         run: |
-          echo "FILELIST=$(find . -name 'Containerfile' -print | jq -R -s -c 'split("\n")')" >> $GITHUB_OUTPUT
+          echo "FILELIST=$(find . -name 'Containerfile' -print | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
       - name: Show files
         run: echo "${{ steps.finding-files.outputs.FILELIST }}"
       - name: Extract branch name
