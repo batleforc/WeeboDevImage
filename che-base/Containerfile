@@ -1,4 +1,4 @@
-FROM gcr.io/batleforc/weebodevimage/che-base:main
+FROM ghcr.io/batleforc/weebodevimage/che-min:main
 
 LABEL org.opencontainers.image.authors="batleforc"
 LABEL org.opencontainers.image.url="{{.Repo}}che-base"
