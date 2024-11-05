@@ -36,6 +36,9 @@ jobs:
     strategy:
       matrix:
         manifest: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
