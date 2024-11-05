@@ -75,7 +75,7 @@ RUN echo 'if [ $STAR_NO != "false" ]; then\neval "$(starship init bash)"\nfi' >>
 COPY starship.toml ${HOME}/.config/starship.toml
 
 ## Install vim in order to fix commit message and stow to make symbolic link
-RUN apt-get install vim stow iputils-ping netstat netcat less -y
+RUN apt-get install vim stow iputils-ping netstat less -y
 
 ## Install podman capa
 ## https://github.com/devfile/developer-images/blob/main/base/ubi8/Dockerfile#L107C1-L107C59
