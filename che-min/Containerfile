@@ -1,7 +1,7 @@
 FROM buildpack-deps:bookworm
 
 LABEL org.opencontainers.image.authors="batleforc"
-LABEL org.opencontainers.image.url="batleforc/che-min"
+LABEL org.opencontainers.image.url="{{.Repo}}che-min"
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage/src/branch/main/che-min"
 LABEL org.opencontainers.image.title="Che-MinImage"
 

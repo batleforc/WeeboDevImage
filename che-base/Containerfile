@@ -1,7 +1,7 @@
 FROM harbor.weebo.fr/batleforc/che-min:latest
 
 LABEL org.opencontainers.image.authors="batleforc"
-LABEL org.opencontainers.image.url="batleforc/che-base"
+LABEL org.opencontainers.image.url="{{.Repo}}che-base"
 LABEL org.opencontainers.image.title="Che-BaseImage"
 
 ENV HELM_VERSION="v3.14.0"
