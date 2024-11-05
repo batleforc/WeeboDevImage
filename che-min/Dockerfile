@@ -1,0 +1,46 @@
+FROM buildpack-deps:bookworm
+
+LABEL org.opencontainers.image.authors="batleforc"
+LABEL org.opencontainers.image.url="batleforc/che-min"
+LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage/src/branch/main/che-min"
+LABEL org.opencontainers.image.title="Che-MinImage"
+
+ENV KUBE_VERSION="v1.28.4"
+ENV NVM_VERSION="v0.39.7"
+ENV NODE_VERSION="18.19.0"
+
+ENV HOME=/home/tooling
+
+## Install Kubectl
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl && \
+    chmod +x ./kubectl && \
+    mv ./kubectl /usr/local/bin/kubectl
+
+ENV KUBECONFIG=/home/user/.kube/config
+
+## Install NodeJS
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
+RUN echo 'export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"' >> ${HOME}/.bashrc
+RUN echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ${HOME}/.bashrc
+RUN . ${HOME}/.bashrc && nvm install ${NODE_VERSION} && nvm alias default ${NODE_VERSION} && nvm use default && nvm cache clear && npm install --global yarn && corepack enable pnpm
+ENV VSCODE_NODEJS_RUNTIME_DIR=/home/tooling/.nvm/versions/node/v${NODE_VERSION}/bin
+
+
+## https://github.com/devfile/developer-images/blob/main/universal/ubi8/entrypoint.sh
+
+RUN mkdir -p /home/tooling/.local/bin && \
+    chgrp -R 0 /home && chmod -R g=u /home
+ENV PATH="/home/user/.local/bin:$PATH"
+ENV PATH="/home/tooling/.local/bin:$PATH"
+
+## Try a fix for path not found
+
+RUN echo 'export PATH="/home/tooling/.local/bin:$PATH"' >> ${HOME}/.bashrc
+RUN echo 'export PATH="/home/user/.local/bin:$PATH"' >> ${HOME}/.bashrc
+
+## Fix uv_os_get_passwd
+
+RUN chmod g=u /etc/passwd /etc/group
+
+USER 1234
+

@@ -1,0 +1,142 @@
+FROM harbor.weebo.fr/batleforc/che-min:latest
+
+LABEL org.opencontainers.image.authors="batleforc"
+LABEL org.opencontainers.image.url="batleforc/che-base"
+LABEL org.opencontainers.image.title="Che-BaseImage"
+
+ENV HELM_VERSION="v3.14.0"
+ENV TASKFILE_VERSION="v3.34.1"
+ENV k9S_VERSION="v0.31.8"
+ENV KREW_VERSION="v0.4.4"
+ENV GITLEAKS_VERSION="8.18.2"
+ENV KUBEDOCK_VERSION="0.15.5"
+ENV BUILDKIT_VERSION="v0.16.0"
+
+ENV HOME=/home/tooling
+
+USER 0
+
+## Install Krew
+
+ENV PATH="${HOME}/.krew/bin:$PATH"
+RUN echo 'export PATH="${HOME}/.krew/bin:$PATH"' >> ${HOME}/.bashrc
+
+RUN set -eux; \
+  cd "$(mktemp -d)" && \
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/${KREW_VERSION}/krew-linux_amd64.tar.gz"&&\
+  tar -zxvf krew-linux_amd64.tar.gz && \
+  ./"krew-linux_amd64" install krew && \
+  rm -rf krew-linux_amd64.tar.gz krew-linux_amd64 &&\
+  kubectl krew install ns &&\
+  kubectl krew install ctx &&\
+  kubectl krew install oidc-login &&\
+  kubectl krew install resource-capacity
+
+## Install Helm
+RUN curl -LO https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz && \
+  tar -zxvf helm-${HELM_VERSION}-linux-amd64.tar.gz && \
+  mv linux-amd64/helm /usr/local/bin/helm && \
+  rm -rf linux-amd64 helm-${HELM_VERSION}-linux-amd64.tar.gz
+
+## Install jq/yq/zip
+RUN apt-get update && apt-get install -y jq zip &&\
+  wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq &&\
+  chmod +x /usr/bin/yq
+
+## Install Taskfile
+RUN wget https://github.com/go-task/task/releases/download/${TASKFILE_VERSION}/task_linux_amd64.tar.gz && \
+  tar -xvf task_linux_amd64.tar.gz && \
+  mv task /usr/local/bin/task && \
+  rm -rf task_linux_amd64.tar.gz
+
+## Install k9s
+RUN wget https://github.com/derailed/k9s/releases/download/${k9S_VERSION}/k9s_Linux_amd64.tar.gz && \
+  tar -xvf k9s_Linux_amd64.tar.gz && \
+  mv k9s /usr/local/bin/k9s && \
+  rm -rf k9s_Linux_amd64.tar.gz
+
+## Install GitLeaks
+
+RUN wget https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz && \
+  tar -xvf gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz && \
+  mv gitleaks /usr/local/bin/gitleaks && \
+  rm -rf gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz
+
+## Install Gnupg and create alias to quickly load the different gpg key present in the /etc/gpgkey folder (this should be a secret in your namespace)
+RUN apt-get install gnupg2 -y
+RUN echo '\nexport GPG_TTY=$(tty)' >> ${HOME}/.bashrc
+RUN echo '\nalias load-priv="gpg --import /etc/gpgkey/keypriv.asc"\n' >> ${HOME}/.bashrc
+RUN echo '\nalias load-pub="gpg --import /etc/gpgkey/keypub.asc"\n' >> ${HOME}/.bashrc
+
+## Config Starship Shell Prompt
+RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
+ENV STAR_NO="true"
+RUN echo 'if [ $STAR_NO != "false" ]; then\neval "$(starship init bash)"\nfi' >> ${HOME}/.bashrc
+COPY starship.toml ${HOME}/.config/starship.toml
+
+## Install vim in order to fix commit message and stow to make symbolic link
+RUN apt-get install vim stow iputils-ping netstat netcat less -y
+
+## Install podman capa
+## https://github.com/devfile/developer-images/blob/main/base/ubi8/Dockerfile#L107C1-L107C59
+
+RUN apt install podman buildah skopeo fuse-overlayfs -y
+
+ENV _BUILDAH_STARTED_IN_USERNS="" BUILDAH_ISOLATION=chroot
+
+RUN touch /etc/subgid /etc/subuid  && \
+  chmod g=u /etc/subgid /etc/subuid /etc/passwd  && \
+  echo user:10000:65536 > /etc/subuid  && \
+  echo user:10000:65536 > /etc/subgid
+
+RUN mkdir -p "${HOME}"/.config/containers && \
+  (echo '[storage]';echo 'driver = "vfs"') > "${HOME}"/.config/containers/storage.conf && \
+  chown -R 10001 "${HOME}"/.config
+
+ENV KUBECONFIG=/home/user/.kube/config
+RUN curl -L https://github.com/joyrex2001/kubedock/releases/download/${KUBEDOCK_VERSION}/kubedock_${KUBEDOCK_VERSION}_linux_amd64.tar.gz | tar -C /usr/local/bin -xz --no-same-owner \
+  && chmod +x /usr/local/bin/kubedock
+COPY --chown=0:0 kubedock_setup.sh /usr/local/bin/kubedock_setup
+
+ENV PODMAN_WRAPPER_PATH=/usr/bin/podman.wrapper
+ENV ORIGINAL_PODMAN_PATH=/usr/bin/podman.orig
+COPY --chown=0:0 podman-wrapper.sh "${PODMAN_WRAPPER_PATH}"
+RUN touch /etc/subgid /etc/subuid && \
+  chmod g=u /etc/subgid /etc/subuid /etc/passwd /usr/bin/newuidmap && \
+  echo user:1234:65536 > /etc/subuid && \
+  echo user:1234:65536 > /etc/subgid
+
+COPY --chown=0:0 podman-wrapper.sh /usr/bin/podman.wrapper
+RUN mv /usr/bin/podman "${ORIGINAL_PODMAN_PATH}"
+
+## Add buildctl
+
+RUN wget https://github.com/moby/buildkit/releases/download/${BUILDKIT_VERSION}/buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz && \
+  tar -xvf buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz && \
+  mv bin/* /usr/local/bin/ && \
+  rm -rf buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz
+
+COPY --chown=0:0 .stow-local-ignore /home/tooling/
+
+## https://github.com/devfile/developer-images/blob/main/universal/ubi8/entrypoint.sh
+
+RUN chgrp -R 0 /home/tooling && chmod -R g=u /home/tooling
+
+RUN mkdir /home/user && ls /home && stow . -t /home/user/ -d /home/tooling/ --no-folding
+
+RUN chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home
+
+COPY --chown=0:0 entrypoint.sh /
+
+RUN chmod +x /entrypoint.sh
+
+USER 1234
+RUN cp -f /home/tooling/.bashrc /home/user/.bashrc
+RUN stow . -t /home/user/ -d /home/tooling/ --no-folding
+ENV HOME=/home/user
+WORKDIR /projects
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD ["tail", "-f", "/dev/null"]
+
+
+

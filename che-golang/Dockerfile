@@ -1,0 +1,57 @@
+FROM {{.BaseImage}}
+
+LABEL org.opencontainers.image.url="batleforc/che-golang"
+LABEL org.opencontainers.image.title="Che-GolangImage"
+LABEL org.opencontainers.image.source="batleforc/che-golang"
+
+ENV HOME=/home/tooling
+USER 0
+
+# START Infra Block
+
+## Repris de https://github.com/docker-library/golang/blob/40db26d6cc395e12ec499d7d88c77ee5f6dbe912/1.21/bookworm/Dockerfile
+
+ENV PATH /usr/local/go/bin:$PATH
+RUN echo 'export PATH="/usr/local/go/bin:$PATH"' >> ${HOME}/.bashrc
+
+ENV GOLANG_VERSION="1.21.7"
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+    g++ \
+    gcc \
+    libc6-dev \
+    make \
+    pkg-config \
+    ;
+
+RUN curl -fsL https://go.dev/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz > go${GOLANG_VERSION}.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go${GOLANG_VERSION}.linux-amd64.tar.gz \
+    && rm -f go${GOLANG_VERSION}.linux-amd64.tar.gz \
+    && ln -s /usr/local/go/bin/go /usr/local/bin/go
+
+
+# don't auto-upgrade the gotoolchain
+# https://github.com/docker-library/golang/issues/472
+ENV GOTOOLCHAIN=local
+
+ENV GOPATH /projects
+ENV PATH $GOPATH/bin:$PATH
+RUN echo 'export PATH="$GOPATH/bin:$PATH"' >> ${HOME}/.bashrc
+
+# END Infra Block
+
+ENV STAR_NO="true"
+
+# START User Block
+
+
+# START User Block
+USER 1234
+ENV HOME=/home/user
+RUN stow . -t .home/user -d /home/tooling --no-folding
+RUN cp -f /home/tooling/.bashrc /home/user/.bashrc
+WORKDIR /home/user
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD ["tail", "-f", "/dev/null"]
