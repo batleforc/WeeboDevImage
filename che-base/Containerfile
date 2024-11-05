@@ -1,4 +1,4 @@
-FROM harbor.weebo.fr/batleforc/che-min:latest
+FROM gcr.io/batleforc/weebodevimage/che-base:main
 
 LABEL org.opencontainers.image.authors="batleforc"
 LABEL org.opencontainers.image.url="{{.Repo}}che-base"
