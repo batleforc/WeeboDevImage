@@ -1,0 +1,9 @@
+{
+    "branchPrefix": "renovate/",
+    "username": "renovate-bot",
+    "onboarding": true,
+    "platform": "github",
+    "assignees": [
+        "batleforc"
+    ]
+}
