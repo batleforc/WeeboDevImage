@@ -61,7 +61,12 @@ func main() {
 		if err != nil {
 			log.Panicf("Error parsing the file: %v \n", err)
 		}
-		err = tmpl.Execute(os.Stdout, config)
+		output, err := os.Create(file)
+		if err != nil {
+			log.Panicf("Error creating the file: %v \n", err)
+		}
+		defer output.Close()
+		err = tmpl.Execute(output, config)
 		if err != nil {
 			log.Panicf("Error executing the file: %v \n", err)
 		}
