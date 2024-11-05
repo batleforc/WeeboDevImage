@@ -50,7 +50,7 @@ ENV STAR_NO="true"
 # START User Block
 USER 1234
 ENV HOME=/home/user
-RUN stow . -t .home/user -d /home/tooling --no-folding
+RUN stow . -t /home/user -d /home/tooling --no-folding
 RUN cp -f /home/tooling/.bashrc /home/user/.bashrc
 WORKDIR /home/user
 ENTRYPOINT [ "/entrypoint.sh" ]
