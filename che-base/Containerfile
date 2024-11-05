@@ -111,10 +111,8 @@ RUN mv /usr/bin/podman "${ORIGINAL_PODMAN_PATH}"
 
 ## Add buildctl
 
-RUN wget https://github.com/moby/buildkit/releases/download/${BUILDKIT_VERSION}/buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz && \
-  tar -xvf buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz && \
-  mv bin/* /usr/local/bin && \
-  rm -rf buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz
+RUN curl -L https://github.com/moby/buildkit/releases/download/${BUILDKIT_VERSION}/buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz | \
+  tar -xz -C /usr/local/bin
 
 COPY --chown=0:0 .stow-local-ignore /home/tooling/
 
