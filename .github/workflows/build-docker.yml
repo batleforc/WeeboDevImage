@@ -54,9 +54,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract folder name
         shell: bash
-        run: read -ra strarr <<<"${{ matrix.manifest }}" && echo "folder=${strarr[1]}" >> $GITHUB_OUTPUT
-        env:
-          IFS: "/"
+        run: IFS="/" read -ra strarr <<<"${{ matrix.manifest }}" && echo "folder=${strarr[1]}" >> $GITHUB_OUTPUT
         id: extract_folder
       - name: Build and push
         uses: docker/build-push-action@v5
