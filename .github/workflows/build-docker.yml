@@ -2,7 +2,7 @@ name: Build docker image
 
 on:
   push:
-    branches: ["main", "*"]
+    branches: ["main"]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: ["main"]
@@ -30,9 +30,90 @@ jobs:
         shell: bash
         run: echo "repository=${GITHUB_REPOSITORY@L}" >> $GITHUB_OUTPUT
         id: extract_repo
+  build-min:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+    strategy:
+      matrix:
+        manifest:
+          - ./che-min/Containerfile
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Setup Go environment
+        uses: actions/setup-go@v5.1.0
+      - name: Run prepare
+        run: |
+          cd src-template
+          go run main.go
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract folder name
+        shell: bash
+        run: IFS="/" read -ra strarr <<<"${{ matrix.manifest }}" && echo "folder=${strarr[1]}" >> $GITHUB_OUTPUT
+        id: extract_folder
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{steps.extract_folder.outputs.folder}}
+          file: ${{ matrix.manifest}}
+          push: true
+          tags: |
+            ghcr.io/${{ needs.prepare.outputs.repository }}/${{steps.extract_folder.outputs.folder}}:${{ needs.prepare.outputs.branch }}
+  build-base:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+    strategy:
+      matrix:
+        manifest:
+          - ./che-base/Containerfile
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Setup Go environment
+        uses: actions/setup-go@v5.1.0
+      - name: Run prepare
+        run: |
+          cd src-template
+          go run main.go
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract folder name
+        shell: bash
+        run: IFS="/" read -ra strarr <<<"${{ matrix.manifest }}" && echo "folder=${strarr[1]}" >> $GITHUB_OUTPUT
+        id: extract_folder
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{steps.extract_folder.outputs.folder}}
+          file: ${{ matrix.manifest}}
+          push: true
+          tags: |
+            ghcr.io/${{ needs.prepare.outputs.repository }}/${{steps.extract_folder.outputs.folder}}:${{ needs.prepare.outputs.branch }}
   build-image:
     runs-on: ubuntu-latest
-    needs: prepare
+    needs:
+      - prepare
+      - build-min
+      - build-base
     strategy:
       matrix:
         manifest: ${{ fromJson(needs.prepare.outputs.matrix) }}
