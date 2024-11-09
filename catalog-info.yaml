@@ -1,0 +1,23 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: weebodevimage
+  description: WeeboDevImage is an ensemble of tools for developing Weebo
+    applications inside of Eclipse Che or image used has sidecar.
+  tags:
+  - golang
+  - devfile
+  - containerimage
+  links:
+  - url: https://github.com/batleforc/WeeboDevImage
+    title: Repo
+    icon: github
+  annotations:
+    backstage.io/managed-by-location: url:https://github.com/batleforc/WeeboDevImage/blob/main/catalog-info.yaml
+    backstage.io/source-location: url:https://github.com/batleforc/WeeboDevImage
+    github.com/project-slug: batleforc/WeeboDevImage
+spec:
+  type: library
+  lifecycle: production
+  owner: weebodev
+  system: infra
