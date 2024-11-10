@@ -17,7 +17,7 @@ metadata:
     backstage.io/source-location: url:https://github.com/batleforc/WeeboDevImage/blob/main/
     github.com/project-slug: batleforc/WeeboDevImage
 spec:
-  type: library
+  type: service
   lifecycle: production
   owner: WeeboDev
   system: infra
