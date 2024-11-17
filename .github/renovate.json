@@ -8,5 +8,11 @@
     ],
     "repositories": [
         "batleforc/weebodevimage"
-    ]
+    ],
+    "dockerfile": {
+        "fileMatch": [
+            "(^|/|\\.)Containerfile$",
+            "(^|/)Containerfile[^/]*$"
+        ]
+    }
 }
