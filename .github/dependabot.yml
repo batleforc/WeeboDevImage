@@ -5,6 +5,11 @@ version: 2
 updates:
 - package-ecosystem: "docker" # See documentation for possible values
   directories:
-  - "/che-*"
+  - "/che-min"
+  - "/che-base"
+  - "/che-golang"
+  - "/che-node"
+  - "/che-rust"
+  - "/alpine-jqcurl"
   schedule:
     interval: "daily"
