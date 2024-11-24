@@ -1,4 +1,4 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
-java -jar /app/wirerest-0.7.jar --security.token --wg.interface.name=wg0
+java -jar /app/wirerest-0.7.jar --security.token --wg.interface.name=wg0 --wg.interface.default.mask=20
