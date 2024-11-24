@@ -9,4 +9,4 @@ WORKDIR /app
 # Install Wireguard REST API
 RUN wget https://github.com/FokiDoki/WireRest/releases/download/0.7-BETA/wirerest-0.7.jar && apk add --no-cache openjdk21
 
-ENTRYPOINT [ "java","-jar","/app/wirerest-0.7.jar" ]
+COPY ./root /
