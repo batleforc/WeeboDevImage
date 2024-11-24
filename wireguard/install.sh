@@ -219,10 +219,20 @@ fi
 
 echo -e "Selected directory: $JAVA_DIRECTORY"
 
+wg
+
 # Step 5: Choose WireGuard interface
 interfaces=$(wg | grep "interface" | awk '{print $2}')
+if [ -n "$REST_INTERFACE"]; then
+    if ! echo "$interfaces" | grep -q "$REST_INTERFACE"; then
+        echo -e "${RED}Error: Interface $REST_INTERFACE not found.${NC} Please check the interface name"
+        interfaces=$REST_INTERFACE
+    else
+        interfaces=$(echo "$interfaces" | grep "$REST_INTERFACE")
+    fi
+fi
 # Check if there are active interfaces
-if [ -z "$interfaces" ]; then
+elif [ -z "$interfaces" ]; then
     echo -e "${RED}Error: No active interfaces found.${NC} Please activate at least one interface (config)"
     exit 1
 elif [ $(wc -w <<< "$interfaces") -eq 1 ]; then
