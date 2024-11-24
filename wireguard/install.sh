@@ -13,6 +13,8 @@ RED='\e[31m'
 GREEN='\e[32m'
 YELLOW='\e[33m'
 NC='\e[0m' # No Color
+# sleep for 2 seconds
+sleep 2
 
 source /etc/os-release
 OS="${ID}"
