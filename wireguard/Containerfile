@@ -7,6 +7,7 @@ LABEL org.opencontainers.image.title="Wireguard"
 WORKDIR /app
 
 # Install Wireguard REST API
-COPY install.sh /app/install.sh
+COPY install.sh /app
+RUN chmod +x install.sh
 
 ENTRYPOINT [ "/app/install.sh" ]
