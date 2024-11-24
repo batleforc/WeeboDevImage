@@ -7,7 +7,6 @@ LABEL org.opencontainers.image.title="Wireguard"
 WORKDIR /app
 
 # Install Wireguard REST API
-COPY install.sh /app
-RUN chmod +x install.sh && apk add --no-cache openjdk21
+RUN wget https://github.com/FokiDoki/WireRest/releases/download/0.7-BETA/wirerest-0.7.jar && apk add --no-cache openjdk21
 
-ENTRYPOINT [ "/app/install.sh" ]
+ENTRYPOINT [ "java -jar wirerest-0.7.jar" ]
