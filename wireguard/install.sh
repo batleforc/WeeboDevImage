@@ -230,7 +230,6 @@ if [ -n "$REST_INTERFACE"]; then
     else
         interfaces=$(echo "$interfaces" | grep "$REST_INTERFACE")
     fi
-fi
 # Check if there are active interfaces
 elif [ -z "$interfaces" ]; then
     echo -e "${RED}Error: No active interfaces found.${NC} Please activate at least one interface (config)"
