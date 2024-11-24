@@ -7,7 +7,6 @@ LABEL org.opencontainers.image.title="Wireguard"
 WORKDIR /app
 
 # Install Wireguard REST API
-RUN wget https://github.com/FokiDoki/WireRest/releases/download/0.7-BETA/install.sh && \
-    chmod +x install.sh
+COPY install.sh /app/install.sh
 
 ENTRYPOINT [ "/app/install.sh" ]
