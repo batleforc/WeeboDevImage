@@ -13,7 +13,7 @@ ENV HOME=/home/tooling
 
 # Add auto-completion
 
-RUN apt-get update && apt-get install -y bash-completion && echo "source /etc/profile.d/bash_completion.sh" >> ${HOME}/.bashrc
+RUN apt-get update && apt-get install -y bash-completion && mkdir -p /home/tooling/ && echo "source /etc/profile.d/bash_completion.sh" >> ${HOME}/.bashrc
 
 ## Install Kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl && \
