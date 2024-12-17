@@ -49,8 +49,8 @@ RUN apt-get update && apt-get install -y jq zip &&\
 RUN wget https://github.com/go-task/task/releases/download/${TASKFILE_VERSION}/task_linux_amd64.tar.gz && \
   tar -xvf task_linux_amd64.tar.gz && \
   mv task /usr/local/bin/task && \
+  mv completion/bash/task.bash /etc/bash_completion.d/task && \
   rm -rf task_linux_amd64.tar.gz && \
-  task --completion bash > /etc/bash_completion.d/task && \
   echo 'source /etc/bash_completion.d/task' >> ${HOME}/.bashrc
 
 ## Install k9s
