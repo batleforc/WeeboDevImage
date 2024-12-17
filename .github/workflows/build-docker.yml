@@ -19,7 +19,7 @@ jobs:
       - name: Finding files and store to output
         id: finding-files
         run: |
-          echo "FILELIST=$(find . -name 'Containerfile' -print | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+          echo "FILELIST=$(find . -name 'Containerfile' -print | jq -R -s -c 'split("\n")[:-1] | select(.!="che-min"||.!="che-base")')" >> $GITHUB_OUTPUT
       - name: Show files
         run: echo "${{ steps.finding-files.outputs.FILELIST }}"
       - name: Extract branch name
@@ -70,6 +70,7 @@ jobs:
           context: ${{steps.extract_folder.outputs.folder}}
           file: ${{ matrix.manifest}}
           push: true
+          sbom: true
           tags: |
             ghcr.io/${{ needs.prepare.outputs.repository }}/${{steps.extract_folder.outputs.folder}}:${{ needs.prepare.outputs.branch }}
   build-base:
@@ -113,6 +114,7 @@ jobs:
           context: ${{steps.extract_folder.outputs.folder}}
           file: ${{ matrix.manifest}}
           push: true
+          sbom: true
           tags: |
             ghcr.io/${{ needs.prepare.outputs.repository }}/${{steps.extract_folder.outputs.folder}}:${{ needs.prepare.outputs.branch }}
   build-image:
@@ -156,5 +158,6 @@ jobs:
           context: ${{steps.extract_folder.outputs.folder}}
           file: ${{ matrix.manifest}}
           push: true
+          sbom: true
           tags: |
             ghcr.io/${{ needs.prepare.outputs.repository }}/${{steps.extract_folder.outputs.folder}}:${{ needs.prepare.outputs.branch }}
