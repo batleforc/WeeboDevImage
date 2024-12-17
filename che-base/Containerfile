@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.url="{{.Repo}}che-base"
 LABEL org.opencontainers.image.title="Che-BaseImage"
 
 ENV HELM_VERSION="v3.14.0"
-ENV TASKFILE_VERSION="v3.34.1"
+ENV TASKFILE_VERSION="v3.40.1"
 ENV k9S_VERSION="v0.31.8"
 ENV KREW_VERSION="v0.4.4"
 ENV GITLEAKS_VERSION="8.18.2"
