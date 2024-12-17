@@ -36,7 +36,9 @@ RUN set -eux; \
 RUN curl -LO https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz && \
   tar -zxvf helm-${HELM_VERSION}-linux-amd64.tar.gz && \
   mv linux-amd64/helm /usr/local/bin/helm && \
-  rm -rf linux-amd64 helm-${HELM_VERSION}-linux-amd64.tar.gz
+  rm -rf linux-amd64 helm-${HELM_VERSION}-linux-amd64.tar.gz && \
+  helm completion bash > /etc/bash_completion.d/helm && \
+  echo 'source /etc/bash_completion.d/helm' >> ${HOME}/.bashrc
 
 ## Install jq/yq/zip
 RUN apt-get update && apt-get install -y jq zip &&\
@@ -47,7 +49,9 @@ RUN apt-get update && apt-get install -y jq zip &&\
 RUN wget https://github.com/go-task/task/releases/download/${TASKFILE_VERSION}/task_linux_amd64.tar.gz && \
   tar -xvf task_linux_amd64.tar.gz && \
   mv task /usr/local/bin/task && \
-  rm -rf task_linux_amd64.tar.gz
+  rm -rf task_linux_amd64.tar.gz && \
+  task --completion bash > /etc/bash_completion.d/task && \
+  echo 'source /etc/bash_completion.d/task' >> ${HOME}/.bashrc
 
 ## Install k9s
 RUN wget https://github.com/derailed/k9s/releases/download/${k9S_VERSION}/k9s_Linux_amd64.tar.gz && \

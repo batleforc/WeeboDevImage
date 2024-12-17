@@ -11,17 +11,24 @@ ENV NODE_VERSION="18.19.0"
 
 ENV HOME=/home/tooling
 
+# Add auto-completion
+
+RUN apt-get update && apt-get install -y bash-completion && echo "source /etc/profile.d/bash_completion.sh" >> ${HOME}/.bashrc
+
 ## Install Kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
-    mv ./kubectl /usr/local/bin/kubectl
+    mv ./kubectl /usr/local/bin/kubectl && \
+    kubectl completion bash > /etc/bash_completion.d/kubectl && \
+    echo 'source /etc/bash_completion.d/kubectl' >> ${HOME}/.bashrc
 
 ENV KUBECONFIG=/home/user/.kube/config
 
 ## Install NodeJS
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 RUN echo 'export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"' >> ${HOME}/.bashrc
-RUN echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ${HOME}/.bashrc
+RUN echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ${HOME}/.bashrc && \
+    echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> ${HOME}/.bashrc
 RUN . ${HOME}/.bashrc && nvm install ${NODE_VERSION} && nvm alias default ${NODE_VERSION} && nvm use default && nvm cache clear && npm install --global yarn && corepack enable pnpm
 ENV VSCODE_NODEJS_RUNTIME_DIR=/home/tooling/.nvm/versions/node/v${NODE_VERSION}/bin
 
