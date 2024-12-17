@@ -3,6 +3,7 @@ FROM ghcr.io/batleforc/weebodevimage/che-min:main
 LABEL org.opencontainers.image.authors="batleforc"
 LABEL org.opencontainers.image.url="{{.Repo}}che-base"
 LABEL org.opencontainers.image.title="Che-BaseImage"
+LABEL org.opencontainers.image.source = "https://github.com/batleforc/WeeboDevImage"
 
 ENV HELM_VERSION="v3.14.0"
 ENV TASKFILE_VERSION="v3.40.1"

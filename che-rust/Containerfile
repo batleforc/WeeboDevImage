@@ -2,7 +2,7 @@ FROM {{.BaseImage}}
 
 LABEL org.opencontainers.image.url="batleforc/che-rust"
 LABEL org.opencontainers.image.title="Che-RustImage"
-LABEL org.opencontainers.image.source="batleforc/che-rust"
+LABEL org.opencontainers.image.source = "https://github.com/batleforc/WeeboDevImage"
 
 ENV HOME=/home/tooling
 USER 0
