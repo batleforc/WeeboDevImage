@@ -1,7 +1,7 @@
 FROM linuxserver/wireguard:latest
 
 LABEL org.opencontainers.image.authors="batleforc"
-LABEL org.opencontainers.image.url="{{.Repo}}wireguard"
+LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/wireguard"
 LABEL org.opencontainers.image.title="Wireguard"
 
 WORKDIR /app

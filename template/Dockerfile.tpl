@@ -1,4 +1,4 @@
-FROM {{.BaseImage}}
+FROM ghcr.io/batleforc/weebodevimage/che-base:main
 
 LABEL org.opencontainers.image.url="batleforc/che-{{.Name}}"
 LABEL org.opencontainers.image.title="Che-{{.FullName}}"

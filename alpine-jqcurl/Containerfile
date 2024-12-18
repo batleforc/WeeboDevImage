@@ -1,7 +1,7 @@
 FROM alpine/curl:latest
 
 LABEL org.opencontainers.image.authors="batleforc"
-LABEL org.opencontainers.image.url="{{.Repo}}alpine-jqcurl"
+LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/alpine-jqcurl"
 LABEL org.opencontainers.image.title="Alpine-jqcurl"
 LABEL org.opencontainers.image.source = "https://github.com/batleforc/WeeboDevImage"
 

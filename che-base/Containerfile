@@ -1,7 +1,7 @@
 FROM ghcr.io/batleforc/weebodevimage/che-min:main
 
 LABEL org.opencontainers.image.authors="batleforc"
-LABEL org.opencontainers.image.url="{{.Repo}}che-base"
+LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/che-base"
 LABEL org.opencontainers.image.title="Che-BaseImage"
 LABEL org.opencontainers.image.source = "https://github.com/batleforc/WeeboDevImage"
 
