@@ -3,7 +3,7 @@ FROM ghcr.io/batleforc/weebodevimage/che-min:main
 LABEL org.opencontainers.image.authors="batleforc"
 LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/che-base"
 LABEL org.opencontainers.image.title="Che-BaseImage"
-LABEL org.opencontainers.image.source = "https://github.com/batleforc/WeeboDevImage"
+LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 
 ENV HELM_VERSION="v3.14.0"
 ENV TASKFILE_VERSION="v3.40.1"
@@ -80,7 +80,7 @@ RUN echo 'if [ $STAR_NO != "false" ]; then\neval "$(starship init bash)"\nfi' >>
 COPY starship.toml ${HOME}/.config/starship.toml
 
 ## Install vim in order to fix commit message and stow to make symbolic link
-RUN apt-get install vim stow iputils-ping net-tools less -y
+RUN apt-get install vim stow iputils-ping net-tools less trippy -y
 
 ## Install podman capa
 ## https://github.com/devfile/developer-images/blob/main/base/ubi8/Dockerfile#L107C1-L107C59

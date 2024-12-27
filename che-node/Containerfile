@@ -2,7 +2,7 @@ FROM ghcr.io/batleforc/weebodevimage/che-base:main
 
 LABEL org.opencontainers.image.url="batleforc/che-node"
 LABEL org.opencontainers.image.title="Che-Node"
-LABEL org.opencontainers.image.source = "https://github.com/batleforc/WeeboDevImage"
+LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 
 ENV HOME=/home/tooling
 USER 0
