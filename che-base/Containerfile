@@ -84,8 +84,10 @@ RUN apt-get install vim stow iputils-ping net-tools less -y
 
 ## Install Trippy
 RUN curl -L https://github.com/fujiapple852/trippy/releases/download/0.12.1/trippy-0.12.1-x86_64-unknown-linux-gnu.tar.gz && \
-  tar -xz -C /usr/local/bin --strip-components=1 trippy-0.12.1-x86_64-unknown-linux-gnu.tar.gz  && \
-  chmod +x /usr/local/bin/trippy
+  tar -xvf trippy-0.12.1-x86_64-unknown-linux-gnu.tar.gz  && \
+  mv trip /usr/local/bin/trip && \
+  rm -rf trippy-0.12.1-x86_64-unknown-linux-gnu.tar.gz && \
+  chmod +x /usr/local/bin/trip
 
 ## Install podman capa
 ## https://github.com/devfile/developer-images/blob/main/base/ubi8/Dockerfile#L107C1-L107C59
