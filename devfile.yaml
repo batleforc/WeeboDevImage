@@ -10,3 +10,10 @@ components:
     image: ghcr.io/batleforc/weebodevimage/che-golang:main
     memoryLimit: 2Gi
     mountSources: true
+- name: devtool
+  container:
+    image: buildpack-deps:bookworm
+    memoryLimit: 1Gi
+    mountSources: false
+    command: ['tail']
+    args: ['-f', '/dev/null']
