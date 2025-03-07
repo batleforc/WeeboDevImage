@@ -27,11 +27,14 @@ RUN wget https://github.com/siderolabs/talos/releases/download/${TALOSCTL_VERSIO
   mv talosctl-linux-amd64 /usr/local/bin/talosctl
 
 ## Opentofu
-
 RUN wget https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz && \
     tar -xvf tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz && \
     mv tofu /usr/local/bin/tofu && \
     rm -rf tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz
+
+## Add Wireguard
+RUN apt update && apt install wireguard
+
 
 ## Install different CLI
 
