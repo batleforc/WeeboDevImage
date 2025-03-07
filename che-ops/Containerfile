@@ -33,8 +33,7 @@ RUN wget https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERS
     rm -rf tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz
 
 ## Add Wireguard
-RUN apt update && apt install wireguard
-
+RUN apt update && apt install wireguard -y
 
 ## Install different CLI
 
