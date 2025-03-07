@@ -25,10 +25,6 @@ RUN wget https://github.com/kubernetes-sigs/cluster-api/releases/download/${CLUS
 ## Talosctl
 RUN curl -sL https://talos.dev/install | sh
 
-## test
-
-RUN echo $PWD > /home/tooling/.test
-
 ## Opentofu
 
 RUN wget https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz && \
