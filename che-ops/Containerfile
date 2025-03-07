@@ -23,7 +23,7 @@ RUN wget https://github.com/kubernetes-sigs/cluster-api/releases/download/${CLUS
     mv clusterctl-linux-amd64 /usr/local/bin/clusterctl
 
 ## Talosctl
-RUN curl https://talos.dev/install | bash
+RUN curl -sL https://talos.dev/install | sh
 
 ## test
 
