@@ -39,9 +39,9 @@ RUN wget https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERS
 ## Install different CLI
 
 USER 1234
-ENV HOME=/home/user
-RUN stow . -t /home/user -d /home/tooling --no-folding
 RUN cp -f /home/tooling/.bashrc /home/user/.bashrc
+RUN stow . -t /home/user -d /home/tooling --no-folding
+ENV HOME=/home/user
 WORKDIR /home/user
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD ["tail", "-f", "/dev/null"]
