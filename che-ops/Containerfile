@@ -1,0 +1,47 @@
+FROM ghcr.io/batleforc/weebodevimage/che-base:main
+
+LABEL org.opencontainers.image.url="batleforc/che-rust"
+LABEL org.opencontainers.image.title="Che-RustImage"
+LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
+
+ENV HOME=/home/tooling
+USER 0
+
+## Set version target
+
+ENV CLUSTERCTL_VERSION="v1.9.5"
+ENV TALOSCTL_VERSION="V1.9.4"
+ENV OPENTOFU_VERSION="1.9.0"
+ENV ARGOCDCLI_VERSION="v2.14.4"
+
+## ArgoCD
+RUN wget https://github.com/argoproj/argo-cd/releases/download/${ARGOCDCLI_VERSION}/argocd-linux-amd64 && \
+  mv argocd-linux-amd64 /usr/local/bin/argocd
+
+## Clusterctl
+RUN wget https://github.com/kubernetes-sigs/cluster-api/releases/download/${CLUSTERCTL_VERSION}/clusterctl-linux-amd64 && \
+    mv clusterctl-linux-amd64 /usr/local/bin/clusterctl
+
+## Talosctl
+RUN curl https://talos.dev/install | bash
+
+## test
+
+RUN echo $PWD > /home/tooling/.test
+
+## Opentofu
+
+RUN wget https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz && \
+    tar -xvf tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz && \
+    mv tofu /usr/local/bin/tofu && \
+    rm -rf tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz
+
+## Install different CLI
+
+USER 1234
+ENV HOME=/home/user
+RUN stow . -t /home/user -d /home/tooling --no-folding
+RUN cp -f /home/tooling/.bashrc /home/user/.bashrc
+WORKDIR /home/user
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD ["tail", "-f", "/dev/null"]

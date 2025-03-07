@@ -5,13 +5,13 @@ LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/c
 LABEL org.opencontainers.image.title="Che-BaseImage"
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 
-ENV HELM_VERSION="v3.14.0"
-ENV TASKFILE_VERSION="v3.40.1"
-ENV k9S_VERSION="v0.31.8"
+ENV HELM_VERSION="v3.17.1"
+ENV TASKFILE_VERSION="v3.41.0"
+ENV k9S_VERSION="v0.40.5"
 ENV KREW_VERSION="v0.4.4"
-ENV GITLEAKS_VERSION="8.18.2"
-ENV KUBEDOCK_VERSION="0.15.5"
-ENV BUILDKIT_VERSION="v0.16.0"
+ENV GITLEAKS_VERSION="8.24.0"
+ENV KUBEDOCK_VERSION="0.18.1"
+ENV BUILDKIT_VERSION="v0.20.1"
 
 ENV HOME=/home/tooling
 
@@ -80,7 +80,7 @@ RUN echo 'if [ $STAR_NO != "false" ]; then\neval "$(starship init bash)"\nfi' >>
 COPY starship.toml ${HOME}/.config/starship.toml
 
 ## Install vim in order to fix commit message and stow to make symbolic link
-RUN apt-get install vim stow iputils-ping net-tools less -y
+RUN apt-get install vim stow iputils-ping net-tools less htop -y
 
 ## Install Trippy - Removed has the unprivileged user cannot use it yet SEE : https://trippy.rs/guides/privileges/#unprivileged-mode
 # RUN wget https://github.com/fujiapple852/trippy/releases/download/0.12.1/trippy-0.12.1-x86_64-unknown-linux-gnu.tar.gz && \

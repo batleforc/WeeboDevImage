@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/c
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 LABEL org.opencontainers.image.title="Che-MinImage"
 
-ENV KUBE_VERSION="v1.28.4"
+ENV KUBE_VERSION="v1.32.2"
 ENV NVM_VERSION="v0.39.7"
 ENV NODE_VERSION="20.16.0"
 
@@ -13,7 +13,11 @@ ENV HOME=/home/tooling
 
 # Add auto-completion
 
-RUN apt-get update && apt-get install -y bash-completion && mkdir -p /home/tooling/ && echo "source /etc/profile.d/bash_completion.sh" >> ${HOME}/.bashrc
+RUN apt-get update && apt-get install -y bash-completion libc6 locales locales-all &&\
+    mkdir -p /home/tooling/ &&\
+    echo "source /etc/profile.d/bash_completion.sh" >> ${HOME}/.bashrc &&\
+    locale-gen "en_US.UTF-8" &&\
+    dpnkg-reconfigure locales
 
 ## Install Kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl && \
@@ -23,6 +27,7 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBE_VE
     echo 'source /etc/bash_completion.d/kubectl' >> ${HOME}/.bashrc
 
 ENV KUBECONFIG=/home/user/.kube/config
+ENV LANG="en_US.UTF-8"
 
 ## Install NodeJS
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
