@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y bash-completion libc6 locales locales-a
     mkdir -p /home/tooling/ &&\
     echo "source /etc/profile.d/bash_completion.sh" >> ${HOME}/.bashrc &&\
     locale-gen "en_US.UTF-8" &&\
-    dpnkg-reconfigure locales
+    dpkg-reconfigure locales
 
 ## Install Kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl && \
