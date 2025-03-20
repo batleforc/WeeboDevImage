@@ -20,7 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Go environment
-        uses: actions/setup-go@v5.2.0
+        uses: actions/setup-go@v5.4.0
       - name: Run prepare
         run: |
           cd src-template
