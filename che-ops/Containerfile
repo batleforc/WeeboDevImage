@@ -39,7 +39,7 @@ RUN apt update && apt install wireguard -y
 ## UpdateCLI
 RUN wget https://github.com/updatecli/updatecli/releases/download/${UPDATECLI_VERSION}/updatecli_Linux_x86_64.tar.gz && \
     tar -xvf updatecli_Linux_x86_64.tar.gz && \
-    mv updatecli_Linux_x86_64/clusterctl /usr/local/bin/clusterctl && \
+    mv clusterctl /usr/local/bin/clusterctl && \
     rm -rf updatecli_Linux_x86_64.tar.gz
 
 ## Install different CLI
