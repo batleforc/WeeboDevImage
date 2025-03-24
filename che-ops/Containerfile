@@ -13,6 +13,7 @@ ENV CLUSTERCTL_VERSION="v1.9.5"
 ENV TALOSCTL_VERSION="v1.9.4"
 ENV OPENTOFU_VERSION="1.9.0"
 ENV ARGOCDCLI_VERSION="v2.14.4"
+ENV UPDATECLI_VERSION="v0.95.0"
 
 ## ArgoCD
 RUN wget https://github.com/argoproj/argo-cd/releases/download/${ARGOCDCLI_VERSION}/argocd-linux-amd64 && \
@@ -34,6 +35,12 @@ RUN wget https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERS
 
 ## Add Wireguard
 RUN apt update && apt install wireguard -y
+
+## UpdateCLI
+RUN wget https://github.com/updatecli/updatecli/releases/download/${UPDATECLI_VERSION}/updatecli_Linux_x86_64.tar.gz && \
+    tar -xvf updatecli_Linux_x86_64.tar.gz && \
+    mv updatecli_Linux_x86_64/clusterctl /usr/local/bin/clusterctl && \
+    rm -rf updatecli_Linux_x86_64.tar.gz
 
 ## Install different CLI
 
