@@ -87,6 +87,18 @@ sources:
       username: "{{ .github.username }}"
       versionFilter:
         kind: semver
+  cog:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: cocogitto
+      repository: cocogitto
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+    transformers:
+    - trimprefix: "v"
 
 targets:
   bump_helm_version:
@@ -152,6 +164,15 @@ targets:
       file: che-base/Containerfile
       matchpattern: 'BUILDKIT_VERSION=".*"'
       replacepattern: 'BUILDKIT_VERSION="{{ source "buildkit" }}"'
+  bump_cog_version:
+    kind: file
+    name: "Bump cog version"
+    scmid: default
+    sourceid: cog
+    spec:
+      file: che-base/Containerfile
+      matchpattern: 'COCOGITTO_VERSION=".*"'
+      replacepattern: 'COCOGITTO_VERSION="{{ source "cog" }}"'
 
 actions:
   bump_base_space:
