@@ -1,0 +1,44 @@
+name: Upgrade GoSpace
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: "{{ .github.user }}"
+      email: "{{ .github.email }}"
+      owner: batleforc
+      repository: WeeboDevImage
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      branch: main
+
+sources:
+  golang:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: golang
+      repository: go
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+
+targets:
+  bump_go_version:
+    kind: file
+    name: "Bump Golang version"
+    scmid: default
+    sourceid: golang
+    spec:
+      file: che-golang/Containerfile
+      matchpattern: 'GOLANG_VERSION=".*"'
+      replacepattern: 'GOLANG_VERSION="{{ source "golang" }}"'
+
+actions:
+  bump_go_space:
+    kind: github/pullrequest
+    scmid: default
+    spec:
+      title: 'ci: Bump Go Space'
+      automerge: false
