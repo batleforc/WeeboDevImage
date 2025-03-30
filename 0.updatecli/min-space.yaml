@@ -14,18 +14,12 @@ scms:
 
 sources:
   kubectl:
-    kind: gittag
-    scmid: default
+    kind: http
     spec:
-      owner: kubernetes
-      repository: kubectl
-      token: "{{ requiredEnv .github.token }}"
-      username: "{{ .github.username }}"
-      versionFilter:
-        kind: semver
+      url: "https://dl.k8s.io/release/stable.txt"
 
 targets:
-  bumpupdatecli:
+  bump_kubectl_version:
     kind: file
     name: "Bump updatecli version"
     scmid: default
