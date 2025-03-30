@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImag
 LABEL org.opencontainers.image.title="Che-MinImage"
 
 ENV KUBE_VERSION="v1.32.3"
-ENV NVM_VERSION="v0.39.7"
+ENV NVM_VERSION="v0.40.2"
 ENV NODE_VERSION="20.19.0"
 
 ENV HOME=/home/tooling
