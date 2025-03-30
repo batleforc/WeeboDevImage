@@ -33,7 +33,7 @@ targets:
     spec:
       file: che-base/Containerfile
       matchpattern: 'HELM_VERSION=".*"'
-      replacepattern: 'HELM_VERSION="{{ source "kubectl" }}"'
+      replacepattern: 'HELM_VERSION="{{ source "helm" }}"'
 
 actions:
   bump_base_space:
