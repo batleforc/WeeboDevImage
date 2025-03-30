@@ -7,7 +7,7 @@ scms:
       user: "{{ .github.user }}"
       email: "{{ .github.email }}"
       owner: batleforc
-      repository: weebodebimage
+      repository: WeeboDevImage
       token: "{{ requiredEnv .github.token }}"
       username: "{{ .github.username }}"
       branch: main
