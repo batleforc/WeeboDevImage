@@ -114,8 +114,8 @@ targets:
     sourceid: k9s
     spec:
       file: che-base/Containerfile
-      matchpattern: 'K9S_VERSION=".*"'
-      replacepattern: 'K9S_VERSION="{{ source "k9s" }}"'
+      matchpattern: 'k9S_VERSION=".*"'
+      replacepattern: 'k9S_VERSION="{{ source "k9s" }}"'
   bump_krew_version:
     kind: file
     name: "Bump krew version"
