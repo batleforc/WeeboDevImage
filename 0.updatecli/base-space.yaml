@@ -1,0 +1,44 @@
+name: Upgrade BaseSpace
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: "{{ .github.user }}"
+      email: "{{ .github.email }}"
+      owner: batleforc
+      repository: WeeboDevImage
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      branch: main
+
+sources:
+  helm:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: helm
+      repository: helm
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+
+targets:
+  bump_helm_version:
+    kind: file
+    name: "Bump helm version"
+    scmid: default
+    sourceid: helm
+    spec:
+      file: che-base/Containerfile
+      matchpattern: 'HELM_VERSION=".*"'
+      replacepattern: 'HELM_VERSION="{{ source "kubectl" }}"'
+
+actions:
+  bump_base_space:
+    kind: github/pullrequest
+    scmid: default
+    spec:
+      title: 'ci: Bump Base Space'
+      automerge: false
