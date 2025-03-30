@@ -22,7 +22,7 @@ sources:
       token: "{{ requiredEnv .github.token }}"
       username: "{{ .github.username }}"
       versionFilter:
-        kind: semver
+        kind: latest
 
 targets:
   bump_go_version:
