@@ -29,11 +29,11 @@ targets:
     kind: file
     name: "Bump updatecli version"
     scmid: default
-    sourceid: updatecli
+    sourceid: kubectl
     spec:
       file: 0.ansible/setup-host/install-cli.yml
       matchpattern: 'KUBE_VERSION=".*"'
-      replacepattern: 'KUBE_VERSION="{{ source "updatecli" }}"'
+      replacepattern: 'KUBE_VERSION="{{ source "kubectl" }}"'
 
 actions:
   bump_min_space:
