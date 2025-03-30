@@ -44,7 +44,7 @@ targets:
     scmid: default
     sourceid: nvm
     spec:
-      file: che-base/Containerfile
+      file: che-min/Containerfile
       matchpattern: 'NVM_VERSION=".*"'
       replacepattern: 'NVM_VERSION="{{ source "nvm" }}"'
 
