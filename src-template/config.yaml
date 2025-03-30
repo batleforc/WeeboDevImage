@@ -1,3 +1,0 @@
-baseImage: "ghcr.io/batleforc/weebodevimage/che-base:main"
-repo: "https://github.com/batleforc/WeeboDevImage/"
-regSource: "ghcr.io/batleforc/weebodevimage/che-"
