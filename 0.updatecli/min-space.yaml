@@ -1,4 +1,4 @@
-name: Setup Host
+name: Upgrade MinSpace
 
 scms:
   default:
@@ -32,13 +32,13 @@ targets:
     sourceid: updatecli
     spec:
       file: 0.ansible/setup-host/install-cli.yml
-      matchpattern: 'updatecli_version: ".*"'
-      replacepattern: 'updatecli_version: "{{ source "updatecli" }}"'
+      matchpattern: 'KUBE_VERSION=".*"'
+      replacepattern: 'KUBE_VERSION="{{ source "updatecli" }}"'
 
 actions:
-  bumpupdatecli:
+  bump_min_space:
     kind: github/pullrequest
     scmid: default
     spec:
-      title: 'ci: Bump `updatecli` version to {{ source "updatecli" }}'
+      title: 'ci: Bump Min Space'
       automerge: false

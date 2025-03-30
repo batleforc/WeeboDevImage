@@ -29,29 +29,11 @@ jobs:
       - name: Install Updatecli in the runner
         uses: updatecli/updatecli-action@v2
 
-      - name: Set up GPG
-        run: |
-          echo "$GPG_PRIVATE_KEY" | gpg --import
-          echo "use-agent" >> ~/.gnupg/gpg.conf
-          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
-          gpg --list-secret-keys --keyid-format LONG
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-      - name: Configure git to use GPG
-        run: |
-          git config --global user.signingkey $GPG_KEY_ID
-          git config --global commit.gpgsign true
-          git config --global gpg.program gpg
-        env:
-          GPG_KEY_ID: ${{ secrets.GPG_KEY }}
-
       - name: "Run updatecli in dryrun"
         run: "updatecli compose diff"
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GPG_KEY_ID: ${{ secrets.GPG_KEY }}
 
       - uses: actions/create-github-app-token@af35edadc00be37caa72ed9f3e6d5f7801bfdf09 # v1.11.7
         id: generate_token
@@ -66,4 +48,3 @@ jobs:
         env:
           GITHUB_ACTOR: ${{ secrets.UPDATECLI_BOT_GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-          GPG_KEY_ID: ${{ secrets.GPG_KEY }}

@@ -4,6 +4,3 @@ github:
   username: "github-actions"
   token: "GITHUB_TOKEN"
   test: "v1.0"
-
-gpg:
-  key: "GPG_KEY_ID"
