@@ -23,6 +23,70 @@ sources:
       username: "{{ .github.username }}"
       versionFilter:
         kind: semver
+  task:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: go-task
+      repository: task
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+  k9s:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: derailed
+      repository: k9s
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: latest
+  krew:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: kubernetes-sigs
+      repository: krew
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+  gitleaks:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: gitleaks
+      repository: gitleaks
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: latest
+    transformers:
+    - trimprefix: "v"
+  kubedock:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: joyrex2001
+      repository: kubedock
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+    transformers:
+    - trimprefix: "v"
+  buildkit:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: moby
+      repository: buildkit
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
 
 targets:
   bump_helm_version:
@@ -34,6 +98,60 @@ targets:
       file: che-base/Containerfile
       matchpattern: 'HELM_VERSION=".*"'
       replacepattern: 'HELM_VERSION="{{ source "helm" }}"'
+  bump_task_version:
+    kind: file
+    name: "Bump task version"
+    scmid: default
+    sourceid: task
+    spec:
+      file: che-base/Containerfile
+      matchpattern: 'TASKFILE_VERSION=".*"'
+      replacepattern: 'TASKFILE_VERSION="{{ source "task" }}"'
+  bump_k9s_version:
+    kind: file
+    name: "Bump k9s version"
+    scmid: default
+    sourceid: k9s
+    spec:
+      file: che-base/Containerfile
+      matchpattern: 'K9S_VERSION=".*"'
+      replacepattern: 'K9S_VERSION="{{ source "k9s" }}"'
+  bump_krew_version:
+    kind: file
+    name: "Bump krew version"
+    scmid: default
+    sourceid: krew
+    spec:
+      file: che-base/Containerfile
+      matchpattern: 'KREW_VERSION=".*"'
+      replacepattern: 'KREW_VERSION="{{ source "krew" }}"'
+  bump_gitleaks_version:
+    kind: file
+    name: "Bump gitleaks version"
+    scmid: default
+    sourceid: gitleaks
+    spec:
+      file: che-base/Containerfile
+      matchpattern: 'GITLEAKS_VERSION=".*"'
+      replacepattern: 'GITLEAKS_VERSION="{{ source "gitleaks" }}"'
+  bump_kubedock_version:
+    kind: file
+    name: "Bump kubedock version"
+    scmid: default
+    sourceid: kubedock
+    spec:
+      file: che-base/Containerfile
+      matchpattern: 'KUBEDOCK_VERSION=".*"'
+      replacepattern: 'KUBEDOCK_VERSION="{{ source "kubedock" }}"'
+  bump_buildkit_version:
+    kind: file
+    name: "Bump buildkit version"
+    scmid: default
+    sourceid: buildkit
+    spec:
+      file: che-base/Containerfile
+      matchpattern: 'BUILDKIT_VERSION=".*"'
+      replacepattern: 'BUILDKIT_VERSION="{{ source "buildkit" }}"'
 
 actions:
   bump_base_space:
