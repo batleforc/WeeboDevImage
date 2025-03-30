@@ -17,17 +17,36 @@ sources:
     kind: http
     spec:
       url: "https://dl.k8s.io/release/stable.txt"
+  nvm:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: nvm-sh
+      repository: nvm
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
 
 targets:
   bump_kubectl_version:
     kind: file
-    name: "Bump updatecli version"
+    name: "Bump kubectl version"
     scmid: default
     sourceid: kubectl
     spec:
       file: che-min/Containerfile
       matchpattern: 'KUBE_VERSION=".*"'
       replacepattern: 'KUBE_VERSION="{{ source "kubectl" }}"'
+  bump_nvm_version:
+    kind: file
+    name: "Bump nvm version"
+    scmid: default
+    sourceid: nvm
+    spec:
+      file: che-base/Containerfile
+      matchpattern: 'NVM_VERSION=".*"'
+      replacepattern: 'NVM_VERSION="{{ source "nvm" }}"'
 
 actions:
   bump_min_space:
