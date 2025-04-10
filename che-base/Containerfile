@@ -7,7 +7,7 @@ LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImag
 
 ENV HELM_VERSION="v3.17.3"
 ENV TASKFILE_VERSION="v3.42.1"
-ENV k9S_VERSION="v0.40.10"
+ENV k9S_VERSION="v0.50.0"
 ENV KREW_VERSION="v0.4.5"
 ENV GITLEAKS_VERSION="8.24.2"
 ENV KUBEDOCK_VERSION="0.18.1"
