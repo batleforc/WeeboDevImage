@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/c
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 LABEL org.opencontainers.image.title="Che-MinImage"
 
-ENV KUBE_VERSION="v1.32.3"
+ENV KUBE_VERSION="v1.33.0"
 ENV NVM_VERSION="v0.40.3"
 ENV NODE_VERSION="20.19.0"
 
