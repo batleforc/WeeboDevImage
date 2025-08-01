@@ -5,13 +5,13 @@ LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/c
 LABEL org.opencontainers.image.title="Che-BaseImage"
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 
-ENV HELM_VERSION="v3.17.3"
-ENV TASKFILE_VERSION="v3.43.3"
-ENV k9S_VERSION="v0.50.4"
+ENV HELM_VERSION="v3.18.4"
+ENV TASKFILE_VERSION="v3.44.1"
+ENV k9S_VERSION="v0.50.9"
 ENV KREW_VERSION="v0.4.5"
-ENV GITLEAKS_VERSION="8.25.1"
+ENV GITLEAKS_VERSION="8.28.0"
 ENV KUBEDOCK_VERSION="0.18.1"
-ENV BUILDKIT_VERSION="v0.21.1"
+ENV BUILDKIT_VERSION="v0.23.2"
 ENV COCOGITTO_VERSION="6.3.0"
 
 ENV HOME=/home/tooling
