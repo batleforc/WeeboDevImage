@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.title="Che-BaseImage"
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 
 ENV HELM_VERSION="v3.19.0"
-ENV TASKFILE_VERSION="v3.45.3"
+ENV TASKFILE_VERSION="v3.45.4"
 ENV k9S_VERSION="v0.50.9"
 ENV KREW_VERSION="v0.4.5"
 ENV GITLEAKS_VERSION="8.28.0"
