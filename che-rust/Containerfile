@@ -50,14 +50,7 @@ RUN echo 'export PATH=/home/user/.cargo/bin:$PATH' >> ${HOME}/.bashrc
 ENV STAR_NO="true"
 
 # START User Block
-
-RUN set -eux; \
-    rustup component add clippy; \
-    rustup component add rustfmt;\
-    cargo install --locked cargo-audit; \
-    cargo install --locked cocogitto; \
-    rustup target add wasm32-unknown-unknown;
-
+RUN chmod g=u /etc/passwd /etc/group
 # START User Block
 USER 1234
 ENV HOME=/home/user
