@@ -1,4 +1,4 @@
-FROM buildpack-deps:bookworm
+FROM buildpack-deps:trixie
 
 LABEL org.opencontainers.image.authors="batleforc"
 LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/che-min"
@@ -7,7 +7,7 @@ LABEL org.opencontainers.image.title="Che-MinImage"
 
 ENV KUBE_VERSION="v1.35.0"
 ENV NVM_VERSION="v0.40.3"
-ENV NODE_VERSION="20.19.0"
+ENV NODE_VERSION="24.13.0"
 
 ENV HOME=/home/tooling
 
@@ -42,9 +42,12 @@ ENV PATH=/home/tooling/.nvm/versions/node/v${NODE_VERSION}/bin:$PATH
 ## https://github.com/devfile/developer-images/blob/main/universal/ubi8/entrypoint.sh
 
 RUN mkdir -p /home/tooling/.local/bin && \
-    chgrp -R 0 /home && chmod -R g=u /home
+    chgrp -R 0 /home && chmod -R g=u /home && \
+    useradd -u 1234 -G wheel,root -d /home/user --shell /bin/bash -m user
 ENV PATH="/home/user/.local/bin:$PATH"
 ENV PATH="/home/tooling/.local/bin:$PATH"
+
+COPY --chown=0:0 .copy-files /home/tooling/
 
 ## Try a fix for path not found
 
