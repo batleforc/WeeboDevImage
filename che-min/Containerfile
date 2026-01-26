@@ -43,7 +43,7 @@ ENV PATH=/home/tooling/.nvm/versions/node/v${NODE_VERSION}/bin:$PATH
 
 RUN mkdir -p /home/tooling/.local/bin && \
     chgrp -R 0 /home && chmod -R g=u /home && \
-    useradd -u 1234 -G wheel,root -d /home/user --shell /bin/bash -m user
+    useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user
 ENV PATH="/home/user/.local/bin:$PATH"
 ENV PATH="/home/tooling/.local/bin:$PATH"
 
