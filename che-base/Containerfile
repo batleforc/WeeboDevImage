@@ -141,7 +141,7 @@ COPY --chown=0:0 .stow-local-ignore /home/tooling/
 
 RUN chgrp -R 0 /home/tooling && chmod -R g=u /home/tooling
 
-RUN mkdir /home/user && ls /home && stow . -t /home/user/ -d /home/tooling/ --no-folding
+RUN mkdir -p /home/user && ls /home && stow . -t /home/user/ -d /home/tooling/ --no-folding
 
 RUN chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home
 
