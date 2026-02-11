@@ -14,7 +14,7 @@ USER 0
 ENV PATH /usr/local/go/bin:$PATH
 RUN echo 'export PATH="/usr/local/go/bin:$PATH"' >> ${HOME}/.bashrc
 
-ENV GOLANG_VERSION="1.26rc3"
+ENV GOLANG_VERSION="1.26.0"
 
 RUN set -eux; \
     apt-get update; \
