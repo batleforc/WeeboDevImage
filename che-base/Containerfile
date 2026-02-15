@@ -18,14 +18,16 @@ ENV HOME=/home/tooling
 
 USER 0
 
+RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC}
+
 ## Install Krew
 
 ENV PATH="${HOME}/.krew/bin:$PATH"
-RUN echo 'export PATH="${HOME}/.krew/bin:$PATH"' >> ${HOME}/.bashrc
+RUN echo 'export PATH="${HOME}/.krew/bin:$PATH"' >> ${GLOBALS_BASHRC}
 
 RUN set -eux; \
   cd "$(mktemp -d)" && \
-  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/${KREW_VERSION}/krew-linux_amd64.tar.gz"&&\
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/${KREW_VERSION}/krew-linux_amd64.tar.gz" && \
   tar -zxvf krew-linux_amd64.tar.gz && \
   ./"krew-linux_amd64" install krew && \
   rm -rf krew-linux_amd64.tar.gz krew-linux_amd64 &&\
@@ -35,59 +37,79 @@ RUN set -eux; \
   kubectl krew install resource-capacity
 
 ## Install Helm
-RUN curl -LO https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz && \
+RUN curl -fsSLo helm-${HELM_VERSION}-linux-amd64.tar.gz \
+  https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz && \
   tar -zxvf helm-${HELM_VERSION}-linux-amd64.tar.gz && \
   mv linux-amd64/helm /usr/local/bin/helm && \
   rm -rf linux-amd64 helm-${HELM_VERSION}-linux-amd64.tar.gz && \
   helm completion bash > /etc/bash_completion.d/helm && \
-  echo 'source /etc/bash_completion.d/helm' >> ${HOME}/.bashrc
+  echo 'source /etc/bash_completion.d/helm' >> ${GLOBALS_BASHRC}
 
 ## Install jq/yq/zip
-RUN apt-get update && apt-get install -y jq zip &&\
-  wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq &&\
-  chmod +x /usr/bin/yq
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends \
+  jq \
+  zip \
+  gnupg2 \
+  vim \
+  stow \
+  iputils-ping \
+  net-tools \
+  less \
+  htop \
+  podman \
+  buildah \
+  skopeo \
+  fuse-overlayfs && \
+  rm -rf /var/lib/apt/lists/* && \
+  curl -fsSLo /usr/local/bin/yq \
+  https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && \
+  chmod +x /usr/local/bin/yq
 
 ## Install Taskfile
-RUN wget https://github.com/go-task/task/releases/download/${TASKFILE_VERSION}/task_linux_amd64.tar.gz && \
+RUN curl -fsSLo task_linux_amd64.tar.gz \
+  https://github.com/go-task/task/releases/download/${TASKFILE_VERSION}/task_linux_amd64.tar.gz && \
   tar -xvf task_linux_amd64.tar.gz && \
   mv task /usr/local/bin/task && \
   mv completion/bash/task.bash /etc/bash_completion.d/task && \
   rm -rf task_linux_amd64.tar.gz && \
-  echo 'source /etc/bash_completion.d/task' >> ${HOME}/.bashrc
+  echo 'source /etc/bash_completion.d/task' >> ${GLOBALS_BASHRC}
 
 ## Install k9s
-RUN wget https://github.com/derailed/k9s/releases/download/${k9S_VERSION}/k9s_Linux_amd64.tar.gz && \
+RUN curl -fsSLo k9s_Linux_amd64.tar.gz \
+  https://github.com/derailed/k9s/releases/download/${k9S_VERSION}/k9s_Linux_amd64.tar.gz && \
   tar -xvf k9s_Linux_amd64.tar.gz && \
   mv k9s /usr/local/bin/k9s && \
   rm -rf k9s_Linux_amd64.tar.gz
 
 ## Install Cocogitto
-RUN wget https://github.com/cocogitto/cocogitto/releases/download/${COCOGITTO_VERSION}/cocogitto-${COCOGITTO_VERSION}-x86_64-unknown-linux-musl.tar.gz && \
+RUN curl -fsSLo cocogitto-${COCOGITTO_VERSION}-x86_64-unknown-linux-musl.tar.gz \
+  https://github.com/cocogitto/cocogitto/releases/download/${COCOGITTO_VERSION}/cocogitto-${COCOGITTO_VERSION}-x86_64-unknown-linux-musl.tar.gz && \
   tar -xvf cocogitto-${COCOGITTO_VERSION}-x86_64-unknown-linux-musl.tar.gz && \
   mv x86_64-unknown-linux-musl/cog /usr/local/bin/cog && \
   rm -rf cocogitto-${COCOGITTO_VERSION}-x86_64-unknown-linux-musl.tar.gz
 
 ## Install GitLeaks
 
-RUN wget https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz && \
+RUN curl -fsSLo gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz \
+  https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz && \
   tar -xvf gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz && \
   mv gitleaks /usr/local/bin/gitleaks && \
   rm -rf gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz
 
 ## Install Gnupg and create alias to quickly load the different gpg key present in the /etc/gpgkey folder (this should be a secret in your namespace)
-RUN apt-get install gnupg2 -y
-RUN echo '\nexport GPG_TTY=$(tty)' >> ${HOME}/.bashrc
-RUN echo '\nalias load-priv="gpg --import /etc/gpgkey/keypriv.asc"\n' >> ${HOME}/.bashrc
-RUN echo '\nalias load-pub="gpg --import /etc/gpgkey/keypub.asc"\n' >> ${HOME}/.bashrc
+RUN echo '\nexport GPG_TTY=$(tty)' >> ${GLOBALS_BASHRC}
+RUN echo '\nalias load-priv="gpg --import /etc/gpgkey/keypriv.asc"\n' >> ${GLOBALS_BASHRC}
+RUN echo '\nalias load-pub="gpg --import /etc/gpgkey/keypub.asc"\n' >> ${GLOBALS_BASHRC}
 
 ## Config Starship Shell Prompt
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 ENV STAR_NO="true"
-RUN echo 'if [ $STAR_NO != "false" ]; then\neval "$(starship init bash)"\nfi' >> ${HOME}/.bashrc
+RUN echo 'if [ $STAR_NO != "false" ]; then\neval "$(starship init bash)"\nfi' >> ${GLOBALS_BASHRC}
 COPY starship.toml ${HOME}/.config/starship.toml
 
 ## Install vim in order to fix commit message and stow to make symbolic link
-RUN apt-get install vim stow iputils-ping net-tools less htop -y
+## Installed via apt-get bundle above
 
 ## Install Trippy - Removed has the unprivileged user cannot use it yet SEE : https://trippy.rs/guides/privileges/#unprivileged-mode
 # RUN wget https://github.com/fujiapple852/trippy/releases/download/0.12.1/trippy-0.12.1-x86_64-unknown-linux-gnu.tar.gz && \
@@ -100,8 +122,7 @@ RUN apt-get install vim stow iputils-ping net-tools less htop -y
 
 ## Install podman capa
 ## https://github.com/devfile/developer-images/blob/main/base/ubi8/Dockerfile#L107C1-L107C59
-
-RUN apt install podman buildah skopeo fuse-overlayfs -y
+## Installed via apt-get bundle above
 
 ENV _BUILDAH_STARTED_IN_USERNS="" BUILDAH_ISOLATION=chroot
 
@@ -115,7 +136,8 @@ RUN mkdir -p "${HOME}"/.config/containers && \
   chown -R 10001 "${HOME}"/.config
 
 ENV KUBECONFIG=/home/user/.kube/config
-RUN curl -L https://github.com/joyrex2001/kubedock/releases/download/${KUBEDOCK_VERSION}/kubedock_${KUBEDOCK_VERSION}_linux_amd64.tar.gz | tar -C /usr/local/bin -xz --no-same-owner \
+RUN curl -fsSL https://github.com/joyrex2001/kubedock/releases/download/${KUBEDOCK_VERSION}/kubedock_${KUBEDOCK_VERSION}_linux_amd64.tar.gz | \
+  tar -C /usr/local/bin -xz --no-same-owner \
   && chmod +x /usr/local/bin/kubedock
 COPY --chown=0:0 kubedock_setup.sh /usr/local/bin/kubedock_setup
 
@@ -126,13 +148,11 @@ RUN touch /etc/subgid /etc/subuid && \
   chmod g=u /etc/subgid /etc/subuid /etc/passwd /usr/bin/newuidmap && \
   echo user:1234:65536 > /etc/subuid && \
   echo user:1234:65536 > /etc/subgid
-
-COPY --chown=0:0 podman-wrapper.sh /usr/bin/podman.wrapper
 RUN mv /usr/bin/podman "${ORIGINAL_PODMAN_PATH}"
 
 ## Add buildctl
 
-RUN curl -L https://github.com/moby/buildkit/releases/download/${BUILDKIT_VERSION}/buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz | \
+RUN curl -fsSL https://github.com/moby/buildkit/releases/download/${BUILDKIT_VERSION}/buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz | \
   tar -xz -C /usr/local/bin
 
 COPY --chown=0:0 .stow-local-ignore /home/tooling/
