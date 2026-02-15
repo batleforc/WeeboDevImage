@@ -1,0 +1,24 @@
+schemaVersion: 2.2.0
+metadata:
+  name: WeeboDevImageRust
+
+components:
+- name: tools
+  container:
+    image: ghcr.io/batleforc/weebodevimage/che-rust:main
+    memoryLimit: 8Gi
+    memoryRequest: 1Gi
+    cpuLimit: "2"
+    cpuRequest: "500m"
+    mountSources: true
+    endpoints:
+    - name: rust
+      targetPort: 5437
+      exposure: public
+      protocol: https
+      secure: true
+    env:
+    - name: ENV
+      value: "dev-che"
+    - name: "PORT"
+      value: "5437"
