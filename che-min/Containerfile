@@ -15,7 +15,7 @@ ENV NVM_DIR=/home/tooling/.nvm
 ENV GLOBALS_FOLDER="/globals/"
 ENV GLOBALS_BASHRC="${GLOBALS_FOLDER}bashrc"
 
-RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC}
+RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC} && chmod -R 777 ${GLOBALS_FOLDER} && mkdir -p /home/tooling
 RUN echo 'source /globals/bashrc' >> ${HOME}/.bashrc
 
 # Add auto-completion
