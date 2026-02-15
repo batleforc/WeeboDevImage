@@ -137,7 +137,7 @@ RUN mkdir -p "${HOME}"/.config/containers && \
   chown -R 10001 "${HOME}"/.config
 
 ENV KUBECONFIG=/home/user/.kube/config
-RUN curl -fsSL https://github.com/joyrex2001/kubedock/releases/download/${KUBEDOCK_VERSION}/kubedock_${KUBEDOCK_VERSION}_linux_amd64.tar.gz | \
+RUN curl -fsSL https://github.com/joyrex2001/kubedock/releases/download/${KUBEDOCK_VERSION}/kubedock_linux_x86_64.tar.gz | \
   tar -C /usr/local/bin -xz --no-same-owner \
   && chmod +x /usr/local/bin/kubedock
 COPY --chown=0:0 kubedock_setup.sh /usr/local/bin/kubedock_setup
