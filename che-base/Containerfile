@@ -106,7 +106,7 @@ RUN echo 'alias load-pub="gpg --import /etc/gpgkey/keypub.asc"' >> ${GLOBALS_BAS
 ## Config Starship Shell Prompt
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 ENV STAR_NO="true"
-RUN echo 'if [ $STAR_NO != "false" ]; then eval "$(starship init bash)" fi' >> ${GLOBALS_BASHRC}
+RUN echo '[ $STAR_NO != "false" ] && eval "$(starship init bash)" ' >> ${GLOBALS_BASHRC}
 COPY starship.toml ${HOME}/.config/starship.toml
 
 ## Install vim in order to fix commit message and stow to make symbolic link
