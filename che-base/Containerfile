@@ -26,6 +26,7 @@ ENV PATH="${HOME}/.krew/bin:$PATH"
 RUN echo 'export PATH="${HOME}/.krew/bin:$PATH"' >> ${GLOBALS_BASHRC}
 
 RUN set -eux; \
+  source ${GLOBALS_BASHRC} && \
   cd "$(mktemp -d)" && \
   curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/${KREW_VERSION}/krew-linux_amd64.tar.gz" && \
   tar -zxvf krew-linux_amd64.tar.gz && \
