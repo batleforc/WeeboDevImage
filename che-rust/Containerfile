@@ -21,6 +21,7 @@ RUN echo 'export CARGO_HOME=/home/user/.cargo' >> ${GLOBALS_BASHRC}
 RUN echo 'export PATH="/home/user/.cargo/bin:$PATH"\n' >> ${GLOBALS_BASHRC}
 
 RUN set -eux; \
+    cat ${GLOBALS_BASHRC}; \
     source ${GLOBALS_BASHRC}; \
     dpkgArch="$(dpkg --print-architecture)"; \
     case "${dpkgArch##*-}" in \
