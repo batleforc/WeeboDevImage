@@ -18,7 +18,7 @@ ENV RUSTUP_HOME=/home/tooling/.rustup \
 
 RUN echo 'export RUSTUP_HOME=/home/user/.rustup' >> ${GLOBALS_BASHRC}
 RUN echo 'export CARGO_HOME=/home/user/.cargo' >> ${GLOBALS_BASHRC}
-RUN echo 'export PATH="/home/user/.cargo/bin:$PATH"\n' >> ${GLOBALS_BASHRC}
+RUN echo 'export PATH="/home/user/.cargo/bin:$PATH"' >> ${GLOBALS_BASHRC}
 
 RUN set -eux; \
     cat ${GLOBALS_BASHRC}; \

@@ -100,8 +100,8 @@ RUN curl -fsSLo gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz \
 
 ## Install Gnupg and create alias to quickly load the different gpg key present in the /etc/gpgkey folder (this should be a secret in your namespace)
 RUN echo 'export GPG_TTY=$(tty)' >> ${GLOBALS_BASHRC}
-RUN echo 'alias load-priv="gpg --import /etc/gpgkey/keypriv.asc"\n' >> ${GLOBALS_BASHRC}
-RUN echo 'alias load-pub="gpg --import /etc/gpgkey/keypub.asc"\n' >> ${GLOBALS_BASHRC}
+RUN echo 'alias load-priv="gpg --import /etc/gpgkey/keypriv.asc"' >> ${GLOBALS_BASHRC}
+RUN echo 'alias load-pub="gpg --import /etc/gpgkey/keypub.asc"' >> ${GLOBALS_BASHRC}
 
 ## Config Starship Shell Prompt
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
