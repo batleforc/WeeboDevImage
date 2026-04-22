@@ -8,8 +8,6 @@ components:
     image: ghcr.io/batleforc/weebodevimage/che-rust:main
     memoryLimit: 8Gi
     memoryRequest: 1Gi
-    cpuLimit: "2"
-    cpuRequest: "500m"
     mountSources: true
     endpoints:
     - name: rust
