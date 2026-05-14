@@ -1,8 +1,7 @@
-# GENERATED FILE — do not edit directly. Edit Containerfile.tpl + versions.yaml, then run: task render
-FROM ghcr.io/batleforc/weebodevimage/che-base:main
+FROM @@REGISTRY@@/che-base:main
 
-LABEL org.opencontainers.image.url="batleforc/che-golang"
-LABEL org.opencontainers.image.title="Che-GolangImage"
+LABEL org.opencontainers.image.url="batleforc/che-node"
+LABEL org.opencontainers.image.title="Che-Node"
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 
 ENV HOME=/home/tooling
@@ -10,8 +9,7 @@ USER 0
 
 # START Infra Block
 
-RUN curl https://mise.run | sh && \
-    echo 'eval "$(~/.local/bin/mise activate bash)"' >> ${GLOBALS_BASHRC}
+# //TODO: Add Nginx
 
 # END Infra Block
 
@@ -19,8 +17,7 @@ ENV STAR_NO="true"
 
 # START User Block
 
-
-# START User Block
+# END User Block
 USER 1234
 ENV HOME=/home/user
 RUN stow . -t /home/user -d /home/tooling --no-folding

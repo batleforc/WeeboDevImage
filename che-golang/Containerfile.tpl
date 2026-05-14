@@ -1,5 +1,4 @@
-# GENERATED FILE — do not edit directly. Edit Containerfile.tpl + versions.yaml, then run: task render
-FROM ghcr.io/batleforc/weebodevimage/che-base:main
+FROM @@REGISTRY@@/che-base:main
 
 LABEL org.opencontainers.image.url="batleforc/che-golang"
 LABEL org.opencontainers.image.title="Che-GolangImage"
@@ -15,7 +14,7 @@ USER 0
 ENV PATH /usr/local/go/bin:$PATH
 RUN echo 'export PATH="/usr/local/go/bin:$PATH"' >> ${HOME}/.bashrc
 
-ENV GOLANG_VERSION="1.25.0"
+ENV GOLANG_VERSION="@@GOLANG_VERSION@@"
 
 RUN set -eux; \
     apt-get update; \

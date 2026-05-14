@@ -1,18 +1,18 @@
 schemaVersion: 2.2.0
 metadata:
-  name: WeeboDevImageGolang
+  name: WeeboDevImagePolyglot
 
 components:
 - name: tools
   container:
-    image: ghcr.io/batleforc/weebodevimage/che-golang:main
+    image: ghcr.io/batleforc/weebodevimage/che-polyglot:main
     memoryLimit: 8Gi
-    memoryRequest: 1Gi
-    cpuLimit: "2"
+    memoryRequest: 2Gi
+    cpuLimit: "4"
     cpuRequest: "500m"
     mountSources: true
     endpoints:
-    - name: golang
+    - name: polyglot
       targetPort: 5437
       exposure: public
       protocol: https
@@ -22,6 +22,18 @@ components:
       value: "dev-che"
     - name: "PORT"
       value: "5437"
+
+commands:
+- id: mise-install
+  exec:
+    label: "Install mise tools"
+    commandLine: "~/.local/bin/mise install --yes"
+    component: tools
+    workingDir: /home/user
+
+events:
+  postStart:
+  - mise-install
 
 attributes:
   pod-overrides:

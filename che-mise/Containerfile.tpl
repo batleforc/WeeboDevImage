@@ -1,5 +1,4 @@
-# GENERATED FILE — do not edit directly. Edit Containerfile.tpl + versions.yaml, then run: task render
-FROM ghcr.io/batleforc/weebodevimage/che-base:main
+FROM @@REGISTRY@@/che-base:main
 
 LABEL org.opencontainers.image.url="batleforc/che-golang"
 LABEL org.opencontainers.image.title="Che-GolangImage"

@@ -30,23 +30,21 @@ sources:
 
 targets:
   bump_kubectl_version:
-    kind: file
+    kind: yaml
     name: "Bump kubectl version"
     scmid: default
     sourceid: kubectl
     spec:
-      file: che-min/Containerfile
-      matchpattern: 'KUBE_VERSION=".*"'
-      replacepattern: 'KUBE_VERSION="{{ source "kubectl" }}"'
+      file: versions.yaml
+      key: $.min.kubectl
   bump_nvm_version:
-    kind: file
+    kind: yaml
     name: "Bump nvm version"
     scmid: default
     sourceid: nvm
     spec:
-      file: che-min/Containerfile
-      matchpattern: 'NVM_VERSION=".*"'
-      replacepattern: 'NVM_VERSION="{{ source "nvm" }}"'
+      file: versions.yaml
+      key: $.min.nvm
 
 actions:
   bump_min_space:

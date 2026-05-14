@@ -3,6 +3,13 @@
 
 source kubedock_setup
 
+# Dynamically set subuid/subgid based on actual running UID for user namespace support
+USER_ID=$(id -u)
+START_ID=$(( USER_ID + 1 ))
+RANGE=$(( 65536 - START_ID ))
+echo "${USER:-user}:${START_ID}:${RANGE}" > /etc/subuid
+echo "${USER:-user}:${START_ID}:${RANGE}" > /etc/subgid
+
 # /home/user/ will be mounted to by a PVC if persistUserHome is enabled
 mountpoint -q /home/user/; HOME_USER_MOUNTED=$?
 

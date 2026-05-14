@@ -1,0 +1,32 @@
+registry: ghcr.io/batleforc/weebodevimage
+
+base:
+  ubuntu: "26.04"
+
+min:
+  kubectl: "v1.35.1"
+  nvm: "v0.40.4"
+  node: "24.13.0"
+
+base_tools:
+  helm: "v4.1.1"
+  taskfile: "v3.48.0"
+  k9s: "v0.50.18"
+  krew: "v0.4.5"
+  gitleaks: "8.30.0"
+  kubedock: "0.20.3"
+  buildkit: "v0.27.1"
+  cocogitto: "6.5.0"
+
+golang:
+  version: "1.25.0"
+
+rust:
+  version: "1.87.0"
+
+ops:
+  argocd: "v2.14.4"
+  clusterctl: "v1.9.5"
+  talosctl: "v1.9.4"
+  opentofu: "1.9.0"
+  updatecli: "v0.95.0"

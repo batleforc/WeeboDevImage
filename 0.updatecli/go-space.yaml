@@ -25,16 +25,16 @@ sources:
         kind: latest
     transformers:
     - trimprefix: "go"
+
 targets:
   bump_go_version:
-    kind: file
+    kind: yaml
     name: "Bump Golang version"
     scmid: default
     sourceid: golang
     spec:
-      file: che-golang/Containerfile
-      matchpattern: 'GOLANG_VERSION=".*"'
-      replacepattern: 'GOLANG_VERSION="{{ source "golang" }}"'
+      file: versions.yaml
+      key: $.golang.version
 
 actions:
   bump_go_space:

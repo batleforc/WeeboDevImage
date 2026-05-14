@@ -1,19 +1,18 @@
-# GENERATED FILE — do not edit directly. Edit Containerfile.tpl + versions.yaml, then run: task render
-FROM ghcr.io/batleforc/weebodevimage/che-min:main
+FROM @@REGISTRY@@/che-min:main
 
 LABEL org.opencontainers.image.authors="batleforc"
 LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/che-base"
 LABEL org.opencontainers.image.title="Che-BaseImage"
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 
-ENV HELM_VERSION="v4.1.1"
-ENV TASKFILE_VERSION="v3.48.0"
-ENV k9S_VERSION="v0.50.18"
-ENV KREW_VERSION="v0.4.5"
-ENV GITLEAKS_VERSION="8.30.0"
-ENV KUBEDOCK_VERSION="0.20.3"
-ENV BUILDKIT_VERSION="v0.27.1"
-ENV COCOGITTO_VERSION="6.5.0"
+ENV HELM_VERSION="@@BASE_TOOLS_HELM@@"
+ENV TASKFILE_VERSION="@@BASE_TOOLS_TASKFILE@@"
+ENV k9S_VERSION="@@BASE_TOOLS_K9S@@"
+ENV KREW_VERSION="@@BASE_TOOLS_KREW@@"
+ENV GITLEAKS_VERSION="@@BASE_TOOLS_GITLEAKS@@"
+ENV KUBEDOCK_VERSION="@@BASE_TOOLS_KUBEDOCK@@"
+ENV BUILDKIT_VERSION="@@BASE_TOOLS_BUILDKIT@@"
+ENV COCOGITTO_VERSION="@@BASE_TOOLS_COCOGITTO@@"
 
 ENV HOME=/home/tooling
 

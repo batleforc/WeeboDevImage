@@ -102,77 +102,69 @@ sources:
 
 targets:
   bump_helm_version:
-    kind: file
+    kind: yaml
     name: "Bump helm version"
     scmid: default
     sourceid: helm
     spec:
-      file: che-base/Containerfile
-      matchpattern: 'HELM_VERSION=".*"'
-      replacepattern: 'HELM_VERSION="{{ source "helm" }}"'
+      file: versions.yaml
+      key: $.base_tools.helm
   bump_task_version:
-    kind: file
+    kind: yaml
     name: "Bump task version"
     scmid: default
     sourceid: task
     spec:
-      file: che-base/Containerfile
-      matchpattern: 'TASKFILE_VERSION=".*"'
-      replacepattern: 'TASKFILE_VERSION="{{ source "task" }}"'
+      file: versions.yaml
+      key: $.base_tools.taskfile
   bump_k9s_version:
-    kind: file
+    kind: yaml
     name: "Bump k9s version"
     scmid: default
     sourceid: k9s
     spec:
-      file: che-base/Containerfile
-      matchpattern: 'k9S_VERSION=".*"'
-      replacepattern: 'k9S_VERSION="{{ source "k9s" }}"'
+      file: versions.yaml
+      key: $.base_tools.k9s
   bump_krew_version:
-    kind: file
+    kind: yaml
     name: "Bump krew version"
     scmid: default
     sourceid: krew
     spec:
-      file: che-base/Containerfile
-      matchpattern: 'KREW_VERSION=".*"'
-      replacepattern: 'KREW_VERSION="{{ source "krew" }}"'
+      file: versions.yaml
+      key: $.base_tools.krew
   bump_gitleaks_version:
-    kind: file
+    kind: yaml
     name: "Bump gitleaks version"
     scmid: default
     sourceid: gitleaks
     spec:
-      file: che-base/Containerfile
-      matchpattern: 'GITLEAKS_VERSION=".*"'
-      replacepattern: 'GITLEAKS_VERSION="{{ source "gitleaks" }}"'
+      file: versions.yaml
+      key: $.base_tools.gitleaks
   bump_kubedock_version:
-    kind: file
+    kind: yaml
     name: "Bump kubedock version"
     scmid: default
     sourceid: kubedock
     spec:
-      file: che-base/Containerfile
-      matchpattern: 'KUBEDOCK_VERSION=".*"'
-      replacepattern: 'KUBEDOCK_VERSION="{{ source "kubedock" }}"'
+      file: versions.yaml
+      key: $.base_tools.kubedock
   bump_buildkit_version:
-    kind: file
+    kind: yaml
     name: "Bump buildkit version"
     scmid: default
     sourceid: buildkit
     spec:
-      file: che-base/Containerfile
-      matchpattern: 'BUILDKIT_VERSION=".*"'
-      replacepattern: 'BUILDKIT_VERSION="{{ source "buildkit" }}"'
+      file: versions.yaml
+      key: $.base_tools.buildkit
   bump_cog_version:
-    kind: file
+    kind: yaml
     name: "Bump cog version"
     scmid: default
     sourceid: cog
     spec:
-      file: che-base/Containerfile
-      matchpattern: 'COCOGITTO_VERSION=".*"'
-      replacepattern: 'COCOGITTO_VERSION="{{ source "cog" }}"'
+      file: versions.yaml
+      key: $.base_tools.cocogitto
 
 actions:
   bump_base_space:

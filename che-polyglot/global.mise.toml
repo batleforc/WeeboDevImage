@@ -1,0 +1,15 @@
+# Global mise tool declarations for the polyglot workspace.
+# These tools are NOT pre-installed in the image — run `mise install` (or let the
+# devfile postStart hook do it) to install them when the workspace starts.
+# Override any version in your project's .mise.toml.
+
+[tools]
+python    = "latest"
+node      = "lts"
+java      = "temurin-21"
+ruby      = "latest"
+terraform = "latest"
+
+[settings]
+# Auto-install tools declared in .mise.toml when entering a directory
+experimental = true

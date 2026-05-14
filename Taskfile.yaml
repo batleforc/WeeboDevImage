@@ -1,0 +1,56 @@
+version: '3'
+
+vars:
+  REGISTRY: ghcr.io/batleforc/weebodevimage
+  IMAGES:
+    - che-golang
+    - che-node
+    - che-rust
+    - che-mise
+    - che-ops
+
+tasks:
+  render:
+    desc: "Render all Containerfile.tpl -> Containerfile using versions.yaml"
+    cmds:
+      - bash scripts/render.sh
+
+  lint:
+    desc: "Verify all Containerfiles match their templates (used in CI)"
+    cmds:
+      - bash scripts/render.sh --check
+
+  list:
+    desc: "List all images and their versions from versions.yaml"
+    cmds:
+      - yq e '.' versions.yaml
+
+  build:
+    desc: "Build a single image locally (task build IMAGE=che-golang)"
+    requires:
+      vars: [IMAGE]
+    vars:
+      TAG: '{{.TAG | default "local"}}'
+    cmds:
+      - podman build -t {{.REGISTRY}}/{{.IMAGE}}:{{.TAG}} {{.IMAGE}}/
+
+  build-min:
+    desc: "Build che-min"
+    cmds:
+      - task: build
+        vars: {IMAGE: che-min}
+
+  build-base:
+    desc: "Build che-base (requires che-min:local)"
+    deps: [build-min]
+    cmds:
+      - task: build
+        vars: {IMAGE: che-base}
+
+  build-all:
+    desc: "Build all images in dependency order"
+    deps: [build-base]
+    cmds:
+      - for: {var: IMAGES}
+        task: build
+        vars: {IMAGE: "{{.ITEM}}"}

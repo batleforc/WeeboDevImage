@@ -1,5 +1,4 @@
-# GENERATED FILE — do not edit directly. Edit Containerfile.tpl + versions.yaml, then run: task render
-FROM ghcr.io/batleforc/weebodevimage/che-base:main
+FROM @@REGISTRY@@/che-base:main
 
 LABEL org.opencontainers.image.url="batleforc/che-ops"
 LABEL org.opencontainers.image.title="Che-OpsImage"
@@ -10,11 +9,11 @@ USER 0
 
 ## Set version target
 
-ENV CLUSTERCTL_VERSION="v1.9.5"
-ENV TALOSCTL_VERSION="v1.9.4"
-ENV OPENTOFU_VERSION="1.9.0"
-ENV ARGOCDCLI_VERSION="v2.14.4"
-ENV UPDATECLI_VERSION="v0.95.0"
+ENV CLUSTERCTL_VERSION="@@OPS_CLUSTERCTL@@"
+ENV TALOSCTL_VERSION="@@OPS_TALOSCTL@@"
+ENV OPENTOFU_VERSION="@@OPS_OPENTOFU@@"
+ENV ARGOCDCLI_VERSION="@@OPS_ARGOCD@@"
+ENV UPDATECLI_VERSION="@@OPS_UPDATECLI@@"
 
 ## ArgoCD
 RUN wget https://github.com/argoproj/argo-cd/releases/download/${ARGOCDCLI_VERSION}/argocd-linux-amd64 && \

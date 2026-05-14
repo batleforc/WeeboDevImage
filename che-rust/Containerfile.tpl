@@ -1,5 +1,4 @@
-# GENERATED FILE — do not edit directly. Edit Containerfile.tpl + versions.yaml, then run: task render
-FROM ghcr.io/batleforc/weebodevimage/che-base:main
+FROM @@REGISTRY@@/che-base:main
 
 LABEL org.opencontainers.image.url="batleforc/che-rust"
 LABEL org.opencontainers.image.title="Che-RustImage"
@@ -13,7 +12,7 @@ USER 0
 ENV RUSTUP_HOME=/home/tooling/.rustup \
     CARGO_HOME=/home/tooling/.cargo  \
     PATH=/home/tooling/.cargo/bin:$PATH \
-    RUST_VERSION=1.87.0 \
+    RUST_VERSION=@@RUST_VERSION@@ \
     GLOBALS_FOLDER="/globals/" \
     GLOBALS_BASHRC="${GLOBALS_FOLDER}bashrc"
 

@@ -42,9 +42,22 @@ jobs:
           app-id: ${{ secrets.UPDATECLIBOT_APP_ID }}
           private-key: ${{ secrets.UPDATECLIBOT_APP_PRIVKEY }}
 
+      - name: Install yq
+        if: github.ref == 'refs/heads/main'
+        run: |
+          curl -fsSLo /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
+
       - name: "Run updatecli"
         if: github.ref == 'refs/heads/main'
         run: "updatecli compose apply"
         env:
           GITHUB_ACTOR: ${{ secrets.UPDATECLI_BOT_GITHUB_ACTOR }}
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+
+      - name: "Render Containerfiles after version bump"
+        if: github.ref == 'refs/heads/main'
+        run: bash scripts/render.sh
+        env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}

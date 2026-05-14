@@ -1,14 +1,13 @@
-# GENERATED FILE — do not edit directly. Edit Containerfile.tpl + versions.yaml, then run: task render
-FROM ubuntu:26.04
+FROM ubuntu:@@BASE_UBUNTU@@
 
 LABEL org.opencontainers.image.authors="batleforc"
 LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/che-min"
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 LABEL org.opencontainers.image.title="Che-MinImage"
 
-ENV KUBE_VERSION="v1.35.1"
-ENV NVM_VERSION="v0.40.4"
-ENV NODE_VERSION="24.13.0"
+ENV KUBE_VERSION="@@MIN_KUBECTL@@"
+ENV NVM_VERSION="@@MIN_NVM@@"
+ENV NODE_VERSION="@@MIN_NODE@@"
 
 ENV HOME=/home/tooling
 ENV NVM_DIR=/home/tooling/.nvm
