@@ -16,7 +16,7 @@ base_tools:
   gitleaks: "8.30.0"
   kubedock: "0.20.3"
   buildkit: "v0.27.1"
-  cocogitto: "6.5.0"
+  cocogitto: 7.0.0
 
 golang:
   version: "1.25.0"
