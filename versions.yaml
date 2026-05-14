@@ -11,7 +11,7 @@ min:
 base_tools:
   helm: v4.2.0
   taskfile: "v3.48.0"
-  k9s: "v0.50.18"
+  k9s: v0.50.18
   krew: "v0.4.5"
   gitleaks: 8.30.1
   kubedock: "0.20.3"
