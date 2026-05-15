@@ -63,7 +63,6 @@ RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/insta
     curl -fsSL https://get.pnpm.io/install.sh | SHELL=bash  sh - && \
     npm cache clean --force && \
     rm -rf /home/tooling/.npm
-ENV VSCODE_NODEJS_RUNTIME_DIR=/home/tooling/.nvm/versions/node/v${NODE_VERSION}/bin
 ENV PATH=/home/tooling/.nvm/versions/node/v${NODE_VERSION}/bin:$PATH
 
 
