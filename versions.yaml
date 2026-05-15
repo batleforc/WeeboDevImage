@@ -40,6 +40,6 @@ rustup:
 ops:
   argocd: "v2.14.4"
   clusterctl: "v1.9.5"
-  talosctl: "v1.9.4"
+  talosctl: v1.13.2
   opentofu: "1.9.0"
   updatecli: v0.117.0
