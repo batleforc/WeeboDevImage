@@ -77,7 +77,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Login to registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ needs.prepare.outputs.registry_host }}
           username: ${{ secrets.REGISTRY_USERNAME || github.repository_owner }}
@@ -110,7 +110,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Login to registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ needs.prepare.outputs.registry_host }}
           username: ${{ secrets.REGISTRY_USERNAME || github.repository_owner }}
@@ -143,7 +143,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Login to registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ needs.prepare.outputs.registry_host }}
           username: ${{ secrets.REGISTRY_USERNAME || github.repository_owner }}
