@@ -1,4 +1,4 @@
-schemaVersion: 2.2.0
+schemaVersion: 2.3.0
 metadata:
   name: WeeboDevImagePolyglot
 
@@ -22,6 +22,15 @@ components:
       value: "dev-che"
     - name: "PORT"
       value: "5437"
+  attributes:
+    pod-overrides:
+      metadata:
+        annotations:
+          io.kubernetes.cri-o.Devices: "/dev/fuse,/dev/net/tun"
+      spec:
+        hostUsers: false
+        securityContext:
+          procMount: Unmasked
 
 commands:
 - id: mise-install
@@ -34,13 +43,3 @@ commands:
 events:
   postStart:
   - mise-install
-
-attributes:
-  pod-overrides:
-    metadata:
-      annotations:
-        io.kubernetes.cri-o.Devices: "/dev/fuse,/dev/net/tun"
-    spec:
-      hostUsers: false
-      securityContext:
-        procMount: Unmasked
