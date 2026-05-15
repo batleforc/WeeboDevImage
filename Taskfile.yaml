@@ -1,7 +1,8 @@
-version: '3'
+version: "3"
 
 vars:
-  REGISTRY: ghcr.io/batleforc/weebodevimage
+  REGISTRY:
+    sh: yq e '.registry' versions.yaml
   IMAGES:
     - che-golang
     - che-node
@@ -10,6 +11,10 @@ vars:
     - che-ops
 
 tasks:
+  init:
+    desc: "Initialize the project (install dependencies, etc.)"
+    cmds:
+      - cog install-hook -a -o
   render:
     desc: "Render all Containerfile.tpl -> Containerfile using versions.yaml"
     cmds:
@@ -38,19 +43,19 @@ tasks:
     desc: "Build che-min"
     cmds:
       - task: build
-        vars: {IMAGE: che-min}
+        vars: { IMAGE: che-min }
 
   build-base:
     desc: "Build che-base (requires che-min:local)"
     deps: [build-min]
     cmds:
       - task: build
-        vars: {IMAGE: che-base}
+        vars: { IMAGE: che-base }
 
   build-all:
     desc: "Build all images in dependency order"
     deps: [build-base]
     cmds:
-      - for: {var: IMAGES}
+      - for: { var: IMAGES }
         task: build
-        vars: {IMAGE: "{{.ITEM}}"}
+        vars: { IMAGE: "{{.ITEM}}" }

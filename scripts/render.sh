@@ -23,6 +23,12 @@ _yq() { yq e "$1" "$V"; }
 
 REGISTRY="$(_yq '.registry')"
 BASE_UBUNTU="$(_yq '.base.ubuntu')"
+BASE_UBUNTU_REGISTRY="$(_yq '.base.ubuntu_registry // ""')"
+if [[ -n "$BASE_UBUNTU_REGISTRY" ]]; then
+  BASE_UBUNTU_IMAGE="${BASE_UBUNTU_REGISTRY}/ubuntu:${BASE_UBUNTU}"
+else
+  BASE_UBUNTU_IMAGE="ubuntu:${BASE_UBUNTU}"
+fi
 MIN_KUBECTL="$(_yq '.min.kubectl')"
 MIN_NVM="$(_yq '.min.nvm')"
 MIN_NODE="$(_yq '.min.node')"
@@ -46,6 +52,7 @@ render_tpl() {
   local tpl="$1"
   sed \
     -e "s|@@REGISTRY@@|${REGISTRY}|g" \
+    -e "s|@@BASE_UBUNTU_IMAGE@@|${BASE_UBUNTU_IMAGE}|g" \
     -e "s|@@BASE_UBUNTU@@|${BASE_UBUNTU}|g" \
     -e "s|@@MIN_KUBECTL@@|${MIN_KUBECTL}|g" \
     -e "s|@@MIN_NVM@@|${MIN_NVM}|g" \
@@ -96,4 +103,34 @@ if $CHECK_MODE; then
     exit 1
   fi
   echo "All Containerfiles are up to date."
+fi
+
+FAILED=0
+
+for tpl in "${REPO_ROOT}"/devfile.yaml.tpl "${REPO_ROOT}"/*/devfile.yaml.tpl; do
+  [[ -f "$tpl" ]] || continue
+  dir="$(dirname "${tpl}")"
+  target="${dir}/devfile.yaml"
+
+  if $CHECK_MODE; then
+    tmp="$(mktemp)"
+    render_tpl "${tpl}" > "${tmp}"
+    if ! diff -q "${target}" "${tmp}" > /dev/null 2>&1; then
+      echo "DRIFT: ${tpl} is out of date"
+      diff "${target}" "${tmp}" || true
+      FAILED=1
+    fi
+    rm -f "${tmp}"
+  else
+    render_tpl "${tpl}" > "${target}"
+    echo "Rendered: ${target#"${REPO_ROOT}/"}"
+  fi
+done
+
+if $CHECK_MODE; then
+  if [[ $FAILED -ne 0 ]]; then
+    echo "Some devfiles are out of date. Run: task render" >&2
+    exit 1
+  fi
+  echo "All devfiles are up to date."
 fi

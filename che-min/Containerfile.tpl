@@ -1,4 +1,4 @@
-FROM ubuntu:@@BASE_UBUNTU@@
+FROM @@BASE_UBUNTU_IMAGE@@
 
 LABEL org.opencontainers.image.authors="batleforc"
 LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/che-min"
