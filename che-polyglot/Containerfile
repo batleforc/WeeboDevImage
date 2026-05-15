@@ -10,7 +10,7 @@ USER 0
 
 # START Infra Block
 
-ENV MISE_VERSION="v2025.5.16"
+ENV MISE_VERSION="v2026.5.8"
 
 ## Extra build deps useful when mise compiles tools from source
 RUN apt-get update && apt-get install -y --no-install-recommends \
