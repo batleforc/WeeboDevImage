@@ -1,0 +1,157 @@
+name: Upgrade RustSpace
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: "{{ .github.user }}"
+      email: "{{ .github.email }}"
+      owner: batleforc
+      repository: WeeboDevImage
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      branch: main
+
+sources:
+  rust:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: rust-lang
+      repository: rust
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+  rustup:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: rust-lang
+      repository: rustup
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+  sha256_amd64:
+    kind: http
+    dependson:
+    - rustup
+    spec:
+      url: 'https://static.rust-lang.org/rustup/archive/{{ source "rustup" }}/x86_64-unknown-linux-gnu/rustup-init.sha256'
+    transformers:
+    - find: '^[a-f0-9]+'
+  sha256_armhf:
+    kind: http
+    dependson:
+    - rustup
+    spec:
+      url: 'https://static.rust-lang.org/rustup/archive/{{ source "rustup" }}/armv7-unknown-linux-gnueabihf/rustup-init.sha256'
+    transformers:
+    - find: '^[a-f0-9]+'
+  sha256_arm64:
+    kind: http
+    dependson:
+    - rustup
+    spec:
+      url: 'https://static.rust-lang.org/rustup/archive/{{ source "rustup" }}/aarch64-unknown-linux-gnu/rustup-init.sha256'
+    transformers:
+    - find: '^[a-f0-9]+'
+  sha256_i386:
+    kind: http
+    dependson:
+    - rustup
+    spec:
+      url: 'https://static.rust-lang.org/rustup/archive/{{ source "rustup" }}/i686-unknown-linux-gnu/rustup-init.sha256'
+    transformers:
+    - find: '^[a-f0-9]+'
+  sha256_ppc64el:
+    kind: http
+    dependson:
+    - rustup
+    spec:
+      url: 'https://static.rust-lang.org/rustup/archive/{{ source "rustup" }}/powerpc64le-unknown-linux-gnu/rustup-init.sha256'
+    transformers:
+    - find: '^[a-f0-9]+'
+  sha256_s390x:
+    kind: http
+    dependson:
+    - rustup
+    spec:
+      url: 'https://static.rust-lang.org/rustup/archive/{{ source "rustup" }}/s390x-unknown-linux-gnu/rustup-init.sha256'
+    transformers:
+    - find: '^[a-f0-9]+'
+
+targets:
+  bump_rust_version:
+    kind: yaml
+    name: "Bump Rust version"
+    scmid: default
+    sourceid: rust
+    spec:
+      file: versions.yaml
+      key: $.rust.version
+  bump_rustup_version:
+    kind: yaml
+    name: "Bump rustup version"
+    scmid: default
+    sourceid: rustup
+    spec:
+      file: versions.yaml
+      key: $.rustup.version
+  bump_sha256_amd64:
+    kind: yaml
+    name: "Bump rustup sha256 amd64"
+    scmid: default
+    sourceid: sha256_amd64
+    spec:
+      file: versions.yaml
+      key: $.rustup.sha256.amd64
+  bump_sha256_armhf:
+    kind: yaml
+    name: "Bump rustup sha256 armhf"
+    scmid: default
+    sourceid: sha256_armhf
+    spec:
+      file: versions.yaml
+      key: $.rustup.sha256.armhf
+  bump_sha256_arm64:
+    kind: yaml
+    name: "Bump rustup sha256 arm64"
+    scmid: default
+    sourceid: sha256_arm64
+    spec:
+      file: versions.yaml
+      key: $.rustup.sha256.arm64
+  bump_sha256_i386:
+    kind: yaml
+    name: "Bump rustup sha256 i386"
+    scmid: default
+    sourceid: sha256_i386
+    spec:
+      file: versions.yaml
+      key: $.rustup.sha256.i386
+  bump_sha256_ppc64el:
+    kind: yaml
+    name: "Bump rustup sha256 ppc64el"
+    scmid: default
+    sourceid: sha256_ppc64el
+    spec:
+      file: versions.yaml
+      key: $.rustup.sha256.ppc64el
+  bump_sha256_s390x:
+    kind: yaml
+    name: "Bump rustup sha256 s390x"
+    scmid: default
+    sourceid: sha256_s390x
+    spec:
+      file: versions.yaml
+      key: $.rustup.sha256.s390x
+
+actions:
+  bump_rust_space:
+    kind: github/pullrequest
+    scmid: default
+    spec:
+      title: 'ci: Bump Rust Space'
+      automerge: false

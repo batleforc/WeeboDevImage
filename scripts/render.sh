@@ -42,6 +42,13 @@ BASE_TOOLS_BUILDKIT="$(_yq '.base_tools.buildkit')"
 BASE_TOOLS_COCOGITTO="$(_yq '.base_tools.cocogitto')"
 GOLANG_VERSION="$(_yq '.golang.version')"
 RUST_VERSION="$(_yq '.rust.version')"
+RUSTUP_VERSION="$(_yq '.rustup.version')"
+RUSTUP_SHA256_AMD64="$(_yq '.rustup.sha256.amd64')"
+RUSTUP_SHA256_ARMHF="$(_yq '.rustup.sha256.armhf')"
+RUSTUP_SHA256_ARM64="$(_yq '.rustup.sha256.arm64')"
+RUSTUP_SHA256_I386="$(_yq '.rustup.sha256.i386')"
+RUSTUP_SHA256_PPC64EL="$(_yq '.rustup.sha256.ppc64el')"
+RUSTUP_SHA256_S390X="$(_yq '.rustup.sha256.s390x')"
 OPS_ARGOCD="$(_yq '.ops.argocd')"
 OPS_CLUSTERCTL="$(_yq '.ops.clusterctl')"
 OPS_TALOSCTL="$(_yq '.ops.talosctl')"
@@ -67,6 +74,13 @@ render_tpl() {
     -e "s|@@BASE_TOOLS_COCOGITTO@@|${BASE_TOOLS_COCOGITTO}|g" \
     -e "s|@@GOLANG_VERSION@@|${GOLANG_VERSION}|g" \
     -e "s|@@RUST_VERSION@@|${RUST_VERSION}|g" \
+    -e "s|@@RUSTUP_VERSION@@|${RUSTUP_VERSION}|g" \
+    -e "s|@@RUSTUP_SHA256_AMD64@@|${RUSTUP_SHA256_AMD64}|g" \
+    -e "s|@@RUSTUP_SHA256_ARMHF@@|${RUSTUP_SHA256_ARMHF}|g" \
+    -e "s|@@RUSTUP_SHA256_ARM64@@|${RUSTUP_SHA256_ARM64}|g" \
+    -e "s|@@RUSTUP_SHA256_I386@@|${RUSTUP_SHA256_I386}|g" \
+    -e "s|@@RUSTUP_SHA256_PPC64EL@@|${RUSTUP_SHA256_PPC64EL}|g" \
+    -e "s|@@RUSTUP_SHA256_S390X@@|${RUSTUP_SHA256_S390X}|g" \
     -e "s|@@OPS_ARGOCD@@|${OPS_ARGOCD}|g" \
     -e "s|@@OPS_CLUSTERCTL@@|${OPS_CLUSTERCTL}|g" \
     -e "s|@@OPS_TALOSCTL@@|${OPS_TALOSCTL}|g" \

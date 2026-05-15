@@ -27,6 +27,18 @@ sources:
       username: "{{ .github.username }}"
       versionFilter:
         kind: semver
+  node:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: nodejs
+      repository: node
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+    transformers:
+    - trimprefix: "v"
 
 targets:
   bump_kubectl_version:
@@ -45,6 +57,14 @@ targets:
     spec:
       file: versions.yaml
       key: $.min.nvm
+  bump_node_version:
+    kind: yaml
+    name: "Bump node version"
+    scmid: default
+    sourceid: node
+    spec:
+      file: versions.yaml
+      key: $.min.node
 
 actions:
   bump_min_space:

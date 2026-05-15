@@ -1,0 +1,117 @@
+name: Upgrade OpsSpace
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: "{{ .github.user }}"
+      email: "{{ .github.email }}"
+      owner: batleforc
+      repository: WeeboDevImage
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      branch: main
+
+sources:
+  argocd:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: argoproj
+      repository: argo-cd
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+  clusterctl:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: kubernetes-sigs
+      repository: cluster-api
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+  talosctl:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: siderolabs
+      repository: talos
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+  opentofu:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: opentofu
+      repository: opentofu
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+    transformers:
+    - trimprefix: "v"
+  updatecli:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: updatecli
+      repository: updatecli
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
+
+targets:
+  bump_argocd_version:
+    kind: yaml
+    name: "Bump argocd version"
+    scmid: default
+    sourceid: argocd
+    spec:
+      file: versions.yaml
+      key: $.ops.argocd
+  bump_clusterctl_version:
+    kind: yaml
+    name: "Bump clusterctl version"
+    scmid: default
+    sourceid: clusterctl
+    spec:
+      file: versions.yaml
+      key: $.ops.clusterctl
+  bump_talosctl_version:
+    kind: yaml
+    name: "Bump talosctl version"
+    scmid: default
+    sourceid: talosctl
+    spec:
+      file: versions.yaml
+      key: $.ops.talosctl
+  bump_opentofu_version:
+    kind: yaml
+    name: "Bump opentofu version"
+    scmid: default
+    sourceid: opentofu
+    spec:
+      file: versions.yaml
+      key: $.ops.opentofu
+  bump_updatecli_version:
+    kind: yaml
+    name: "Bump updatecli version"
+    scmid: default
+    sourceid: updatecli
+    spec:
+      file: versions.yaml
+      key: $.ops.updatecli
+
+actions:
+  bump_ops_space:
+    kind: github/pullrequest
+    scmid: default
+    spec:
+      title: 'ci: Bump Ops Space'
+      automerge: false

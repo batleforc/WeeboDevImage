@@ -14,3 +14,13 @@ policies:
   - ./0.updatecli/go-space.yaml
   values:
   - ./0.updatecli/values.yaml
+- name: Upgrade Rust Space
+  config:
+  - ./0.updatecli/rust-space.yaml
+  values:
+  - ./0.updatecli/values.yaml
+- name: Upgrade Ops Space
+  config:
+  - ./0.updatecli/ops-space.yaml
+  values:
+  - ./0.updatecli/values.yaml
