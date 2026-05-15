@@ -16,6 +16,9 @@ ENV RUSTUP_HOME=/home/tooling/.rustup \
     GLOBALS_FOLDER="/globals/" \
     GLOBALS_BASHRC="${GLOBALS_FOLDER}bashrc"
 
+RUN apt-get update && apt-get install -y --no-install-recommends libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN echo 'export RUSTUP_HOME=/home/user/.rustup' >> ${GLOBALS_BASHRC} && \
     echo 'export CARGO_HOME=/home/user/.cargo' >> ${GLOBALS_BASHRC} && \
     echo 'export PATH="/home/user/.cargo/bin:$PATH"' >> ${GLOBALS_BASHRC}

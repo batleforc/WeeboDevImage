@@ -9,7 +9,11 @@ USER 0
 
 # START Infra Block
 
-RUN curl https://mise.run | sh && \
+ENV MISE_VERSION="@@BASE_TOOLS_MISE@@"
+
+RUN curl -fsSL https://github.com/jdx/mise/releases/download/${MISE_VERSION}/mise-${MISE_VERSION}-linux-x64 \
+    -o /home/tooling/.local/bin/mise && \
+    chmod +x /home/tooling/.local/bin/mise && \
     echo 'eval "$(~/.local/bin/mise activate bash)"' >> ${GLOBALS_BASHRC}
 
 # END Infra Block

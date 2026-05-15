@@ -20,11 +20,9 @@ RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC} && chmod -R 777 ${GLOB
     echo 'source /globals/bashrc' >> ${HOME}/.bashrc
 
 # Core packages: replaces buildpack-deps, adds locale + completion + nested container support (uidmap)
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get upgrade -y && \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get install -y --no-install-recommends \
       build-essential \
-      libssl-dev \
-      libffi-dev \
       curl \
       wget \
       ca-certificates \
@@ -33,13 +31,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get upgrade -y && \
       bash-completion \
       libc6 \
       locales \
-      locales-all \
       uidmap \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /home/tooling/ \
     && echo "source /etc/profile.d/bash_completion.sh" >> ${GLOBALS_BASHRC} \
-    && locale-gen "en_US.UTF-8" \
-    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
+    && locale-gen "en_US.UTF-8"
 
 ## Install Kubectl
 RUN curl -fsSLo /usr/local/bin/kubectl \
@@ -65,7 +61,9 @@ RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/insta
     nvm use default && \
     nvm cache clear && \
     npm install --global yarn && \
-    corepack enable pnpm
+    corepack enable pnpm && \
+    npm cache clean --force && \
+    rm -rf /home/tooling/.npm
 ENV VSCODE_NODEJS_RUNTIME_DIR=/home/tooling/.nvm/versions/node/v${NODE_VERSION}/bin
 ENV PATH=/home/tooling/.nvm/versions/node/v${NODE_VERSION}/bin:$PATH
 

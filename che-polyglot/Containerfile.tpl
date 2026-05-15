@@ -9,11 +9,14 @@ USER 0
 
 # START Infra Block
 
+ENV MISE_VERSION="@@BASE_TOOLS_MISE@@"
+
 ## Extra build deps useful when mise compiles tools from source
 RUN apt-get update && apt-get install -y --no-install-recommends \
       python3-dev \
       python3-pip \
       python3-venv \
+      libssl-dev \
       libyaml-dev \
       libreadline-dev \
       libncurses-dev \
@@ -21,12 +24,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libsqlite3-dev \
       libffi-dev \
       zlib1g-dev \
-      tk-dev \
-      openjdk-21-jdk-headless \
     && rm -rf /var/lib/apt/lists/*
 
 ## Install mise
-RUN curl https://mise.run | sh && \
+RUN curl -fsSL https://github.com/jdx/mise/releases/download/${MISE_VERSION}/mise-${MISE_VERSION}-linux-x64 \
+    -o /home/tooling/.local/bin/mise && \
+    chmod +x /home/tooling/.local/bin/mise && \
     echo 'eval "$(~/.local/bin/mise activate bash)"' >> ${GLOBALS_BASHRC} && \
     echo 'export MISE_TRUSTED_CONFIG_PATHS=/home/tooling/.config/mise:/home/user/.config/mise' >> ${GLOBALS_BASHRC} && \
     mkdir -p /home/tooling/.config/mise

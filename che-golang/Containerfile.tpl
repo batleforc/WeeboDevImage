@@ -23,7 +23,8 @@ RUN set -eux; \
     libc6-dev \
     make \
     pkg-config \
-    ;
+    ; \
+    rm -rf /var/lib/apt/lists/*
 
 RUN tmpdir="$(mktemp -d)" && cd "${tmpdir}" && \
     curl -fsL https://go.dev/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz > go.tar.gz && \

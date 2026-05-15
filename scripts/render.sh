@@ -40,6 +40,8 @@ BASE_TOOLS_GITLEAKS="$(_yq '.base_tools.gitleaks')"
 BASE_TOOLS_KUBEDOCK="$(_yq '.base_tools.kubedock')"
 BASE_TOOLS_BUILDKIT="$(_yq '.base_tools.buildkit')"
 BASE_TOOLS_COCOGITTO="$(_yq '.base_tools.cocogitto')"
+BASE_TOOLS_YQ="$(_yq '.base_tools.yq')"
+BASE_TOOLS_MISE="$(_yq '.base_tools.mise')"
 GOLANG_VERSION="$(_yq '.golang.version')"
 RUST_VERSION="$(_yq '.rust.version')"
 RUSTUP_VERSION="$(_yq '.rustup.version')"
@@ -72,6 +74,8 @@ render_tpl() {
     -e "s|@@BASE_TOOLS_KUBEDOCK@@|${BASE_TOOLS_KUBEDOCK}|g" \
     -e "s|@@BASE_TOOLS_BUILDKIT@@|${BASE_TOOLS_BUILDKIT}|g" \
     -e "s|@@BASE_TOOLS_COCOGITTO@@|${BASE_TOOLS_COCOGITTO}|g" \
+    -e "s|@@BASE_TOOLS_YQ@@|${BASE_TOOLS_YQ}|g" \
+    -e "s|@@BASE_TOOLS_MISE@@|${BASE_TOOLS_MISE}|g" \
     -e "s|@@GOLANG_VERSION@@|${GOLANG_VERSION}|g" \
     -e "s|@@RUST_VERSION@@|${RUST_VERSION}|g" \
     -e "s|@@RUSTUP_VERSION@@|${RUSTUP_VERSION}|g" \

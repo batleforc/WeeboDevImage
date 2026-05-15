@@ -16,7 +16,8 @@ ENV ARGOCDCLI_VERSION="@@OPS_ARGOCD@@"
 ENV UPDATECLI_VERSION="@@OPS_UPDATECLI@@"
 
 ## Add Wireguard
-RUN apt update && apt install wireguard -y
+RUN apt-get update && apt-get install -y --no-install-recommends wireguard \
+    && rm -rf /var/lib/apt/lists/*
 
 ## ArgoCD + Clusterctl + Talosctl + Opentofu + UpdateCLI
 RUN tmpdir="$(mktemp -d)" && cd "${tmpdir}" && \

@@ -13,6 +13,7 @@ ENV GITLEAKS_VERSION="@@BASE_TOOLS_GITLEAKS@@"
 ENV KUBEDOCK_VERSION="@@BASE_TOOLS_KUBEDOCK@@"
 ENV BUILDKIT_VERSION="@@BASE_TOOLS_BUILDKIT@@"
 ENV COCOGITTO_VERSION="@@BASE_TOOLS_COCOGITTO@@"
+ENV YQ_VERSION="@@BASE_TOOLS_YQ@@"
 
 ENV HOME=/home/tooling
 
@@ -56,7 +57,7 @@ RUN apt-get update && \
   libcap2-bin && \
   rm -rf /var/lib/apt/lists/* && \
   curl -fsSLo /usr/local/bin/yq \
-  https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && \
+  https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 && \
   chmod +x /usr/local/bin/yq
 
 ## Install Helm + Taskfile + k9s + Cocogitto + GitLeaks

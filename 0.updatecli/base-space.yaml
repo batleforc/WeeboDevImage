@@ -99,6 +99,16 @@ sources:
         kind: semver
     transformers:
     - trimprefix: "v"
+  mise:
+    kind: githubrelease
+    scmid: default
+    spec:
+      owner: jdx
+      repository: mise
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: latest
 
 targets:
   bump_helm_version:
@@ -165,6 +175,14 @@ targets:
     spec:
       file: versions.yaml
       key: $.base_tools.cocogitto
+  bump_mise_version:
+    kind: yaml
+    name: "Bump mise version"
+    scmid: default
+    sourceid: mise
+    spec:
+      file: versions.yaml
+      key: $.base_tools.mise
 
 actions:
   bump_base_space:
