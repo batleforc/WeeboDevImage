@@ -2,7 +2,7 @@ registry: ghcr.io/batleforc/weebodevimage
 
 base:
   ubuntu: "26.04"
-  ubuntu_registry: ""  # optional: e.g. harbor.example.com/dockerhub-proxy
+  ubuntu_registry: "" # optional: e.g. harbor.example.com/dockerhub-proxy
 
 min:
   kubectl: v1.36.1
@@ -19,7 +19,7 @@ base_tools:
   buildkit: v0.30.0
   cocogitto: 7.0.0
   yq: "v4.45.1"
-  mise: "v2025.5.16"
+  mise: v2026.5.8
 
 golang:
   version: 1.26.3
