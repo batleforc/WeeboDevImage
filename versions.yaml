@@ -41,5 +41,5 @@ ops:
   argocd: "v2.14.4"
   clusterctl: v1.13.2
   talosctl: v1.13.2
-  opentofu: "1.9.0"
+  opentofu: 1.12.0
   updatecli: v0.117.0
