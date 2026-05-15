@@ -28,10 +28,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ## Install mise
 RUN curl https://mise.run | sh && \
     echo 'eval "$(~/.local/bin/mise activate bash)"' >> ${GLOBALS_BASHRC} && \
-    echo 'export MISE_TRUSTED_CONFIG_PATHS=/home/tooling/.config/mise:/home/user/.config/mise' >> ${GLOBALS_BASHRC}
-
-## Default global mise config — tools are declared but installed at workspace start via `mise install`
-RUN mkdir -p /home/tooling/.config/mise
+    echo 'export MISE_TRUSTED_CONFIG_PATHS=/home/tooling/.config/mise:/home/user/.config/mise' >> ${GLOBALS_BASHRC} && \
+    mkdir -p /home/tooling/.config/mise
 COPY --chown=0:0 global.mise.toml /home/tooling/.config/mise/config.toml
 
 # END Infra Block
@@ -41,8 +39,8 @@ ENV STAR_NO="true"
 # START User Block
 USER 1234
 ENV HOME=/home/user
-RUN stow . -t /home/user -d /home/tooling --no-folding
-RUN cp -f /home/tooling/.bashrc /home/user/.bashrc
+RUN stow . -t /home/user -d /home/tooling --no-folding && \
+    cp -f /home/tooling/.bashrc /home/user/.bashrc
 WORKDIR /home/user
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD ["tail", "-f", "/dev/null"]

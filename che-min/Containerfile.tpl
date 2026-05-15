@@ -15,8 +15,8 @@ ENV NVM_DIR=/home/tooling/.nvm
 ENV GLOBALS_FOLDER="/globals/"
 ENV GLOBALS_BASHRC="${GLOBALS_FOLDER}bashrc"
 
-RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC} && chmod -R 777 ${GLOBALS_FOLDER} && mkdir -p /home/tooling
-RUN echo 'source /globals/bashrc' >> ${HOME}/.bashrc
+RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC} && chmod -R 777 ${GLOBALS_FOLDER} && mkdir -p /home/tooling && \
+    echo 'source /globals/bashrc' >> ${HOME}/.bashrc
 
 # Core packages: replaces buildpack-deps, adds locale + completion + nested container support (uidmap)
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get upgrade -y && \
@@ -81,11 +81,8 @@ COPY --chown=0:0 .copy-files /home/tooling/
 
 ## Try a fix for path not found
 
-RUN echo 'export PATH="/home/tooling/.local/bin:$PATH"' >> ${GLOBALS_BASHRC}
-RUN echo 'export PATH="/home/user/.local/bin:$PATH"' >> ${GLOBALS_BASHRC}
-
-## Fix uv_os_get_passwd
-
-RUN chmod g=u /etc/passwd /etc/group
+RUN echo 'export PATH="/home/tooling/.local/bin:$PATH"' >> ${GLOBALS_BASHRC} && \
+    echo 'export PATH="/home/user/.local/bin:$PATH"' >> ${GLOBALS_BASHRC} && \
+    chmod g=u /etc/passwd /etc/group
 
 USER 1234

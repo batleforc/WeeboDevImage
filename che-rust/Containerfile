@@ -17,9 +17,9 @@ ENV RUSTUP_HOME=/home/tooling/.rustup \
     GLOBALS_FOLDER="/globals/" \
     GLOBALS_BASHRC="${GLOBALS_FOLDER}bashrc"
 
-RUN echo 'export RUSTUP_HOME=/home/user/.rustup' >> ${GLOBALS_BASHRC}
-RUN echo 'export CARGO_HOME=/home/user/.cargo' >> ${GLOBALS_BASHRC}
-RUN echo 'export PATH="/home/user/.cargo/bin:$PATH"' >> ${GLOBALS_BASHRC}
+RUN echo 'export RUSTUP_HOME=/home/user/.rustup' >> ${GLOBALS_BASHRC} && \
+    echo 'export CARGO_HOME=/home/user/.cargo' >> ${GLOBALS_BASHRC} && \
+    echo 'export PATH="/home/user/.cargo/bin:$PATH"' >> ${GLOBALS_BASHRC}
 
 RUN set -eux; \
     cat ${GLOBALS_BASHRC}; \
@@ -47,20 +47,18 @@ RUN set -eux; \
     rustup completions bash > /etc/bash_completion.d/rustup && \
     echo 'source /etc/bash_completion.d/rustup' >> ${GLOBALS_BASHRC} && \
     rustup completions bash cargo > /etc/bash_completion.d/cargo && \
-    echo 'source /etc/bash_completion.d/cargo' >> ${GLOBALS_BASHRC}
+    echo 'source /etc/bash_completion.d/cargo' >> ${GLOBALS_BASHRC} && \
+    chmod g=u /etc/passwd /etc/group
 
 
 # END Infra Block
 
 ENV STAR_NO="true"
 
-# START User Block
-RUN chmod g=u /etc/passwd /etc/group
-# START User Block
 USER 1234
 ENV HOME=/home/user
-RUN stow . -t /home/user -d /home/tooling --no-folding
-RUN cp -f /home/tooling/.bashrc /home/user/.bashrc
+RUN stow . -t /home/user -d /home/tooling --no-folding && \
+    cp -f /home/tooling/.bashrc /home/user/.bashrc
 WORKDIR /home/user
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD ["tail", "-f", "/dev/null"]
