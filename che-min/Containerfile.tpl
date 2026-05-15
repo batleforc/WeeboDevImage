@@ -21,16 +21,16 @@ RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC} && chmod -R 777 ${GLOB
 # Core packages: replaces buildpack-deps, adds locale + completion + nested container support (uidmap)
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get install -y --no-install-recommends \
-      build-essential \
-      curl \
-      wget \
-      ca-certificates \
-      git \
-      git-lfs \
-      bash-completion \
-      libc6 \
-      locales \
-      uidmap \
+    build-essential \
+    curl \
+    wget \
+    ca-certificates \
+    git \
+    git-lfs \
+    bash-completion \
+    libc6 \
+    locales \
+    uidmap \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /home/tooling/ \
     && echo "source /etc/profile.d/bash_completion.sh" >> ${GLOBALS_BASHRC} \
@@ -60,7 +60,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/insta
     nvm use default && \
     nvm cache clear && \
     npm install --global yarn && \
-    corepack enable pnpm && \
+    curl -fsSL https://get.pnpm.io/install.sh | sh - && \
     npm cache clean --force && \
     rm -rf /home/tooling/.npm
 ENV VSCODE_NODEJS_RUNTIME_DIR=/home/tooling/.nvm/versions/node/v${NODE_VERSION}/bin
