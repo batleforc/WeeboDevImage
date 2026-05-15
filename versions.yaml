@@ -19,7 +19,7 @@ base_tools:
   cocogitto: "6.5.0"
 
 golang:
-  version: "1.25.0"
+  version: 1.26.3
 
 rust:
   version: "1.87.0"
