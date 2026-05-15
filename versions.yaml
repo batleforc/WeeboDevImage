@@ -2,7 +2,7 @@ registry: ghcr.io/batleforc/weebodevimage
 
 base:
   ubuntu: "26.04"
-  ubuntu_registry: ""  # optional: e.g. harbor.example.com/dockerhub-proxy
+  ubuntu_registry: "" # optional: e.g. harbor.example.com/dockerhub-proxy
 
 min:
   kubectl: v1.36.1
@@ -42,4 +42,4 @@ ops:
   clusterctl: "v1.9.5"
   talosctl: "v1.9.4"
   opentofu: "1.9.0"
-  updatecli: "v0.95.0"
+  updatecli: v0.117.0
