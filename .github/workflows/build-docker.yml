@@ -161,3 +161,73 @@ jobs:
           sbom: true
           tags: |
             ${{ needs.prepare.outputs.registry }}/${{ steps.extract_folder.outputs.folder }}:${{ needs.prepare.outputs.branch }}
+
+  report-sizes:
+    runs-on: ubuntu-latest
+    needs: [prepare, build-min, build-base, build-image]
+    permissions:
+      packages: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up crane
+        uses: imjasonh/setup-crane@v0.4
+
+      - name: Authenticate crane against GHCR
+        run: |
+          crane auth login ghcr.io \
+            --username ${{ github.repository_owner }} \
+            --password ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Collect image sizes
+        id: collect
+        env:
+          REGISTRY: ${{ needs.prepare.outputs.registry }}
+          BRANCH: ${{ needs.prepare.outputs.branch }}
+        run: |
+          TABLE="| Image | Taille compressée |\n|---|---|\n"
+
+          while IFS= read -r containerfile; do
+            folder=$(echo "$containerfile" | cut -d'/' -f2)
+            IMAGE="${REGISTRY}/${folder}:${BRANCH}"
+
+            # --platform linux/amd64 résout l'OCI index créé par SBOM
+            BYTES=$(crane manifest --platform linux/amd64 "${IMAGE}" \
+              | jq '[.layers[].size] | add // 0')
+
+            HUMAN=$(numfmt --to=iec "${BYTES}")
+            TABLE+="| \`${folder}\` | ${HUMAN} |\n"
+          done < <(find . -name 'Containerfile' -print | sort)
+
+          {
+            echo "table<<REPORT_EOF"
+            printf '%b' "${TABLE}"
+            echo "REPORT_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Write job summary
+        env:
+          SIZE_TABLE: ${{ steps.collect.outputs.table }}
+        run: |
+          {
+            echo "## Image Compressed Sizes"
+            echo ""
+            printf '%b' "${SIZE_TABLE}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Post commit comment
+        uses: actions/github-script@v7
+        env:
+          SIZE_TABLE: ${{ steps.collect.outputs.table }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const table = process.env.SIZE_TABLE;
+            const body = `## Image Compressed Sizes\n\n${table}`;
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              commit_sha: context.sha,
+              body,
+            });
