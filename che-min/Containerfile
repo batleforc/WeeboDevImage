@@ -61,7 +61,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/insta
     nvm use default && \
     nvm cache clear && \
     npm install --global yarn && \
-    SHELL=bash curl -fsSL https://get.pnpm.io/install.sh | sh - && \
+    curl -fsSL https://get.pnpm.io/install.sh | sh - && \
     npm cache clean --force && \
     rm -rf /home/tooling/.npm
 ENV VSCODE_NODEJS_RUNTIME_DIR=/home/tooling/.nvm/versions/node/v${NODE_VERSION}/bin

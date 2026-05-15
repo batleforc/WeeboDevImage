@@ -19,6 +19,7 @@ post_package_bump_hooks = []
 [git_hooks.pre-commit]
 script = """#!/bin/sh
 task render
+git add .
 """
 
 [commit_types]
