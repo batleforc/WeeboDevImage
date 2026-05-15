@@ -38,8 +38,8 @@ rustup:
     s390x: 66c2c132428b6b77803facb02cbdf33b89d20c00bd20da142be8cb651f2e7cd8
 
 ops:
-  argocd: "v2.14.4"
-  clusterctl: "v1.9.5"
-  talosctl: "v1.9.4"
-  opentofu: "1.9.0"
-  updatecli: "v0.95.0"
+  argocd: v3.4.2
+  clusterctl: v1.13.2
+  talosctl: v1.13.2
+  opentofu: 1.12.0
+  updatecli: v0.117.0
