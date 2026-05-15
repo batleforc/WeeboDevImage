@@ -3,6 +3,13 @@ name: Build docker image
 on:
   push:
     branches: ["main"]
+  schedule:
+    - cron: "0 06 * * *"
+
+concurrency:
+  # only run one build at a time
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   lint-templates:
