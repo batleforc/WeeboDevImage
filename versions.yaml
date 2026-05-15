@@ -4,8 +4,8 @@ base:
   ubuntu: "26.04"
 
 min:
-  kubectl: "v1.35.1"
-  nvm: "v0.40.4"
+  kubectl: v1.36.1
+  nvm: v0.40.4
   node: "24.13.0"
 
 base_tools:
