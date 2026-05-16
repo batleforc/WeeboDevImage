@@ -44,7 +44,7 @@ RUN curl -fsSLo /usr/local/bin/kubectl \
     chmod +x /usr/local/bin/kubectl && \
     kubectl completion bash > /etc/bash_completion.d/kubectl && \
     echo 'source /etc/bash_completion.d/kubectl' >> ${GLOBALS_BASHRC} && \
-    curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/download/${FIRACODE_VERSION}/FiraCode.zip -o FiraCode.zip && \
+    curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/download/v${FIRACODE_VERSION}/FiraCode.zip -o FiraCode.zip && \
     unzip FiraCode.zip -d /usr/share/fonts/truetype/firacode && \
     rm FiraCode.zip && \
     fc-cache -f -v

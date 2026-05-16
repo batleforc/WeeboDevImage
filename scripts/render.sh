@@ -21,7 +21,7 @@ fi
 
 _yq() { yq e "$1" "$V"; }
 
-REGISTRY="$(_yq '.registry')"
+# BASE_UBUNTU_IMAGE is computed, not a direct yaml leaf
 BASE_UBUNTU="$(_yq '.base.ubuntu')"
 BASE_UBUNTU_REGISTRY="$(_yq '.base.ubuntu_registry // ""')"
 if [[ -n "$BASE_UBUNTU_REGISTRY" ]]; then
@@ -29,70 +29,25 @@ if [[ -n "$BASE_UBUNTU_REGISTRY" ]]; then
 else
   BASE_UBUNTU_IMAGE="ubuntu:${BASE_UBUNTU}"
 fi
-MIN_KUBECTL="$(_yq '.min.kubectl')"
-MIN_NVM="$(_yq '.min.nvm')"
-MIN_NODE="$(_yq '.min.node')"
-MIN_FIRACODE="$(_yq '.min.firacode')"
-BASE_TOOLS_HELM="$(_yq '.base_tools.helm')"
-BASE_TOOLS_TASKFILE="$(_yq '.base_tools.taskfile')"
-BASE_TOOLS_K9S="$(_yq '.base_tools.k9s')"
-BASE_TOOLS_KREW="$(_yq '.base_tools.krew')"
-BASE_TOOLS_GITLEAKS="$(_yq '.base_tools.gitleaks')"
-BASE_TOOLS_KUBEDOCK="$(_yq '.base_tools.kubedock')"
-BASE_TOOLS_BUILDKIT="$(_yq '.base_tools.buildkit')"
-BASE_TOOLS_COCOGITTO="$(_yq '.base_tools.cocogitto')"
-BASE_TOOLS_YQ="$(_yq '.base_tools.yq')"
-BASE_TOOLS_MISE="$(_yq '.base_tools.mise')"
-GOLANG_VERSION="$(_yq '.golang.version')"
-RUST_VERSION="$(_yq '.rust.version')"
-RUSTUP_VERSION="$(_yq '.rustup.version')"
-RUSTUP_SHA256_AMD64="$(_yq '.rustup.sha256.amd64')"
-RUSTUP_SHA256_ARMHF="$(_yq '.rustup.sha256.armhf')"
-RUSTUP_SHA256_ARM64="$(_yq '.rustup.sha256.arm64')"
-RUSTUP_SHA256_I386="$(_yq '.rustup.sha256.i386')"
-RUSTUP_SHA256_PPC64EL="$(_yq '.rustup.sha256.ppc64el')"
-RUSTUP_SHA256_S390X="$(_yq '.rustup.sha256.s390x')"
-OPS_ARGOCD="$(_yq '.ops.argocd')"
-OPS_CLUSTERCTL="$(_yq '.ops.clusterctl')"
-OPS_TALOSCTL="$(_yq '.ops.talosctl')"
-OPS_OPENTOFU="$(_yq '.ops.opentofu')"
-OPS_UPDATECLI="$(_yq '.ops.updatecli')"
 
 render_tpl() {
   local tpl="$1"
-  sed \
-    -e "s|@@REGISTRY@@|${REGISTRY}|g" \
-    -e "s|@@BASE_UBUNTU_IMAGE@@|${BASE_UBUNTU_IMAGE}|g" \
-    -e "s|@@BASE_UBUNTU@@|${BASE_UBUNTU}|g" \
-    -e "s|@@MIN_KUBECTL@@|${MIN_KUBECTL}|g" \
-    -e "s|@@MIN_NVM@@|${MIN_NVM}|g" \
-    -e "s|@@MIN_NODE@@|${MIN_NODE}|g" \
-    -e "s|@@MIN_FIRACODE@@|${MIN_FIRACODE}|g" \
-    -e "s|@@BASE_TOOLS_HELM@@|${BASE_TOOLS_HELM}|g" \
-    -e "s|@@BASE_TOOLS_TASKFILE@@|${BASE_TOOLS_TASKFILE}|g" \
-    -e "s|@@BASE_TOOLS_K9S@@|${BASE_TOOLS_K9S}|g" \
-    -e "s|@@BASE_TOOLS_KREW@@|${BASE_TOOLS_KREW}|g" \
-    -e "s|@@BASE_TOOLS_GITLEAKS@@|${BASE_TOOLS_GITLEAKS}|g" \
-    -e "s|@@BASE_TOOLS_KUBEDOCK@@|${BASE_TOOLS_KUBEDOCK}|g" \
-    -e "s|@@BASE_TOOLS_BUILDKIT@@|${BASE_TOOLS_BUILDKIT}|g" \
-    -e "s|@@BASE_TOOLS_COCOGITTO@@|${BASE_TOOLS_COCOGITTO}|g" \
-    -e "s|@@BASE_TOOLS_YQ@@|${BASE_TOOLS_YQ}|g" \
-    -e "s|@@BASE_TOOLS_MISE@@|${BASE_TOOLS_MISE}|g" \
-    -e "s|@@GOLANG_VERSION@@|${GOLANG_VERSION}|g" \
-    -e "s|@@RUST_VERSION@@|${RUST_VERSION}|g" \
-    -e "s|@@RUSTUP_VERSION@@|${RUSTUP_VERSION}|g" \
-    -e "s|@@RUSTUP_SHA256_AMD64@@|${RUSTUP_SHA256_AMD64}|g" \
-    -e "s|@@RUSTUP_SHA256_ARMHF@@|${RUSTUP_SHA256_ARMHF}|g" \
-    -e "s|@@RUSTUP_SHA256_ARM64@@|${RUSTUP_SHA256_ARM64}|g" \
-    -e "s|@@RUSTUP_SHA256_I386@@|${RUSTUP_SHA256_I386}|g" \
-    -e "s|@@RUSTUP_SHA256_PPC64EL@@|${RUSTUP_SHA256_PPC64EL}|g" \
-    -e "s|@@RUSTUP_SHA256_S390X@@|${RUSTUP_SHA256_S390X}|g" \
-    -e "s|@@OPS_ARGOCD@@|${OPS_ARGOCD}|g" \
-    -e "s|@@OPS_CLUSTERCTL@@|${OPS_CLUSTERCTL}|g" \
-    -e "s|@@OPS_TALOSCTL@@|${OPS_TALOSCTL}|g" \
-    -e "s|@@OPS_OPENTOFU@@|${OPS_OPENTOFU}|g" \
-    -e "s|@@OPS_UPDATECLI@@|${OPS_UPDATECLI}|g" \
-    "${tpl}"
+  local sed_args=(-e "s|@@BASE_UBUNTU_IMAGE@@|${BASE_UBUNTU_IMAGE}|g")
+  local line key value var_name escaped_value
+
+  # Flatten all yaml leaves (dot.separated.path = value) and build sed args dynamically.
+  # Adding a new key to versions.yaml automatically makes @@KEY@@ available in templates.
+  while IFS= read -r line; do
+    [[ -z "$line" || "$line" == \#* ]] && continue
+    key="${line%% = *}"
+    value="${line#* = }"
+    var_name="$(printf '%s' "${key}" | tr '[:lower:].' '[:upper:]_')"
+    escaped_value="${value//\\/\\\\}"
+    escaped_value="${escaped_value//|/\\|}"
+    sed_args+=(-e "s|@@${var_name}@@|${escaped_value}|g")
+  done < <(yq e '.' -o=props "$V")
+
+  sed "${sed_args[@]}" "${tpl}"
 }
 
 FAILED=0
