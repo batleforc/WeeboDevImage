@@ -32,6 +32,7 @@ fi
 MIN_KUBECTL="$(_yq '.min.kubectl')"
 MIN_NVM="$(_yq '.min.nvm')"
 MIN_NODE="$(_yq '.min.node')"
+MIN_FIRACODE="$(_yq '.min.firacode')"
 BASE_TOOLS_HELM="$(_yq '.base_tools.helm')"
 BASE_TOOLS_TASKFILE="$(_yq '.base_tools.taskfile')"
 BASE_TOOLS_K9S="$(_yq '.base_tools.k9s')"
@@ -66,6 +67,7 @@ render_tpl() {
     -e "s|@@MIN_KUBECTL@@|${MIN_KUBECTL}|g" \
     -e "s|@@MIN_NVM@@|${MIN_NVM}|g" \
     -e "s|@@MIN_NODE@@|${MIN_NODE}|g" \
+    -e "s|@@MIN_FIRACODE@@|${MIN_FIRACODE}|g" \
     -e "s|@@BASE_TOOLS_HELM@@|${BASE_TOOLS_HELM}|g" \
     -e "s|@@BASE_TOOLS_TASKFILE@@|${BASE_TOOLS_TASKFILE}|g" \
     -e "s|@@BASE_TOOLS_K9S@@|${BASE_TOOLS_K9S}|g" \

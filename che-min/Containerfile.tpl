@@ -8,6 +8,7 @@ LABEL org.opencontainers.image.title="Che-MinImage"
 ENV KUBE_VERSION="@@MIN_KUBECTL@@"
 ENV NVM_VERSION="@@MIN_NVM@@"
 ENV NODE_VERSION="@@MIN_NODE@@"
+ENV FIRACODE_VERSION="@@MIN_FIRACODE@@"
 
 ENV HOME=/home/tooling
 ENV NVM_DIR=/home/tooling/.nvm
@@ -36,12 +37,16 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     && echo "source /etc/profile.d/bash_completion.sh" >> ${GLOBALS_BASHRC} \
     && locale-gen "en_US.UTF-8"
 
-## Install Kubectl
+## Install Kubectl - Firacode
 RUN curl -fsSLo /usr/local/bin/kubectl \
     https://dl.k8s.io/release/${KUBE_VERSION}/bin/linux/amd64/kubectl && \
     chmod +x /usr/local/bin/kubectl && \
     kubectl completion bash > /etc/bash_completion.d/kubectl && \
-    echo 'source /etc/bash_completion.d/kubectl' >> ${GLOBALS_BASHRC}
+    echo 'source /etc/bash_completion.d/kubectl' >> ${GLOBALS_BASHRC} && \
+    curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/download/v${FIRACODE_VERSION}/FiraCode.zip -o FiraCode.zip && \
+    unzip FiraCode.zip -d /usr/share/fonts/truetype/firacode && \
+    rm FiraCode.zip && \
+    fc-cache -f -v
 
 ENV KUBECONFIG=/home/user/.kube/config
 ENV LANG="en_US.UTF-8"

@@ -8,6 +8,7 @@ min:
   kubectl: v1.36.1
   nvm: v0.40.4
   node: 26.1.0
+  firacode: v3.4.0
 
 base_tools:
   helm: v4.2.0
