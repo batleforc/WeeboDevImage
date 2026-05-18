@@ -29,5 +29,6 @@ components:
           io.kubernetes.cri-o.Devices: "/dev/fuse,/dev/net/tun"
       spec:
         hostUsers: false
-        securityContext:
-          procMount: Unmasked
+    container-overrides:
+      securityContext:
+        procMount: Unmasked
