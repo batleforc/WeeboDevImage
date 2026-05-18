@@ -53,6 +53,7 @@ RUN curl -fsSLo /usr/local/bin/kubectl \
     tmpdir="$(mktemp -d)" && cd "${tmpdir}" && \
     curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/download/${FIRACODE_VERSION}/FiraCode.zip -o FiraCode.zip && \
     unzip FiraCode.zip && \
+    mkdir -p /usr/local/share/fonts && \
     cp FiraCode*.ttf /usr/local/share/fonts && \
     rm FiraCode.zip && \
     fc-cache -f -v && \
