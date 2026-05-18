@@ -12,7 +12,7 @@ min:
 
 base_tools:
   helm: v4.2.0
-  taskfile: v3.50.0
+  taskfile: v3.51.1
   k9s: v0.50.18
   krew: v0.5.0
   gitleaks: 8.30.1
