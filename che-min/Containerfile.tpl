@@ -37,6 +37,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     libc6 \
     locales \
     uidmap \
+    unzip \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /home/tooling/ \
     && echo "source /etc/profile.d/bash_completion.sh" >> ${GLOBALS_BASHRC} \
