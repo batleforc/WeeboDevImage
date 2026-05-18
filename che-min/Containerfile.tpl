@@ -17,7 +17,12 @@ ENV GLOBALS_FOLDER="/globals/"
 ENV GLOBALS_BASHRC="${GLOBALS_FOLDER}bashrc"
 
 RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC} && chmod -R 777 ${GLOBALS_FOLDER} && mkdir -p /home/tooling && \
-    echo 'source /globals/bashrc' >> ${HOME}/.bashrc
+    echo 'source /globals/bashrc' >> ${HOME}/.bashrc && \
+    echo "alias ll='ls -alF'" >> ${GLOBALS_BASHRC} && \
+    echo "alias la='ls -A'" >> ${GLOBALS_BASHRC} && \
+    echo "alias l='ls -CF'" >> ${GLOBALS_BASHRC} && \
+    echo "alias k='kubectl'" >> ${GLOBALS_BASHRC} && \
+    echo "alias kns='kubectl config set-context --current --namespace'" >> ${GLOBALS_BASHRC}
 
 # Core packages: replaces buildpack-deps, adds locale + completion + nested container support (uidmap)
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
@@ -43,7 +48,7 @@ RUN curl -fsSLo /usr/local/bin/kubectl \
     chmod +x /usr/local/bin/kubectl && \
     kubectl completion bash > /etc/bash_completion.d/kubectl && \
     echo 'source /etc/bash_completion.d/kubectl' >> ${GLOBALS_BASHRC} && \
-    curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/download/v${FIRACODE_VERSION}/FiraCode.zip -o FiraCode.zip && \
+    curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/download/${FIRACODE_VERSION}/FiraCode.zip -o FiraCode.zip && \
     unzip FiraCode.zip -d /usr/share/fonts/truetype/firacode && \
     rm FiraCode.zip && \
     fc-cache -f -v
