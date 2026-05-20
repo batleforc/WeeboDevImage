@@ -11,7 +11,6 @@ ENV k9S_VERSION="@@BASE_TOOLS_K9S@@"
 ENV KREW_VERSION="@@BASE_TOOLS_KREW@@"
 ENV GITLEAKS_VERSION="@@BASE_TOOLS_GITLEAKS@@"
 ENV KUBEDOCK_VERSION="@@BASE_TOOLS_KUBEDOCK@@"
-ENV BUILDKIT_VERSION="@@BASE_TOOLS_BUILDKIT@@"
 ENV COCOGITTO_VERSION="@@BASE_TOOLS_COCOGITTO@@"
 ENV YQ_VERSION="@@BASE_TOOLS_YQ@@"
 
@@ -117,9 +116,7 @@ ENV ORIGINAL_PODMAN_PATH=/usr/bin/podman.orig
 COPY --chown=0:0 podman-wrapper.sh "${PODMAN_WRAPPER_PATH}"
 
 ## Move podman + add buildctl
-RUN mv /usr/bin/podman "${ORIGINAL_PODMAN_PATH}" && \
-  curl -fsSL https://github.com/moby/buildkit/releases/download/${BUILDKIT_VERSION}/buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz | \
-  tar -xz -C /usr/local/bin
+RUN mv /usr/bin/podman "${ORIGINAL_PODMAN_PATH}"
 
 COPY --chown=0:0 .stow-local-ignore /home/tooling/
 COPY --chown=0:0 entrypoint.sh /
