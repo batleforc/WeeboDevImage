@@ -48,7 +48,7 @@ RUN apt-get update && \
   stow \
   iputils-ping \
   net-tools \
-  libnode72 \
+  libnode-dev \
   less \
   htop \
   podman \
