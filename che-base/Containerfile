@@ -21,7 +21,7 @@ ENV HOME=/home/tooling
 USER 0
 
 RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC} && \
-    echo 'export PATH="${HOME}/.krew/bin:$PATH"' >> ${GLOBALS_BASHRC}
+  echo 'export PATH="${HOME}/.krew/bin:$PATH"' >> ${GLOBALS_BASHRC}
 
 ## Install Krew
 
@@ -49,6 +49,7 @@ RUN apt-get update && \
   stow \
   iputils-ping \
   net-tools \
+  libnode72 \
   less \
   htop \
   podman \
@@ -86,10 +87,10 @@ RUN tmpdir="$(mktemp -d)" && cd "${tmpdir}" && \
 
 ## Install Gnupg aliases + Starship Shell Prompt
 RUN echo 'export GPG_TTY=$(tty)' >> ${GLOBALS_BASHRC} && \
-    echo 'alias load-priv="gpg --import /etc/gpgkey/keypriv.asc"' >> ${GLOBALS_BASHRC} && \
-    echo 'alias load-pub="gpg --import /etc/gpgkey/keypub.asc"' >> ${GLOBALS_BASHRC} && \
-    curl -sS https://starship.rs/install.sh | sh -s -- -y && \
-    echo '[ $STAR_NO != "false" ] && eval "$(starship init bash)" ' >> ${GLOBALS_BASHRC}
+  echo 'alias load-priv="gpg --import /etc/gpgkey/keypriv.asc"' >> ${GLOBALS_BASHRC} && \
+  echo 'alias load-pub="gpg --import /etc/gpgkey/keypub.asc"' >> ${GLOBALS_BASHRC} && \
+  curl -sS https://starship.rs/install.sh | sh -s -- -y && \
+  echo '[ $STAR_NO != "false" ] && eval "$(starship init bash)" ' >> ${GLOBALS_BASHRC}
 ENV STAR_NO="true"
 COPY starship.toml ${HOME}/.config/starship.toml
 
@@ -101,10 +102,10 @@ COPY --chown=0:0 containers.conf "${HOME}"/.config/containers/containers.conf
 
 ## subuid/subgid writable by group; newuidmap/newgidmap need setuid/setgid caps for user namespaces
 RUN chown -R 10001 "${HOME}"/.config && \
-    touch /etc/subgid /etc/subuid && \
-    chmod g=u /etc/subgid /etc/subuid /etc/passwd /etc/group && \
-    setcap cap_setuid+ep /usr/bin/newuidmap && \
-    setcap cap_setgid+ep /usr/bin/newgidmap
+  touch /etc/subgid /etc/subuid && \
+  chmod g=u /etc/subgid /etc/subuid /etc/passwd /etc/group && \
+  setcap cap_setuid+ep /usr/bin/newuidmap && \
+  setcap cap_setgid+ep /usr/bin/newgidmap
 
 ENV KUBECONFIG=/home/user/.kube/config
 RUN curl -fsSL https://github.com/joyrex2001/kubedock/releases/download/${KUBEDOCK_VERSION}/kubedock_linux_x86_64.tar.gz | \
@@ -118,8 +119,8 @@ COPY --chown=0:0 podman-wrapper.sh "${PODMAN_WRAPPER_PATH}"
 
 ## Move podman + add buildctl
 RUN mv /usr/bin/podman "${ORIGINAL_PODMAN_PATH}" && \
-    curl -fsSL https://github.com/moby/buildkit/releases/download/${BUILDKIT_VERSION}/buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz | \
-    tar -xz -C /usr/local/bin
+  curl -fsSL https://github.com/moby/buildkit/releases/download/${BUILDKIT_VERSION}/buildkit-${BUILDKIT_VERSION}.linux-amd64.tar.gz | \
+  tar -xz -C /usr/local/bin
 
 COPY --chown=0:0 .stow-local-ignore /home/tooling/
 COPY --chown=0:0 entrypoint.sh /
@@ -127,13 +128,13 @@ COPY --chown=0:0 entrypoint.sh /
 ## https://github.com/devfile/developer-images/blob/main/universal/ubi8/entrypoint.sh
 
 RUN chgrp -R 0 /home/tooling && chmod -R g=u /home/tooling && \
-    mkdir -p /home/user && ls /home && stow . -t /home/user/ -d /home/tooling/ --no-folding && \
-    chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home && \
-    chmod +x /entrypoint.sh
+  mkdir -p /home/user && ls /home && stow . -t /home/user/ -d /home/tooling/ --no-folding && \
+  chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home && \
+  chmod +x /entrypoint.sh
 
 USER 1234
 RUN cp -f /home/tooling/.bashrc /home/user/.bashrc && \
-    stow . -t /home/user/ -d /home/tooling/ --no-folding
+  stow . -t /home/user/ -d /home/tooling/ --no-folding
 ENV HOME=/home/user
 WORKDIR /projects
 ENTRYPOINT [ "/entrypoint.sh" ]
