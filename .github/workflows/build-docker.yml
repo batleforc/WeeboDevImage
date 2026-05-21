@@ -41,7 +41,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: render generated files"
-          branch: "chore/render-generated-files-${{ github.run_id }}"
+          branch: "chore/render-generated-files-${{ github.sha }}"
           delete-branch: true
           title: "chore: sync generated files with templates"
           body: |
@@ -49,6 +49,7 @@ jobs:
             It regenerates files using `bash scripts/render.sh`.
             Please review and merge this PR, then ensure local changes are rendered before future commits by running `task render` (or `bash scripts/render.sh`) before pushing.
             Affected files are included in this PR commit.
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       - name: Fail when drift is detected
         if: steps.render_check.outputs.drift == 'true'
         run: |
