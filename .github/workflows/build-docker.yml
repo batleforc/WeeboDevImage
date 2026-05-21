@@ -41,7 +41,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: render generated files"
-          branch: "chore/render-generated-files-${{ github.sha }}"
+          branch: "chore/render-generated-files"
           delete-branch: true
           title: "chore: sync generated files with templates"
           body: |
@@ -53,7 +53,7 @@ jobs:
       - name: Fail when drift is detected
         if: steps.render_check.outputs.drift == 'true'
         run: |
-          echo "Rendered files diverged from templates. An automated PR was attempted (created or updated) with the required updates."
+          echo "Rendered files diverged from templates. An automated PR has been created or updated with the required updates."
           exit 1
 
   prepare:
