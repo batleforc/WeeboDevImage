@@ -41,7 +41,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: render generated files"
-          branch: "automation/render-generated-files-${{ github.run_id }}"
+          branch: "chore/render-generated-files-${{ github.run_id }}"
           delete-branch: true
           title: "chore: sync generated files with templates"
           body: |
