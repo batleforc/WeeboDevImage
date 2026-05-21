@@ -41,12 +41,14 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: render generated files"
-          branch: "automation/render-generated-files"
+          branch: "automation/render-generated-files-${{ github.run_id }}"
           delete-branch: true
           title: "chore: sync generated files with templates"
           body: |
             This PR was created automatically by CI because rendered files diverged from templates.
             It regenerates files using `bash scripts/render.sh`.
+            Please review and merge this PR, then ensure local changes are rendered before future commits by running `task render` (or `bash scripts/render.sh`) before pushing.
+            Affected files are included in this PR commit.
       - name: Fail when drift is detected
         if: steps.render_check.outputs.drift == 'true'
         run: |
