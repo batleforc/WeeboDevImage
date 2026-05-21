@@ -53,6 +53,7 @@ RUN apt-get update && \
   podman \
   buildah \
   skopeo \
+  pkg-config \
   fuse-overlayfs \
   libcap2-bin && \
   rm -rf /var/lib/apt/lists/* && \
