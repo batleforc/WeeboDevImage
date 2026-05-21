@@ -14,6 +14,9 @@ concurrency:
 jobs:
   lint-templates:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v6
       - name: Install yq
@@ -21,8 +24,34 @@ jobs:
           curl -fsSLo /usr/local/bin/yq \
             https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           chmod +x /usr/local/bin/yq
-      - name: Verify Containerfiles match templates
-        run: bash scripts/render.sh --check
+      - name: Check rendered files drift
+        id: render_check
+        run: |
+          if bash scripts/render.sh --check; then
+            echo "drift=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "drift=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Render files
+        if: steps.render_check.outputs.drift == 'true'
+        run: bash scripts/render.sh
+      - name: Create PR with rendered files
+        if: steps.render_check.outputs.drift == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: render generated files"
+          branch: "automation/render-generated-files"
+          delete-branch: true
+          title: "chore: sync generated files with templates"
+          body: |
+            This PR was created automatically by CI because rendered files diverged from templates.
+            It regenerates files using `bash scripts/render.sh`.
+      - name: Fail when drift is detected
+        if: steps.render_check.outputs.drift == 'true'
+        run: |
+          echo "Rendered files diverged from templates. A PR has been created with the required updates."
+          exit 1
 
   prepare:
     runs-on: ubuntu-latest
