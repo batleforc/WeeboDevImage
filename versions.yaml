@@ -43,4 +43,4 @@ ops:
   clusterctl: v1.13.2
   talosctl: v1.13.3
   opentofu: 1.12.1
-  updatecli: v0.117.1
+  updatecli: v0.118.0
