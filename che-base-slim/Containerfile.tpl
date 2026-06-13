@@ -22,7 +22,7 @@ RUN apt-get update && \
   libnode-dev \
   less \
   htop \
-  pkg-config \
+  pkg-config &&\
   rm -rf /var/lib/apt/lists/* && \
   echo 'export GPG_TTY=$(tty)' >> ${GLOBALS_BASHRC} && \
   echo 'alias load-priv="gpg --import /etc/gpgkey/keypriv.asc"' >> ${GLOBALS_BASHRC} && \
