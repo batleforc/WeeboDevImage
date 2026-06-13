@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/c
 LABEL org.opencontainers.image.title="Che-Base-SlimImage"
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 
-ENV MISE_VERSION="v2026.6.2"
+ENV MISE_VERSION="v2026.6.6"
 ENV HOME=/home/tooling
 
 USER 0
