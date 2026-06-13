@@ -1,0 +1,55 @@
+# GENERATED FILE — do not edit directly. Edit Containerfile.tpl + versions.yaml, then run: task render
+FROM ghcr.io/batleforc/weebodevimage/che-min:main
+
+LABEL org.opencontainers.image.authors="batleforc"
+LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/che-base-slim"
+LABEL org.opencontainers.image.title="Che-Base-SlimImage"
+LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
+
+ENV MISE_VERSION="v2026.6.2"
+ENV HOME=/home/tooling
+
+USER 0
+
+## Install zip, gnupg2, vim, stow, net-tools, libnode-dev, less, htop, pkg-config
+## Install Gnupg aliases + Starship Shell Prompt + Mise
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends \
+  zip \ 
+  gnupg2 \
+  vim \
+  stow \
+  net-tools \
+  libnode-dev \
+  less \
+  htop \
+  pkg-config \
+  rm -rf /var/lib/apt/lists/* && \
+  echo 'export GPG_TTY=$(tty)' >> ${GLOBALS_BASHRC} && \
+  echo 'alias load-priv="gpg --import /etc/gpgkey/keypriv.asc"' >> ${GLOBALS_BASHRC} && \
+  echo 'alias load-pub="gpg --import /etc/gpgkey/keypub.asc"' >> ${GLOBALS_BASHRC} && \
+  curl -sS https://starship.rs/install.sh | sh -s -- -y && \
+  echo '[ $STAR_NO != "false" ] && eval "$(starship init bash)" ' >> ${GLOBALS_BASHRC} && \
+  curl -fsSL https://github.com/jdx/mise/releases/download/${MISE_VERSION}/mise-${MISE_VERSION}-linux-x64 \
+  -o /home/tooling/.local/bin/mise && \
+  chmod +x /home/tooling/.local/bin/mise && \
+  echo 'eval "$(~/.local/bin/mise activate bash)"' >> ${GLOBALS_BASHRC} && \
+  echo 'export MISE_TRUSTED_CONFIG_PATHS=/home/tooling/.config/mise:/home/user/.config/mise:/mounted/mise' >> ${GLOBALS_BASHRC}
+
+ENV STAR_NO="true"
+COPY starship.toml ${HOME}/.config/starship.toml
+COPY --chown=0:0 .stow-local-ignore /home/tooling/
+COPY --chown=0:0 entrypoint.sh /
+
+RUN chgrp -R 0 /home/tooling && chmod -R g=u /home/tooling && \
+  mkdir -p /home/user && \
+  chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home && \
+  chmod +x /entrypoint.sh
+
+USER 1234
+RUN cp -f /home/tooling/.bashrc /home/user/.bashrc && \
+  stow . -t /home/user/ -d /home/tooling/ --no-folding
+ENV HOME=/home/user
+WORKDIR /projects
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD ["tail", "-f", "/dev/null"]
