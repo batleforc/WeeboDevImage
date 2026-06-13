@@ -13,8 +13,8 @@ USER 0
 ENV CLUSTERCTL_VERSION="v1.13.2"
 ENV TALOSCTL_VERSION="v1.13.3"
 ENV OPENTOFU_VERSION="1.12.1"
-ENV ARGOCDCLI_VERSION="v3.4.3"
-ENV UPDATECLI_VERSION="v0.118.0"
+ENV ARGOCDCLI_VERSION="v3.4.2"
+ENV UPDATECLI_VERSION="v0.117.0"
 
 ## Add Wireguard
 RUN apt-get update && apt-get install -y --no-install-recommends wireguard \
@@ -22,17 +22,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends wireguard \
 
 ## ArgoCD + Clusterctl + Talosctl + Opentofu + UpdateCLI
 RUN tmpdir="$(mktemp -d)" && cd "${tmpdir}" && \
-  wget https://github.com/argoproj/argo-cd/releases/download/${ARGOCDCLI_VERSION}/argocd-linux-amd64 && \
-  chmod +x argocd-linux-amd64 && mv argocd-linux-amd64 /usr/local/bin/argocd && \
-  wget https://github.com/kubernetes-sigs/cluster-api/releases/download/${CLUSTERCTL_VERSION}/clusterctl-linux-amd64 && \
-  chmod +x clusterctl-linux-amd64 && mv clusterctl-linux-amd64 /usr/local/bin/clusterctl && \
-  wget https://github.com/siderolabs/talos/releases/download/${TALOSCTL_VERSION}/talosctl-linux-amd64 && \
-  chmod +x talosctl-linux-amd64 && mv talosctl-linux-amd64 /usr/local/bin/talosctl && \
-  wget https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz && \
-  tar -xvf tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz && mv tofu /usr/local/bin/tofu && \
-  wget https://github.com/updatecli/updatecli/releases/download/${UPDATECLI_VERSION}/updatecli_Linux_x86_64.tar.gz && \
-  tar -xvf updatecli_Linux_x86_64.tar.gz && mv updatecli /usr/local/bin/updatecli && \
-  cd / && rm -rf "${tmpdir}"
+    wget https://github.com/argoproj/argo-cd/releases/download/${ARGOCDCLI_VERSION}/argocd-linux-amd64 && \
+    chmod +x argocd-linux-amd64 && mv argocd-linux-amd64 /usr/local/bin/argocd && \
+    wget https://github.com/kubernetes-sigs/cluster-api/releases/download/${CLUSTERCTL_VERSION}/clusterctl-linux-amd64 && \
+    chmod +x clusterctl-linux-amd64 && mv clusterctl-linux-amd64 /usr/local/bin/clusterctl && \
+    wget https://github.com/siderolabs/talos/releases/download/${TALOSCTL_VERSION}/talosctl-linux-amd64 && \
+    chmod +x talosctl-linux-amd64 && mv talosctl-linux-amd64 /usr/local/bin/talosctl && \
+    wget https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz && \
+    tar -xvf tofu_${OPENTOFU_VERSION}_linux_amd64.tar.gz && mv tofu /usr/local/bin/tofu && \
+    wget https://github.com/updatecli/updatecli/releases/download/${UPDATECLI_VERSION}/updatecli_Linux_x86_64.tar.gz && \
+    tar -xvf updatecli_Linux_x86_64.tar.gz && mv updatecli /usr/local/bin/updatecli && \
+    cd / && rm -rf "${tmpdir}"
 
 USER 1234
 RUN cp -f /home/tooling/.bashrc /home/user/.bashrc && \
