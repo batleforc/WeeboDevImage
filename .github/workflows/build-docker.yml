@@ -82,9 +82,9 @@ jobs:
         id: build-matrices
         run: |
           ALL=$(find . -name 'Containerfile' -print | sort | jq -R -s -c 'split("\n")[:-1]')
-          echo "matrix_min=$(echo $ALL   | jq -c 'map(select(test("/che-min/")))')"   >> $GITHUB_OUTPUT
-          echo "matrix_base=$(echo $ALL  | jq -c 'map(select(test("/che-base/")))')"  >> $GITHUB_OUTPUT
-          echo "matrix_images=$(echo $ALL | jq -c 'map(select(test("/che-min/|/che-base/") | not))')" >> $GITHUB_OUTPUT
+          echo "matrix_min=$(echo $ALL   | jq -c 'map(select(test("/che-min")))')"   >> $GITHUB_OUTPUT
+          echo "matrix_base=$(echo $ALL  | jq -c 'map(select(test("/che-base")))')"  >> $GITHUB_OUTPUT
+          echo "matrix_images=$(echo $ALL | jq -c 'map(select(test("/che-min|/che-base") | not))')" >> $GITHUB_OUTPUT
       - name: Show matrices
         run: |
           echo "min:    ${{ steps.build-matrices.outputs.matrix_min }}"
