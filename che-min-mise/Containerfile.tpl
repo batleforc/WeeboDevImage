@@ -47,7 +47,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     less \
     htop \
     pkg-config &&\
-    rm -rf /var/lib/apt/lists/* \
+    rm -rf /var/lib/apt/lists/* &&\
     mkdir -p /home/tooling/ &&\
     echo "source /etc/profile.d/bash_completion.sh" >> ${GLOBALS_BASHRC} &&\
     locale-gen "en_US.UTF-8" &&\
