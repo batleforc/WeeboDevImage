@@ -56,6 +56,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     echo 'alias load-pub="gpg --import /etc/gpgkey/keypub.asc"' >> ${GLOBALS_BASHRC} && \
     curl -sS https://starship.rs/install.sh | sh -s -- -y && \
     echo '[ $STAR_NO != "false" ] && eval "$(starship init bash)" ' >> ${GLOBALS_BASHRC} && \
+    mkdir -p /home/tooling/.local/bin && \
     curl -fsSL https://github.com/jdx/mise/releases/download/${MISE_VERSION}/mise-${MISE_VERSION}-linux-x64 \
     -o /home/tooling/.local/bin/mise && \
     chmod +x /home/tooling/.local/bin/mise && \
