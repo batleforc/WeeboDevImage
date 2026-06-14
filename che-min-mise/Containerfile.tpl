@@ -47,11 +47,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     less \
     htop \
     pkg-config &&\
-    && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /home/tooling/ \
-    && echo "source /etc/profile.d/bash_completion.sh" >> ${GLOBALS_BASHRC} \
-    && locale-gen "en_US.UTF-8" \
-    && echo 'export GPG_TTY=$(tty)' >> ${GLOBALS_BASHRC} && \
+    rm -rf /var/lib/apt/lists/* \
+    mkdir -p /home/tooling/ &&\
+    echo "source /etc/profile.d/bash_completion.sh" >> ${GLOBALS_BASHRC} &&\
+    locale-gen "en_US.UTF-8" &&\
+    echo 'export GPG_TTY=$(tty)' >> ${GLOBALS_BASHRC} && \
     echo 'alias load-priv="gpg --import /etc/gpgkey/keypriv.asc"' >> ${GLOBALS_BASHRC} && \
     echo 'alias load-pub="gpg --import /etc/gpgkey/keypub.asc"' >> ${GLOBALS_BASHRC} && \
     curl -sS https://starship.rs/install.sh | sh -s -- -y && \
