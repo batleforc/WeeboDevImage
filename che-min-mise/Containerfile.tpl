@@ -21,6 +21,7 @@ RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC} && chmod -R 777 ${GLOB
     echo "alias la='ls -A'" >> ${GLOBALS_BASHRC} && \
     echo "alias l='ls -CF'" >> ${GLOBALS_BASHRC} && \
     echo "alias k='kubectl'" >> ${GLOBALS_BASHRC} && \
+    echo "alias n='neovim'" >> ${GLOBALS_BASHRC} && \
     echo "alias kns='kubectl config set-context --current --namespace'" >> ${GLOBALS_BASHRC}
 
 # Core packages: replaces buildpack-deps, adds locale + completion + nested container support (uidmap)
@@ -46,6 +47,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     libnode-dev \
     less \
     htop \
+    neovim \
     pkg-config &&\
     rm -rf /var/lib/apt/lists/* &&\
     mkdir -p /home/tooling/ &&\
@@ -74,6 +76,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     cp FiraCode*.ttf /usr/local/share/fonts && \
     rm FiraCode.zip && \
     fc-cache -f -v && \
+    sh -c "$(curl -fsLS https://get.chezmoi.io)" && \
     rm -rf "${tmpdir}" && cd -
 
 ENV KUBECONFIG=/home/user/.kube/config

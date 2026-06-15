@@ -26,4 +26,15 @@ if [ $HOME_USER_MOUNTED -eq 0 ] && [ ! -f $STOW_COMPLETE ]; then
     touch $STOW_COMPLETE
 fi
 
+CHEZMOI_BASEPATH="/home/user/.local/share/chezmoi"
+
+if [ -z "${CHEZMOI_URL}" ]; then
+    if [ ! -d $CHEZMOI_BASEPATH ]; then
+        chezmoi init $CHEZMOI_URL
+    elif
+        chezmoi update --no-tty --keep-going 
+    fi
+
+fi
+
 exec "$@"
