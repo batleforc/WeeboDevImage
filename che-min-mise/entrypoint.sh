@@ -218,7 +218,7 @@ if [ ! -z "${CHEZMOI_URL}" ]; then
     if [ ! -d "${CHEZMOI_BASEPATH}" ]; then
         echo "Init Chezmoi"
         chezmoi init $CHEZMOI_URL
-        chezmoi apply --no--tty
+        chezmoi apply
     else
         echo "Update Chezmoi"
         chezmoi update --no-tty --keep-going 
