@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # Replace /home/tooling/* path to /home/user/* path
