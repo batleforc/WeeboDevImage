@@ -31,10 +31,9 @@ CHEZMOI_BASEPATH="/home/user/.local/share/chezmoi"
 if [ -z "${CHEZMOI_URL}" ]; then
     if [ ! -d $CHEZMOI_BASEPATH ]; then
         chezmoi init $CHEZMOI_URL
-    elif
+    else
         chezmoi update --no-tty --keep-going 
     fi
-
 fi
 
 exec "$@"
