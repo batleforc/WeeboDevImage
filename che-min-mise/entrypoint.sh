@@ -29,11 +29,16 @@ fi
 CHEZMOI_BASEPATH="/home/user/.local/share/chezmoi"
 
 if [ -z "${CHEZMOI_URL}" ]; then
-    if [ ! -d $CHEZMOI_BASEPATH ]; then
+    echo "Chezmoi Exist"
+    if [ ! -d "${CHEZMOI_BASEPATH}" ]; then
+        echo "Init Chezmoi"
         chezmoi init $CHEZMOI_URL
     else
+        echo "Update Chezmoi"
         chezmoi update --no-tty --keep-going 
     fi
+else
+    echo "Chezmoi url does not exist skip..."
 fi
 
 exec "$@"
