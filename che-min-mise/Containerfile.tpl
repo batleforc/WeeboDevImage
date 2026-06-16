@@ -21,7 +21,7 @@ RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC} && chmod -R 777 ${GLOB
     echo "alias la='ls -A'" >> ${GLOBALS_BASHRC} && \
     echo "alias l='ls -CF'" >> ${GLOBALS_BASHRC} && \
     echo "alias k='kubectl'" >> ${GLOBALS_BASHRC} && \
-    echo "alias n='neovim'" >> ${GLOBALS_BASHRC} && \
+    echo "alias n='nvim'" >> ${GLOBALS_BASHRC} && \
     echo "alias kns='kubectl config set-context --current --namespace'" >> ${GLOBALS_BASHRC}
 
 # Core packages: replaces buildpack-deps, adds locale + completion + nested container support (uidmap)
