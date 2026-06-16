@@ -84,12 +84,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 ENV KUBECONFIG=/home/user/.kube/config
 ENV LANG="en_US.UTF-8"
 ENV STAR_NO="true"
+
 COPY starship.toml ${HOME}/.config/starship.toml
 COPY --chown=0:0 .stow-local-ignore /home/tooling/
 COPY --chown=0:0 entrypoint.sh /
+COPY --chown=0:0 .copy-files /home/tooling/
 
-
-## https://github.com/devfile/developer-images/blob/main/universal/ubi8/entrypoint.sh
 
 RUN mkdir -p /home/tooling/.local/bin && \
     chgrp -R 0 /home && chmod -R g=u /home && \
@@ -97,15 +97,8 @@ RUN mkdir -p /home/tooling/.local/bin && \
     touch /etc/subgid /etc/subuid  && \
     chmod g=u /etc/subgid /etc/subuid /etc/passwd  && \
     echo user:10000:65536 > /etc/subuid  && \
-    echo user:10000:65536 > /etc/subgid
-ENV PATH="/home/user/.local/bin:$PATH"
-ENV PATH="/home/tooling/.local/bin:$PATH"
-
-COPY --chown=0:0 .copy-files /home/tooling/
-
-## Try a fix for path not found
-
-RUN echo 'export PATH="/home/tooling/.local/bin:$PATH"' >> ${GLOBALS_BASHRC} && \
+    echo user:10000:65536 > /etc/subgid && \
+    echo 'export PATH="/home/tooling/.local/bin:$PATH"' >> ${GLOBALS_BASHRC} && \
     echo 'export PATH="/home/user/.local/bin:$PATH"' >> ${GLOBALS_BASHRC} && \
     echo 'export PATH="/checode/checode-linux-libc/ubi9/bin/remote-cli:$PATH"' >> ${GLOBALS_BASHRC} && \
     echo '[ -f "/home/user/.bashrc_perso" ] && source /home/user/.bashrc_perso'  >> ${GLOBALS_BASHRC} && \
@@ -114,6 +107,11 @@ RUN echo 'export PATH="/home/tooling/.local/bin:$PATH"' >> ${GLOBALS_BASHRC} && 
     mkdir -p /home/user && \
     chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home && \
     chmod +x /entrypoint.sh
+
+ENV PATH="/home/user/.local/bin:$PATH"
+ENV PATH="/home/tooling/.local/bin:$PATH"
+
+
 
 USER 1234
 RUN cp -f /home/tooling/.bashrc /home/user/.bashrc && \
