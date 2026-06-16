@@ -28,7 +28,7 @@ fi
 
 CHEZMOI_BASEPATH="/home/user/.local/share/chezmoi"
 
-if [ -z "${CHEZMOI_URL}" ]; then
+if [ ! -z "${CHEZMOI_URL}" ]; then
     echo "Chezmoi Exist"
     if [ ! -d "${CHEZMOI_BASEPATH}" ]; then
         echo "Init Chezmoi"
