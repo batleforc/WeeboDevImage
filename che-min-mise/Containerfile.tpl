@@ -48,6 +48,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     less \
     htop \
     neovim \
+    ripgrep \
+    lazygit \
     pkg-config &&\
     rm -rf /var/lib/apt/lists/* &&\
     mkdir -p /home/tooling/ &&\
