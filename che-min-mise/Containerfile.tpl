@@ -76,7 +76,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     cp FiraCode*.ttf /usr/local/share/fonts && \
     rm FiraCode.zip && \
     fc-cache -f -v && \
-    BINDIR=/home/tooling/.local/bin sh -c "$(curl -fsLS https://get.chezmoi.io)" && \
+    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /home/tooling/.local/bin && \
     rm -rf "${tmpdir}" && cd -
 
 ENV KUBECONFIG=/home/user/.kube/config
