@@ -102,6 +102,7 @@ COPY --chown=0:0 .copy-files /home/tooling/
 RUN echo 'export PATH="/home/tooling/.local/bin:$PATH"' >> ${GLOBALS_BASHRC} && \
     echo 'export PATH="/home/user/.local/bin:$PATH"' >> ${GLOBALS_BASHRC} && \
     echo 'export PATH="/checode/checode-linux-libc/ubi9/bin/remote-cli:$PATH"' >> ${GLOBALS_BASHRC} && \
+    echo '[ -f "/home/user/.bashrc_perso" ] && source /home/user/.bashrc_perso'  >> ${GLOBALS_BASHRC} && \
     chmod g=u /etc/passwd /etc/group && \
     chgrp -R 0 /home/tooling && chmod -R g=u /home/tooling && \
     mkdir -p /home/user && \
