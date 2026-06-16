@@ -92,7 +92,11 @@ COPY --chown=0:0 entrypoint.sh /
 
 RUN mkdir -p /home/tooling/.local/bin && \
     chgrp -R 0 /home && chmod -R g=u /home && \
-    useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user
+    useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
+    touch /etc/subgid /etc/subuid  && \
+    chmod g=u /etc/subgid /etc/subuid /etc/passwd  && \
+    echo user:10000:65536 > /etc/subuid  && \
+    echo user:10000:65536 > /etc/subgid
 ENV PATH="/home/user/.local/bin:$PATH"
 ENV PATH="/home/tooling/.local/bin:$PATH"
 
