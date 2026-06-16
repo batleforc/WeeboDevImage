@@ -13,17 +13,17 @@ ENV MISE_VERSION="@@BASE_TOOLS_MISE@@"
 
 ## Extra build deps useful when mise compiles tools from source
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      python3-dev \
-      python3-pip \
-      python3-venv \
-      libssl-dev \
-      libyaml-dev \
-      libreadline-dev \
-      libncurses-dev \
-      libbz2-dev \
-      libsqlite3-dev \
-      libffi-dev \
-      zlib1g-dev \
+    python3-dev \
+    python3-pip \
+    python3-venv \
+    libssl-dev \
+    libyaml-dev \
+    libreadline-dev \
+    libncurses-dev \
+    libbz2-dev \
+    libsqlite3-dev \
+    libffi-dev \
+    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
 ## Install mise
@@ -46,4 +46,4 @@ RUN stow . -t /home/user -d /home/tooling --no-folding && \
     cp -f /home/tooling/.bashrc /home/user/.bashrc
 WORKDIR /home/user
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD ["tail", "-f", "/dev/null"]
+CMD ["sleep","infinity"]

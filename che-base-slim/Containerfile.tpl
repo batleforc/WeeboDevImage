@@ -51,4 +51,4 @@ RUN cp -f /home/tooling/.bashrc /home/user/.bashrc && \
 ENV HOME=/home/user
 WORKDIR /projects
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD ["tail", "-f", "/dev/null"]
+CMD ["sleep","infinity"]

@@ -23,4 +23,4 @@ RUN stow . -t /home/user -d /home/tooling --no-folding
 RUN cp -f /home/tooling/.bashrc /home/user/.bashrc
 WORKDIR /home/user
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD ["tail", "-f", "/dev/null"]
+CMD ["sleep","infinity"]
