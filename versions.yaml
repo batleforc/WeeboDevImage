@@ -11,16 +11,16 @@ min:
   firacode: v3.4.0
 
 base_tools:
-  helm: v4.2.1
+  helm: v4.2.2
   taskfile: v3.51.1
   k9s: v0.51.0
   krew: v0.5.0
   gitleaks: 8.30.1
   kubedock: 0.21.1
-  buildkit: v0.30.0
+  buildkit: v0.31.0
   cocogitto: 7.0.0
   yq: "v4.45.1"
-  mise: v2026.6.10
+  mise: v2026.6.11
 
 golang:
   version: 1.26.4
