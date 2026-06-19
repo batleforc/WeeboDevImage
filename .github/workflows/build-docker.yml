@@ -18,7 +18,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Install yq
         run: |
           curl -fsSLo /usr/local/bin/yq \
@@ -66,7 +66,7 @@ jobs:
       registry: ${{ steps.extract_registry.outputs.registry }}
       registry_host: ${{ steps.extract_registry.outputs.registry_host }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Install yq
         run: |
           curl -fsSLo /usr/local/bin/yq \
@@ -105,7 +105,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Login to registry
@@ -138,7 +138,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Login to registry
@@ -171,7 +171,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Login to registry
@@ -201,7 +201,7 @@ jobs:
       packages: read
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up crane
         uses: imjasonh/setup-crane@v0.6
