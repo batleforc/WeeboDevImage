@@ -74,6 +74,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     chmod +x /usr/local/bin/kubectl && \
     kubectl completion bash > /etc/bash_completion.d/kubectl && \
     echo 'source /etc/bash_completion.d/kubectl' >> ${GLOBALS_BASHRC} && \
+    echo 'eval "$(fzf --bash)"' >> ${GLOBALS_BASHRC} && \
     tmpdir="$(mktemp -d)" && cd "${tmpdir}" && \
     curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/download/${FIRACODE_VERSION}/FiraCode.zip -o FiraCode.zip && \
     unzip FiraCode.zip && \
