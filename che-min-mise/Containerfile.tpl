@@ -50,6 +50,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     neovim \
     ripgrep \
     lazygit \
+    fzf \
+    eza \
     pkg-config &&\
     rm -rf /var/lib/apt/lists/* &&\
     mkdir -p /home/tooling/ &&\
