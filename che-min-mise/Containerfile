@@ -99,7 +99,7 @@ RUN mkdir -p /home/tooling/.local/bin && \
     chmod g=u /etc/subgid /etc/subuid /etc/passwd  && \
     echo user:10000:65536 > /etc/subuid  && \
     echo user:10000:65536 > /etc/subgid && \
-    echo 'export PATH="/checode/checode-linux-libc/ubi9/bin/remote-cli:/home/tooling/.local/bin:$PATH"' >> ${GLOBALS_BASHRC} && \
+    echo 'export PATH="/home/tooling/.local/bin:$PATH"' >> ${GLOBALS_BASHRC} && \
     echo 'export PATH="/home/user/.local/bin:$PATH"' >> ${GLOBALS_BASHRC} && \
     echo 'export PATH="/checode/checode-linux-libc/ubi9/bin/remote-cli:$PATH"' >> ${GLOBALS_BASHRC} && \
     echo '[ -f "/home/user/.bashrc_perso" ] && source /home/user/.bashrc_perso'  >> ${GLOBALS_BASHRC} && \
