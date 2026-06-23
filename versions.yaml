@@ -23,7 +23,7 @@ base_tools:
   mise: v2026.6.11
 
 golang:
-  version: 1.26.4
+  version: 1.27rc1
 
 rust:
   version: 1.96.0
