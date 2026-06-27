@@ -204,7 +204,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Set up crane
-        uses: imjasonh/setup-crane@v0.6
+        uses: imjasonh/setup-crane@v0.7
 
       - name: Authenticate crane against GHCR
         run: |
