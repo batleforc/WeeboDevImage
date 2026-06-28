@@ -1,0 +1,44 @@
+# GENERATED FILE — do not edit directly. Edit Containerfile.tpl + versions.yaml, then run: task render
+FROM ghcr.io/batleforc/weebodevimage/che-min-mise:main
+# @@BASE_CHE_MIN_MISE_IMAGE@@ -> ghcr.io/batleforc/weebodevimage/che-min-mise:main
+
+LABEL org.opencontainers.image.authors="batleforc"
+LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/che-min-mise-podman"
+LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
+LABEL org.opencontainers.image.title="Che-Min-Mise-Podman"
+
+USER 0
+
+# Rootless container BUILD + RUN on top of the lean base.
+# No kubedock / podman-wrapper here: this variant runs real nested containers.
+# uidmap is already provided by che-min-mise (subuid/subgid set in the base).
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -y --no-install-recommends \
+    podman \
+    buildah \
+    skopeo \
+    crun \
+    fuse-overlayfs \
+    netavark \
+    aardvark-dns \
+    passt \
+    slirp4netns \
+    catatonit && \
+    rm -rf /var/lib/apt/lists/*
+
+# Buildah rootless: chroot isolation avoids pivot_root and stays compatible
+# with a restrictive seccomp profile.
+ENV _BUILDAH_STARTED_IN_USERNS="" \
+    BUILDAH_ISOLATION=chroot
+
+# System-level container config ONLY.
+# storage.conf is intentionally NOT shipped here: the inherited che-min-mise
+# entrypoint generates it per-user at runtime (fuse-overlayfs if /dev/fuse is
+# present, else vfs). Shipping a user-level ~/.config/containers dir would
+# create that directory and suppress the entrypoint's dynamic storage logic,
+# so we keep engine/network/registry config at /etc/containers instead.
+COPY --chown=0:0 containers.conf  /etc/containers/containers.conf
+COPY --chown=0:0 registries.conf  /etc/containers/registries.conf
+
+USER 1234
+WORKDIR /projects
