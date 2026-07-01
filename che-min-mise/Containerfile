@@ -93,6 +93,7 @@ COPY starship.toml ${HOME}/.config/starship.toml
 COPY --chown=0:0 .stow-local-ignore /home/tooling/
 COPY --chown=0:0 entrypoint.sh /
 COPY --chown=0:0 .copy-files /home/tooling/
+COPY --chown=0:0 url.sh /home/tooling/.local/bin/url
 
 
 RUN mkdir -p /home/tooling/.local/bin && \
@@ -110,6 +111,7 @@ RUN mkdir -p /home/tooling/.local/bin && \
     chgrp -R 0 /home/tooling && chmod -R g=u /home/tooling && \
     mkdir -p /home/user && \
     chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home && \
+    chmod +x /home/tooling/.local/bin/url && \
     chmod +x /entrypoint.sh
 
 ENV PATH="/home/user/.local/bin:$PATH"
