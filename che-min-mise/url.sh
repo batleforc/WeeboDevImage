@@ -4,7 +4,6 @@
 # Endpoint name defaults to "base" if omitted.
 set -euo pipefail
 
-ENDPOINT_NAME="${1:-base}"
 USERNAME="${DEVWORKSPACE_NAMESPACE##*-}"
 WORKSPACE="${DEVWORKSPACE_NAME:-}"
 DASHBOARD_URL="${CHE_DASHBOARD_URL:-}"
