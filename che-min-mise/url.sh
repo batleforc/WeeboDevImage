@@ -5,11 +5,11 @@
 set -euo pipefail
 
 ENDPOINT_NAME="${1:-base}"
-USERNAME="${DEVWORKSPACE_NAMESPACE:-}"
+USERNAME="${DEVWORKSPACE_NAMESPACE##*-}"
 WORKSPACE="${DEVWORKSPACE_NAME:-}"
 DASHBOARD_URL="${CHE_DASHBOARD_URL:-}"
 
-[[ -z "$USERNAME"      ]] && { echo "Error: DEVWORKSPACE_NAMESPACE is not set" >&2; exit 1; }
+[[ -z "$DEVWORKSPACE_NAMESPACE" ]] && { echo "Error: DEVWORKSPACE_NAMESPACE is not set" >&2; exit 1; }
 [[ -z "$WORKSPACE"     ]] && { echo "Error: DEVWORKSPACE_NAME is not set"      >&2; exit 1; }
 [[ -z "$DASHBOARD_URL" ]] && { echo "Error: CHE_DASHBOARD_URL is not set"      >&2; exit 1; }
 
