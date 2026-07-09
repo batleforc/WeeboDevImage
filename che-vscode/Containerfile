@@ -1,4 +1,4 @@
 # GENERATED FILE — do not edit directly. Edit Containerfile.tpl + versions.yaml, then run: task render
-FROM quay.io/che-incubator/che-code:7.119.0
+FROM quay.io/che-incubator/che-code:7.120.0
 
 COPY entrypoint-volume.sh /entrypoint-volume.sh
