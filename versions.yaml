@@ -20,7 +20,7 @@ base_tools:
   buildkit: v0.31.1
   cocogitto: 7.0.0
   yq: "v4.45.1"
-  mise: v2026.7.2
+  mise: v2026.7.3
 
 golang:
   version: 1.27rc1
