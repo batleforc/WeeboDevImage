@@ -50,6 +50,6 @@ sidecar:
 ops:
   argocd: v3.4.4
   clusterctl: v1.13.3
-  talosctl: v1.13.5
+  talosctl: v1.13.6
   opentofu: 1.12.3
   updatecli: v0.119.0
