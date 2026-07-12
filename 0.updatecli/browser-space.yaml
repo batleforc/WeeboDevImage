@@ -1,0 +1,38 @@
+name: Upgrade BrowserSpace
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: "{{ .github.user }}"
+      email: "{{ .github.email }}"
+      owner: batleforc
+      repository: WeeboDevImage
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      branch: main
+
+sources:
+  chrome:
+    kind: json
+    spec:
+      file: https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json
+      key: .channels.Stable.version
+
+targets:
+  bump_chrome_version:
+    kind: yaml
+    name: "Bump Chrome for Testing version"
+    scmid: default
+    sourceid: chrome
+    spec:
+      file: versions.yaml
+      key: $.browser.chrome
+
+actions:
+  bump_browser_space:
+    kind: github/pullrequest
+    scmid: default
+    spec:
+      title: 'ci: Bump Browser Space'
+      automerge: false

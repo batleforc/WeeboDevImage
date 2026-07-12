@@ -38,6 +38,9 @@ rustup:
     ppc64el: 4bfff85bd3967d988e14567aa9cc6ab0ea386f0ffeff0f9f14d23f0103bf1f97
     s390x: 66c2c132428b6b77803facb02cbdf33b89d20c00bd20da142be8cb651f2e7cd8
 
+browser:
+  chrome: 150.0.7871.115
+
 ops:
   argocd: v3.4.4
   clusterctl: v1.13.3

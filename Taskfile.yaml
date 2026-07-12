@@ -9,6 +9,7 @@ vars:
     - che-rust
     - che-mise
     - che-ops
+    - che-browser
 
 tasks:
   init:
