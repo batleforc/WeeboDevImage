@@ -1,0 +1,41 @@
+# GENERATED FILE — do not edit directly. Edit Containerfile.tpl + versions.yaml, then run: task render
+FROM ubuntu:26.04
+
+LABEL org.opencontainers.image.authors="batleforc"
+LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/che-mailpit"
+LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
+LABEL org.opencontainers.image.title="Che-MailpitImage"
+
+ENV MAILPIT_VERSION="v1.30.4"
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    tini && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://github.com/axllent/mailpit/releases/download/${MAILPIT_VERSION}/mailpit-linux-amd64.tar.gz | \
+    tar -C /usr/local/bin/ -xzf - mailpit && \
+    chmod +x /usr/local/bin/mailpit
+
+COPY --chown=0:0 entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh && \
+    useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
+    chgrp -R 0 /home/user && chmod -R g=u /home/user && \
+    chmod g=u /etc/passwd
+
+ENV HOME=/home/user
+# ephemeral mailbox; accept any SMTP auth so apps need no config to send
+ENV MP_DATABASE=/tmp/mailpit.db
+ENV MP_SMTP_AUTH_ACCEPT_ANY=1
+ENV MP_SMTP_AUTH_ALLOW_INSECURE=1
+
+USER 1234
+WORKDIR /home/user
+
+# 1025 SMTP, 8025 web UI + API
+EXPOSE 1025 8025
+
+ENTRYPOINT ["tini", "--", "/entrypoint.sh"]

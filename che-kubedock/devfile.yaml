@@ -1,11 +1,11 @@
 schemaVersion: 2.3.0
 metadata:
-  name: WeeboDevImageBrowser
+  name: WeeboDevImageKubedock
 
 components:
 - name: tools
   container:
-    image: @@REGISTRY@@/che-min-mise:main
+    image: ghcr.io/batleforc/weebodevimage/che-min-mise:main
     memoryLimit: 8Gi
     memoryRequest: 1Gi
     cpuLimit: "2"
@@ -22,25 +22,20 @@ components:
       value: "dev-che"
     - name: "PORT"
       value: "5437"
-- name: browser
+    - name: DOCKER_HOST
+      value: "tcp://localhost:2475"
+    - name: TESTCONTAINERS_RYUK_DISABLED
+      value: "true"
+- name: kubedock
   container:
-    image: @@REGISTRY@@/che-browser:main
-    memoryLimit: 3Gi
-    memoryRequest: 1Gi
-    cpuLimit: "2"
-    cpuRequest: 500m
+    image: ghcr.io/batleforc/weebodevimage/che-kubedock:main
+    memoryLimit: 512Mi
+    memoryRequest: 128Mi
+    cpuLimit: "1"
+    cpuRequest: 100m
     mountSources: false
     endpoints:
-    - name: novnc
-      targetPort: 6080
-      exposure: public
-      protocol: https
-      secure: true
-    - name: cdp
-      targetPort: 9222
-      exposure: internal
-      protocol: http
-    - name: webdriver
-      targetPort: 9515
+    - name: docker
+      targetPort: 2475
       exposure: internal
       protocol: http

@@ -1,11 +1,11 @@
 schemaVersion: 2.3.0
 metadata:
-  name: WeeboDevImageBrowser
+  name: WeeboDevImageMailpit
 
 components:
 - name: tools
   container:
-    image: @@REGISTRY@@/che-min-mise:main
+    image: ghcr.io/batleforc/weebodevimage/che-min-mise:main
     memoryLimit: 8Gi
     memoryRequest: 1Gi
     cpuLimit: "2"
@@ -22,25 +22,25 @@ components:
       value: "dev-che"
     - name: "PORT"
       value: "5437"
-- name: browser
+    - name: SMTP_HOST
+      value: "localhost"
+    - name: SMTP_PORT
+      value: "1025"
+- name: mailpit
   container:
-    image: @@REGISTRY@@/che-browser:main
-    memoryLimit: 3Gi
-    memoryRequest: 1Gi
-    cpuLimit: "2"
-    cpuRequest: 500m
+    image: ghcr.io/batleforc/weebodevimage/che-mailpit:main
+    memoryLimit: 256Mi
+    memoryRequest: 64Mi
+    cpuLimit: "1"
+    cpuRequest: 100m
     mountSources: false
     endpoints:
-    - name: novnc
-      targetPort: 6080
+    - name: smtp
+      targetPort: 1025
+      exposure: internal
+      protocol: tcp
+    - name: mailpit-ui
+      targetPort: 8025
       exposure: public
       protocol: https
       secure: true
-    - name: cdp
-      targetPort: 9222
-      exposure: internal
-      protocol: http
-    - name: webdriver
-      targetPort: 9515
-      exposure: internal
-      protocol: http

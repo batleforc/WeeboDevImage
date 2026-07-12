@@ -41,6 +41,12 @@ rustup:
 browser:
   chrome: 150.0.7871.115
 
+# kubedock version intentionally lives in base_tools (shared with che-base)
+sidecar:
+  mailpit: v1.30.4
+  rustfs: 1.0.0-beta.8 # release tag has no 'v', asset name does: templates prepend it
+  lgtm: "0.28.0"
+
 ops:
   argocd: v3.4.4
   clusterctl: v1.13.3

@@ -1,6 +1,6 @@
 schemaVersion: 2.3.0
 metadata:
-  name: WeeboDevImageBrowser
+  name: WeeboDevImageRustFS
 
 components:
 - name: tools
@@ -22,25 +22,27 @@ components:
       value: "dev-che"
     - name: "PORT"
       value: "5437"
-- name: browser
+    - name: AWS_ENDPOINT_URL
+      value: "http://localhost:9000"
+    - name: AWS_ACCESS_KEY_ID
+      value: "rustfsadmin"
+    - name: AWS_SECRET_ACCESS_KEY
+      value: "rustfsadmin"
+- name: rustfs
   container:
-    image: ghcr.io/batleforc/weebodevimage/che-browser:main
-    memoryLimit: 3Gi
-    memoryRequest: 1Gi
-    cpuLimit: "2"
-    cpuRequest: 500m
+    image: ghcr.io/batleforc/weebodevimage/che-rustfs:main
+    memoryLimit: 1Gi
+    memoryRequest: 256Mi
+    cpuLimit: "1"
+    cpuRequest: 100m
     mountSources: false
     endpoints:
-    - name: novnc
-      targetPort: 6080
+    - name: s3
+      targetPort: 9000
+      exposure: internal
+      protocol: http
+    - name: rustfs-console
+      targetPort: 9001
       exposure: public
       protocol: https
       secure: true
-    - name: cdp
-      targetPort: 9222
-      exposure: internal
-      protocol: http
-    - name: webdriver
-      targetPort: 9515
-      exposure: internal
-      protocol: http

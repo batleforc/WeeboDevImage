@@ -10,6 +10,10 @@ vars:
     - che-mise
     - che-ops
     - che-browser
+    - che-kubedock
+    - che-mailpit
+    - che-rustfs
+    - che-lgtm
 
 tasks:
   init:
