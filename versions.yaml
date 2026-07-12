@@ -1,5 +1,18 @@
 registry: ghcr.io/batleforc/weebodevimage
 
+# Images kept in the repo for reference but excluded from CI builds.
+# Remove an entry to re-enable its build.
+disabled_images:
+  - che-min
+  - che-base
+  - che-base-slim
+  - che-golang
+  - che-node
+  - che-rust
+  - che-polyglot
+  - che-mise
+  - che-ops
+
 base:
   ubuntu: "26.04"
   ubuntu_registry: "" # optional: e.g. harbor.example.com/dockerhub-proxy

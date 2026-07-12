@@ -4,11 +4,8 @@ vars:
   REGISTRY:
     sh: yq e '.registry' versions.yaml
   IMAGES:
-    - che-golang
-    - che-node
-    - che-rust
-    - che-mise
-    - che-ops
+    - che-mise-pdm
+    - che-vscode
     - che-browser
     - che-kubedock
     - che-mailpit
@@ -44,22 +41,15 @@ tasks:
     cmds:
       - podman build -t {{.REGISTRY}}/{{.IMAGE}}:{{.TAG}} {{.IMAGE}}/
 
-  build-min:
-    desc: "Build che-min"
+  build-min-mise:
+    desc: "Build che-min-mise"
     cmds:
       - task: build
-        vars: { IMAGE: che-min }
-
-  build-base:
-    desc: "Build che-base (requires che-min:local)"
-    deps: [build-min]
-    cmds:
-      - task: build
-        vars: { IMAGE: che-base }
+        vars: { IMAGE: che-min-mise }
 
   build-all:
     desc: "Build all images in dependency order"
-    deps: [build-base]
+    deps: [build-min-mise]
     cmds:
       - for: { var: IMAGES }
         task: build

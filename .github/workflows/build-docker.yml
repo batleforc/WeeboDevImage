@@ -62,6 +62,7 @@ jobs:
       matrix_min: ${{ steps.build-matrices.outputs.matrix_min }}
       matrix_base: ${{ steps.build-matrices.outputs.matrix_base }}
       matrix_images: ${{ steps.build-matrices.outputs.matrix_images }}
+      matrix_all: ${{ steps.build-matrices.outputs.matrix_all }}
       branch: ${{ steps.extract_branch.outputs.branch }}
       registry: ${{ steps.extract_registry.outputs.registry }}
       registry_host: ${{ steps.extract_registry.outputs.registry_host }}
@@ -81,15 +82,19 @@ jobs:
       - name: Build matrices
         id: build-matrices
         run: |
+          DISABLED=$(yq e -o=json -I=0 '.disabled_images // []' versions.yaml)
           ALL=$(find . -name 'Containerfile' -print | sort | jq -R -s -c 'split("\n")[:-1]')
-          echo "matrix_min=$(echo $ALL   | jq -c 'map(select(test("/che-min")))')"   >> $GITHUB_OUTPUT
-          echo "matrix_base=$(echo $ALL  | jq -c 'map(select(test("/che-base")))')"  >> $GITHUB_OUTPUT
-          echo "matrix_images=$(echo $ALL | jq -c 'map(select(test("/che-min|/che-base") | not))')" >> $GITHUB_OUTPUT
+          ENABLED=$(echo $ALL | jq -c --argjson disabled "$DISABLED" 'map(select(split("/")[1] as $f | ($disabled | index($f)) | not))')
+          echo "matrix_min=$(echo $ENABLED   | jq -c 'map(select(test("/che-min")))')"   >> $GITHUB_OUTPUT
+          echo "matrix_base=$(echo $ENABLED  | jq -c 'map(select(test("/che-base")))')"  >> $GITHUB_OUTPUT
+          echo "matrix_images=$(echo $ENABLED | jq -c 'map(select(test("/che-min|/che-base") | not))')" >> $GITHUB_OUTPUT
+          echo "matrix_all=$ENABLED" >> $GITHUB_OUTPUT
       - name: Show matrices
         run: |
-          echo "min:    ${{ steps.build-matrices.outputs.matrix_min }}"
-          echo "base:   ${{ steps.build-matrices.outputs.matrix_base }}"
-          echo "images: ${{ steps.build-matrices.outputs.matrix_images }}"
+          echo "min:      ${{ steps.build-matrices.outputs.matrix_min }}"
+          echo "base:     ${{ steps.build-matrices.outputs.matrix_base }}"
+          echo "images:   ${{ steps.build-matrices.outputs.matrix_images }}"
+          echo "disabled: $(yq e -o=json -I=0 '.disabled_images // []' versions.yaml)"
       - name: Extract branch name
         id: extract_branch
         shell: bash
@@ -98,6 +103,7 @@ jobs:
   build-min:
     runs-on: ubuntu-latest
     needs: [prepare, lint-templates]
+    if: needs.prepare.outputs.matrix_min != '[]'
     strategy:
       matrix:
         manifest: ${{ fromJson(needs.prepare.outputs.matrix_min) }}
@@ -130,7 +136,13 @@ jobs:
 
   build-base:
     runs-on: ubuntu-latest
-    needs: [prepare, build-min]
+    needs: [prepare, lint-templates, build-min]
+    # a skipped tier (empty matrix) must not block the next one, but a failed one must
+    if: >-
+      !cancelled() &&
+      needs.lint-templates.result == 'success' &&
+      needs.prepare.outputs.matrix_base != '[]' &&
+      contains(fromJson('["success", "skipped"]'), needs.build-min.result)
     strategy:
       matrix:
         manifest: ${{ fromJson(needs.prepare.outputs.matrix_base) }}
@@ -163,7 +175,13 @@ jobs:
 
   build-image:
     runs-on: ubuntu-latest
-    needs: [prepare, build-base]
+    needs: [prepare, lint-templates, build-min, build-base]
+    if: >-
+      !cancelled() &&
+      needs.lint-templates.result == 'success' &&
+      needs.prepare.outputs.matrix_images != '[]' &&
+      contains(fromJson('["success", "skipped"]'), needs.build-min.result) &&
+      contains(fromJson('["success", "skipped"]'), needs.build-base.result)
     strategy:
       matrix:
         manifest: ${{ fromJson(needs.prepare.outputs.matrix_images) }}
@@ -197,6 +215,11 @@ jobs:
   report-sizes:
     runs-on: ubuntu-latest
     needs: [prepare, build-min, build-base, build-image]
+    if: >-
+      !cancelled() &&
+      contains(fromJson('["success", "skipped"]'), needs.build-min.result) &&
+      contains(fromJson('["success", "skipped"]'), needs.build-base.result) &&
+      contains(fromJson('["success", "skipped"]'), needs.build-image.result)
     permissions:
       packages: read
       contents: write
@@ -217,6 +240,7 @@ jobs:
         env:
           REGISTRY: ${{ needs.prepare.outputs.registry }}
           BRANCH: ${{ needs.prepare.outputs.branch }}
+          MANIFESTS: ${{ needs.prepare.outputs.matrix_all }}
         run: |
           TABLE="| Image | Taille compressée |\n|---|---|\n"
 
@@ -230,7 +254,7 @@ jobs:
 
             HUMAN=$(numfmt --to=iec "${BYTES}")
             TABLE+="| \`${folder}\` | ${HUMAN} |\n"
-          done < <(find . -name 'Containerfile' -print | sort)
+          done < <(echo "${MANIFESTS}" | jq -r '.[]')
 
           {
             echo "table<<REPORT_EOF"
