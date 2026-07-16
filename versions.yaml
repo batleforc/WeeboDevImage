@@ -11,7 +11,7 @@ min:
   firacode: v3.4.0
 
 base_tools:
-  helm: v4.2.2
+  helm: v4.2.3
   taskfile: v3.52.0
   k9s: v0.51.0
   krew: v0.5.0
@@ -20,7 +20,7 @@ base_tools:
   buildkit: v0.31.1
   cocogitto: 7.0.0
   yq: "v4.45.1"
-  mise: v2026.7.3
+  mise: v2026.7.7
 
 golang:
   version: 1.27rc1
