@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/c
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 LABEL org.opencontainers.image.title="Che-RustFSImage"
 
-ENV RUSTFS_VERSION="1.0.0-beta.8"
+ENV RUSTFS_VERSION="1.0.0-beta.9"
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get install -y --no-install-recommends \

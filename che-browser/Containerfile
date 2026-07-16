@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/c
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 LABEL org.opencontainers.image.title="Che-BrowserImage"
 
-ENV CHROME_VERSION="150.0.7871.115"
+ENV CHROME_VERSION="151.0.7922.34"
 
 # xvfb/x11vnc/novnc: headed display + web view, nginx-light: CDP proxy,
 # tini: PID 1 reaping Chrome zombies, the lib* set: Chrome runtime deps (26.04 t64 names)
