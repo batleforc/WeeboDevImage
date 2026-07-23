@@ -39,7 +39,7 @@ golang:
   version: 1.27rc2
 
 rust:
-  version: 1.97.0
+  version: 1.97.1
 
 rustup:
   version: 1.29.0
