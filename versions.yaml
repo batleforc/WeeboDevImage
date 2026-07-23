@@ -57,7 +57,7 @@ browser:
 # kubedock version intentionally lives in base_tools (shared with che-base)
 sidecar:
   mailpit: v1.30.4
-  rustfs: 1.0.0-beta.9
+  rustfs: 1.0.0-beta.11
   lgtm: 0.29.0
 
 ops:
