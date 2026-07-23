@@ -18,7 +18,7 @@ base:
   ubuntu_registry: "" # optional: e.g. harbor.example.com/dockerhub-proxy
 
 min:
-  kubectl: v1.36.2
+  kubectl: v1.36.3
   nvm: v0.40.6
   node: 26.5.0
   firacode: v3.4.0
