@@ -58,7 +58,7 @@ browser:
 sidecar:
   mailpit: v1.30.4
   rustfs: 1.0.0-beta.11
-  lgtm: 0.29.0
+  lgtm: 0.29.1
 
 ops:
   argocd: v3.4.5
