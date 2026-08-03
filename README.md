@@ -31,3 +31,13 @@ Their last built tags remain available on ghcr.io but will not receive updates. 
 - `task lint` — check that rendered files match their templates
 - `task build IMAGE=che-browser` — build one image locally
 - `task build-all` — build every active image in dependency order
+
+## TODO
+
+- Redo the Web Terminal ide with the ghostty web lib https://github.com/coder/ghostty-web
+    - Check wich one is the better redo
+        - https://github.com/tsl0922/ttyd
+        - https://github.com/che-incubator/chemuxer
+    - Validate the compatibility with ghostty official api
+    - For the Fun, do a fastfetch
+    - Add the idle capabiliti
