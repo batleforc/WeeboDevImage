@@ -1,6 +1,6 @@
 FROM quay.io/eclipse/che-machine-exec:7.118.0 as machine-exec
 
-FROM quay.io/che-incubator/che-code:7.120.0
+FROM quay.io/che-incubator/che-code:7.121.0
 
 COPY entrypoint-volume.sh /entrypoint-volume.sh
 
