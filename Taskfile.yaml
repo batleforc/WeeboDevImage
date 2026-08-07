@@ -5,6 +5,7 @@ vars:
     sh: yq e '.registry' versions.yaml
   IMAGES:
     - che-mise-pdm
+    - che-mise-webkit
     - che-vscode
     - che-browser
     - che-kubedock

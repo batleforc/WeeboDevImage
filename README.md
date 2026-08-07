@@ -10,6 +10,7 @@ These images are built and pushed to `ghcr.io/batleforc/weebodevimage` on every 
 |---|---|---|
 | `che-min-mise` | `ubuntu:26.04` | Minimal tooling image (mise, kubectl, FiraCode, shell setup). Serves as the `tools` component in the sidecar devfiles and as the base for `che-mise-pdm`. |
 | `che-mise-pdm` | `che-min-mise` | `che-min-mise` + Podman (rootless nested containers, `containers.conf`/`registries.conf` preconfigured). |
+| `che-mise-webkit` | `che-min-mise` | `che-min-mise` + WebKitGTK dev stack (Tauri Linux prerequisites: `libwebkit2gtk-4.1-dev`, appindicator, xdo, ssl, rsvg), with Xvfb/D-Bus so apps can run headless in the workspace. |
 | `che-vscode` | `quay.io/che-incubator/che-code` | Eclipse Che VS Code editor with a custom volume entrypoint. |
 | `che-browser` | `ubuntu:26.04` | Sidecar: headed Chrome behind Xvfb, viewable via noVNC (`6080`), with an nginx CDP proxy (`9222`) and webdriver (`9515`). |
 | `che-kubedock` | `ubuntu:26.04` | Sidecar: [kubedock](https://github.com/joyrex2001/kubedock) — a Docker API that spins up containers as Kubernetes pods (`2475`). |
