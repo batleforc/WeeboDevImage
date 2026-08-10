@@ -1,6 +1,6 @@
 schemaVersion: 2.3.0
 metadata:
-  name: WeeboDevImageAndroid
+  name: WeeboDevImageDesktop
 
 components:
 - name: tools
@@ -22,26 +22,22 @@ components:
       value: "dev-che"
     - name: "PORT"
       value: "5437"
-    - name: ADB_SERVER_SOCKET
-      value: "tcp:localhost:5037"
-    - name: APPIUM_URL
-      value: "http://localhost:4723"
-- name: android
+- name: desktop
   container:
-    image: @@REGISTRY@@/che-android:main
-    memoryLimit: 8Gi
-    memoryRequest: 2Gi
-    cpuLimit: "4"
-    cpuRequest: "1"
-    # sources are shared so apks built in tools are installable straight from /projects
+    image: @@REGISTRY@@/che-desktop:main
+    memoryLimit: 4Gi
+    memoryRequest: 1Gi
+    cpuLimit: "2"
+    cpuRequest: 500m
+    # the app under test is built in tools and launched from the shared /projects
     mountSources: true
+    env:
+    # e.g. "/projects/myapp/src-tauri/target/release/myapp"; empty = xterm
+    - name: DESKTOP_APP_CMD
+      value: ""
     endpoints:
     - name: novnc
       targetPort: 6080
       exposure: public
       protocol: https
       secure: true
-    - name: appium
-      targetPort: 4723
-      exposure: internal
-      protocol: http

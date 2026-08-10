@@ -1,30 +1,36 @@
 FROM @@BASE_UBUNTU_IMAGE@@
 
 LABEL org.opencontainers.image.authors="batleforc"
-LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/che-browser"
+LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/che-desktop"
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
-LABEL org.opencontainers.image.title="Che-BrowserImage"
+LABEL org.opencontainers.image.title="Che-DesktopImage"
 
-ENV CHROME_VERSION="@@BROWSER_CHROME@@"
-
-# xvfb/x11vnc/novnc: headed display + web view, nginx-light: CDP proxy,
-# tini: PID 1 reaping Chrome zombies, the lib* set: Chrome runtime deps (26.04 t64 names)
+# xvfb/x11vnc/novnc: headed display + web view, openbox: WM so app windows,
+# dialogs and focus behave, xterm/xdotool/scrot: manual launch + basic scripted
+# interaction and screenshots, tini: PID 1 reaping,
+# libwebkit2gtk/appindicator/rsvg: Tauri runtime (build side lives in che-mise-webkit),
+# the lib* set: Electron/Chromium + GTK runtime deps and Mesa software GL (26.04 t64 names)
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
-    unzip \
     tini \
     xvfb \
     x11vnc \
     novnc \
     websockify \
-    nginx-light \
+    openbox \
+    xterm \
+    xdotool \
+    scrot \
     dbus \
     dbus-x11 \
     fonts-liberation \
     fonts-dejavu-core \
     fonts-noto-color-emoji \
+    libwebkit2gtk-4.1-0 \
+    libayatana-appindicator3-1 \
+    librsvg2-2 \
     libasound2t64 \
     libatk-bridge2.0-0t64 \
     libatk1.0-0t64 \
@@ -33,39 +39,38 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     libcups2t64 \
     libdbus-1-3 \
     libdrm2 \
+    libegl1 \
     libexpat1 \
     libgbm1 \
+    libgl1 \
+    libgl1-mesa-dri \
     libglib2.0-0t64 \
     libgtk-3-0t64 \
+    libnotify4 \
     libnspr4 \
     libnss3 \
     libpango-1.0-0 \
+    libsecret-1-0 \
     libx11-6 \
     libxcb1 \
     libxcomposite1 \
+    libxcursor1 \
     libxdamage1 \
     libxext6 \
     libxfixes3 \
+    libxi6 \
     libxkbcommon0 \
     libxrandr2 \
     libxrender1 \
+    libxss1 \
+    libxtst6 \
     xdg-utils && \
     rm -rf /var/lib/apt/lists/* && \
     # the novnc package has no index.html, so the noVNC base URL would 404
-    ln -s vnc.html /usr/share/novnc/index.html
+    ln -s vnc.html /usr/share/novnc/index.html && \
+    # stable machine-id so the D-Bus session bus starts under arbitrary UIDs
+    dbus-uuidgen > /etc/machine-id
 
-# Version-matched Chrome for Testing + chromedriver (single pinned version covers both)
-RUN curl -fsSL "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip" -o /tmp/chrome.zip && \
-    curl -fsSL "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip" -o /tmp/chromedriver.zip && \
-    unzip -q /tmp/chrome.zip -d /opt && \
-    mv /opt/chrome-linux64 /opt/chrome && \
-    unzip -q /tmp/chromedriver.zip -d /tmp && \
-    install -m 0755 /tmp/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver && \
-    ln -s /opt/chrome/chrome /usr/bin/google-chrome && \
-    ln -s /opt/chrome/chrome /usr/local/bin/chrome && \
-    rm -rf /tmp/chrome.zip /tmp/chromedriver.zip /tmp/chromedriver-linux64
-
-COPY --chown=0:0 nginx-cdp.conf /etc/che-browser/nginx-cdp.conf
 COPY --chown=0:0 entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh && \
@@ -75,17 +80,24 @@ RUN chmod +x /entrypoint.sh && \
 
 ENV HOME=/home/user
 ENV DISPLAY=:99
-ENV CHROME_PROFILE_DIR=/tmp/chrome-profile
 ENV SCREEN_GEOMETRY=1920x1080x24
-ENV CHROME_START_URL=about:blank
+ENV XDG_RUNTIME_DIR=/tmp/xdg-runtime
 # remap when several sidecars share one pod: each needs unique noVNC/VNC ports
 ENV NOVNC_PORT=6080
 ENV VNC_PORT=5900
+# App under test: launched from the shared /projects sources and respawned on
+# exit (close it via noVNC to pick up a rebuilt binary). Empty = a respawning
+# xterm instead, so the display stays usable interactively.
+ENV DESKTOP_APP_CMD=""
+ENV DESKTOP_APP_CWD=/projects
+ENV DESKTOP_APP_RESTART_DELAY=2
+# Che pods have a tiny /dev/shm; keep Qt apps off MIT-SHM
+ENV QT_X11_NO_MITSHM=1
 
 USER 1234
 WORKDIR /home/user
 
-# 9222 CDP proxy (Playwright connectOverCDP), 9515 chromedriver, 6080 noVNC web UI
-EXPOSE 9222 9515 6080
+# 6080 noVNC web UI
+EXPOSE 6080
 
 ENTRYPOINT ["tini", "--", "/entrypoint.sh"]

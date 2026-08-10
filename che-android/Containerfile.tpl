@@ -100,6 +100,9 @@ ENV LCD_WIDTH=720
 ENV LCD_HEIGHT=1280
 ENV LCD_DENSITY=320
 ENV SCREEN_GEOMETRY=800x1400x24
+# remap when several sidecars share one pod: each needs unique noVNC/VNC ports
+ENV NOVNC_PORT=6080
+ENV VNC_PORT=5900
 # Che pods have a tiny /dev/shm; keep the emulator's Qt UI off MIT-SHM
 ENV QT_X11_NO_MITSHM=1
 

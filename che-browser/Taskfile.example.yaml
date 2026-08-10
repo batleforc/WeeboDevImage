@@ -1,0 +1,52 @@
+version: "3"
+
+# Example Taskfile for a project using the che-browser sidecar.
+# Copy it into your project (or wire it in via `includes:`). CDP and webdriver
+# are plain localhost ports (shared pod network), so most tasks need no hop;
+# the `kubectl exec $HOSTNAME -c browser` hop covers what only exists inside
+# the sidecar (vnc password, restarting Chrome). In a Che workspace $HOSTNAME
+# is the pod name and the injected kubeconfig targets the workspace namespace.
+
+vars:
+  # ${DEVWORKSPACE_NAMESPACE:+…} adds -n only when Che exposes the namespace
+  KEXEC: kubectl exec ${DEVWORKSPACE_NAMESPACE:+-n ${DEVWORKSPACE_NAMESPACE}} ${HOSTNAME} -c browser --
+  KEXEC_IT: kubectl exec -it ${DEVWORKSPACE_NAMESPACE:+-n ${DEVWORKSPACE_NAMESPACE}} ${HOSTNAME} -c browser --
+
+tasks:
+  cdp-version:
+    desc: "Check Chrome is up and print the CDP endpoint info"
+    cmds:
+      - curl -s http://localhost:9222/json/version
+
+  tabs:
+    desc: "List open tabs/targets"
+    cmds:
+      - curl -s http://localhost:9222/json
+
+  open:
+    desc: "Open a URL in a new tab (task open URL=http://localhost:5437)"
+    requires:
+      vars: [URL]
+    cmds:
+      - curl -s -X PUT "http://localhost:9222/json/new?{{.URL}}"
+
+  restart-chrome:
+    desc: "Kill Chrome so the respawn loop restarts it with a clean window"
+    cmds:
+      - "{{.KEXEC}} pkill -f /opt/chrome/chrome"
+
+  vnc-password:
+    desc: "Print the noVNC password (shared via /projects/.sidecar, no exec needed)"
+    cmds:
+      - cat /projects/.sidecar/vnc-password-browser.txt
+
+  shell:
+    desc: "Interactive shell inside the browser sidecar"
+    interactive: true
+    cmds:
+      - "{{.KEXEC_IT}} bash"
+
+  logs:
+    desc: "Follow the sidecar log (chrome respawns, chromedriver, nginx)"
+    cmds:
+      - kubectl logs -f ${DEVWORKSPACE_NAMESPACE:+-n ${DEVWORKSPACE_NAMESPACE}} ${HOSTNAME} -c browser

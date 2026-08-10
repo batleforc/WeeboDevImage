@@ -6,7 +6,7 @@ if ! whoami &>/dev/null && [ -w /etc/passwd ]; then
   echo "user:x:$(id -u):0:container user:${HOME}:/bin/bash" >> /etc/passwd
 fi
 
-mkdir -p "${CHROME_PROFILE_DIR}"
+mkdir -p "${XDG_RUNTIME_DIR}" && chmod 700 "${XDG_RUNTIME_DIR}"
 
 # VNC password: honor $VNC_PASSWORD, otherwise generate one at boot
 # (classic VNC auth only uses the first 8 chars)
@@ -16,11 +16,11 @@ x11vnc -storepasswd "${VNC_PASSWORD}" /tmp/vnc.pass >/dev/null 2>&1
 # falls back to /tmp when there is no workspace mount (local podman run)
 SIDECAR_DIR=/projects/.sidecar
 mkdir -p "${SIDECAR_DIR}" 2>/dev/null || SIDECAR_DIR=/tmp
-printf '%s\n' "${VNC_PASSWORD}" > "${SIDECAR_DIR}/vnc-password-browser.txt"
-chmod 640 "${SIDECAR_DIR}/vnc-password-browser.txt"
+printf '%s\n' "${VNC_PASSWORD}" > "${SIDECAR_DIR}/vnc-password-desktop.txt"
+chmod 640 "${SIDECAR_DIR}/vnc-password-desktop.txt"
 echo "=============================================="
 echo " noVNC password: ${VNC_PASSWORD}"
-echo " (also stored in ${SIDECAR_DIR}/vnc-password-browser.txt)"
+echo " (also stored in ${SIDECAR_DIR}/vnc-password-desktop.txt)"
 echo "=============================================="
 
 Xvfb "${DISPLAY}" -screen 0 "${SCREEN_GEOMETRY}" -nolisten tcp &
@@ -31,27 +31,31 @@ done
 
 x11vnc -display "${DISPLAY}" -rfbport "${VNC_PORT}" -listen 127.0.0.1 -rfbauth /tmp/vnc.pass -forever -shared -quiet &
 websockify --web /usr/share/novnc "0.0.0.0:${NOVNC_PORT}" "127.0.0.1:${VNC_PORT}" &
-chromedriver --port=9515 --allowed-ips= --allowed-origins='*' &
-nginx -c /etc/che-browser/nginx-cdp.conf -g 'daemon off;' &
 
-# Chrome respawns if closed/crashed (a human can close it via noVNC).
-# CDP stays on loopback:9229; nginx fronts it on 0.0.0.0:9222.
+# Session bus: GTK/Electron/Tauri apps expect one. dbus-launch daemonizes, so
+# it is deliberately outside the wait -n watchdog.
+eval "$(dbus-launch --sh-syntax)"
+
+openbox &
+
+# App under test respawns if it exits (a human can close it via noVNC to pick
+# up a rebuilt binary from /projects). Without DESKTOP_APP_CMD, a respawning
+# xterm keeps the display usable for launching things by hand.
 (
+  cd "${DESKTOP_APP_CWD}" 2>/dev/null || cd "${HOME}"
   while true; do
-    google-chrome \
-      --no-sandbox --disable-dev-shm-usage --disable-gpu \
-      --no-first-run --no-default-browser-check \
-      --user-data-dir="${CHROME_PROFILE_DIR}" \
-      --remote-debugging-port=9229 \
-      --remote-allow-origins='*' \
-      --window-position=0,0 --window-size=1920,1040 \
-      "${CHROME_START_URL}"
-    echo "chrome exited (rc=$?), restarting in 1s" >&2
-    sleep 1
+    if [ -n "${DESKTOP_APP_CMD}" ]; then
+      bash -c "${DESKTOP_APP_CMD}"
+      echo "desktop app exited (rc=$?), restarting in ${DESKTOP_APP_RESTART_DELAY}s" >&2
+    else
+      xterm -geometry 120x30+40+40 -title "che-desktop — set DESKTOP_APP_CMD or launch your app here"
+      echo "xterm exited (rc=$?), restarting in ${DESKTOP_APP_RESTART_DELAY}s" >&2
+    fi
+    sleep "${DESKTOP_APP_RESTART_DELAY}"
   done
 ) &
 
-# If any infra process dies, exit so Kubernetes restarts the container
+# If any infra process dies (Xvfb, x11vnc, websockify, openbox), exit so Kubernetes restarts the container
 wait -n
-echo "a che-browser service exited, terminating container" >&2
+echo "a che-desktop service exited, terminating container" >&2
 exit 1

@@ -14,12 +14,13 @@ These images are built and pushed to `ghcr.io/batleforc/weebodevimage` on every 
 | `che-vscode` | `quay.io/che-incubator/che-code` | Eclipse Che VS Code editor with a custom volume entrypoint. |
 | `che-android` | `ubuntu:26.04` | Sidecar: Android 15 (API 35) emulator, CPU-only (no KVM/GPU — QEMU TCG + SwiftShader, expect a slow cold boot), viewable via noVNC (`6080`), with adb (`localhost:5037`) and Appium + uiautomator2 (`4723`). amd64 only. |
 | `che-browser` | `ubuntu:26.04` | Sidecar: headed Chrome behind Xvfb, viewable via noVNC (`6080`), with an nginx CDP proxy (`9222`) and webdriver (`9515`). |
+| `che-desktop` | `ubuntu:26.04` | Sidecar: Xvfb + openbox desktop for validating desktop apps (Tauri/Electron/GTK runtime libs, D-Bus session, Mesa software GL), viewable via noVNC (`6080`). Set `DESKTOP_APP_CMD` to respawn the app built in `/projects`; otherwise an xterm is provided. |
 | `che-kubedock` | `ubuntu:26.04` | Sidecar: [kubedock](https://github.com/joyrex2001/kubedock) — a Docker API that spins up containers as Kubernetes pods (`2475`). |
 | `che-lgtm` | `grafana/otel-lgtm` | Sidecar: Grafana LGTM observability stack (Loki, Grafana, Tempo, Mimir + OTel collector). |
 | `che-mailpit` | `ubuntu:26.04` | Sidecar: [Mailpit](https://github.com/axllent/mailpit) SMTP testing server with web UI. |
 | `che-rustfs` | `ubuntu:26.04` | Sidecar: [RustFS](https://github.com/rustfs/rustfs) S3-compatible object storage. |
 
-Each sidecar folder ships a `devfile.yaml` combining `che-min-mise` (tools) with the sidecar itself.
+Each sidecar folder ships a `devfile.yaml` combining `che-min-mise` (tools) with the sidecar itself. The `che-browser`, `che-android` and `che-desktop` folders also ship an `AGENTS.md` documenting the sidecar's endpoints and how humans and AI agents should use it — copy it into your project so coding agents pick it up — plus a `Taskfile.example.yaml` with ready-made tasks that hop into the sidecar container via `kubectl exec $HOSTNAME -c <sidecar>`.
 
 ## Disabled images
 

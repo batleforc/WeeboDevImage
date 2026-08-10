@@ -33,7 +33,8 @@ components:
     memoryRequest: 2Gi
     cpuLimit: "4"
     cpuRequest: "1"
-    mountSources: false
+    # sources are shared so apks built in tools are installable straight from /projects
+    mountSources: true
     endpoints:
     - name: novnc
       targetPort: 6080

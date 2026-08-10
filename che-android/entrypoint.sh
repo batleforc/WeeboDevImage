@@ -12,10 +12,15 @@ mkdir -p "${ANDROID_AVD_HOME}"
 # (classic VNC auth only uses the first 8 chars)
 VNC_PASSWORD="${VNC_PASSWORD:-$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c8)}"
 x11vnc -storepasswd "${VNC_PASSWORD}" /tmp/vnc.pass >/dev/null 2>&1
-(umask 077 && printf '%s\n' "${VNC_PASSWORD}" > /tmp/vnc_password.txt)
+# stored on the shared /projects so the tools container can read it directly;
+# falls back to /tmp when there is no workspace mount (local podman run)
+SIDECAR_DIR=/projects/.sidecar
+mkdir -p "${SIDECAR_DIR}" 2>/dev/null || SIDECAR_DIR=/tmp
+printf '%s\n' "${VNC_PASSWORD}" > "${SIDECAR_DIR}/vnc-password-android.txt"
+chmod 640 "${SIDECAR_DIR}/vnc-password-android.txt"
 echo "=============================================="
 echo " noVNC password: ${VNC_PASSWORD}"
-echo " (also stored in /tmp/vnc_password.txt)"
+echo " (also stored in ${SIDECAR_DIR}/vnc-password-android.txt)"
 echo "=============================================="
 
 Xvfb "${DISPLAY}" -screen 0 "${SCREEN_GEOMETRY}" -nolisten tcp &
@@ -24,8 +29,8 @@ for _ in $(seq 1 50); do
   sleep 0.2
 done
 
-x11vnc -display "${DISPLAY}" -rfbport 5900 -listen 127.0.0.1 -rfbauth /tmp/vnc.pass -forever -shared -quiet &
-websockify --web /usr/share/novnc 0.0.0.0:6080 127.0.0.1:5900 &
+x11vnc -display "${DISPLAY}" -rfbport "${VNC_PORT}" -listen 127.0.0.1 -rfbauth /tmp/vnc.pass -forever -shared -quiet &
+websockify --web /usr/share/novnc "0.0.0.0:${NOVNC_PORT}" "127.0.0.1:${VNC_PORT}" &
 
 # AVD is created at boot so it lands in the GID-0-writable home; -no-snapshot
 # means every start is a cold boot, so there is nothing to warm up at build time

@@ -13,6 +13,7 @@ vars:
     - che-rustfs
     - che-lgtm
     - che-android
+    - che-desktop
 
 tasks:
   init:

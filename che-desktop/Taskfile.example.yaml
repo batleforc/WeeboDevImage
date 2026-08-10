@@ -1,0 +1,67 @@
+version: "3"
+
+# Example Taskfile for a project using the che-desktop sidecar.
+# Copy it into your project (or wire it in via `includes:`). Every task runs in
+# the tools container and hops into the `desktop` container of the same pod:
+# in a Che workspace $HOSTNAME is the pod name and the injected kubeconfig
+# already targets the workspace namespace (pods/exec permission is granted for
+# your own workspace pods).
+
+vars:
+  # ${DEVWORKSPACE_NAMESPACE:+…} adds -n only when Che exposes the namespace
+  KEXEC: kubectl exec ${DEVWORKSPACE_NAMESPACE:+-n ${DEVWORKSPACE_NAMESPACE}} ${HOSTNAME} -c desktop --
+  KEXEC_IT: kubectl exec -it ${DEVWORKSPACE_NAMESPACE:+-n ${DEVWORKSPACE_NAMESPACE}} ${HOSTNAME} -c desktop --
+
+tasks:
+  shell:
+    desc: "Interactive shell inside the desktop sidecar"
+    interactive: true
+    cmds:
+      - "{{.KEXEC_IT}} bash"
+
+  vnc-password:
+    desc: "Print the noVNC password (shared via /projects/.sidecar, no exec needed)"
+    cmds:
+      - cat /projects/.sidecar/vnc-password-desktop.txt
+
+  logs:
+    desc: "Follow the sidecar log (app stdout/stderr + respawn messages)"
+    cmds:
+      - kubectl logs -f ${DEVWORKSPACE_NAMESPACE:+-n ${DEVWORKSPACE_NAMESPACE}} ${HOSTNAME} -c desktop
+
+  screenshot:
+    desc: "Screenshot the desktop into the shared sources (task screenshot OUT=/projects/shot.png)"
+    vars:
+      OUT: '{{.OUT | default "/projects/screenshot.png"}}'
+    cmds:
+      - "{{.KEXEC}} scrot -o {{.OUT}}"
+      - echo "saved {{.OUT}} (visible from tools via the shared /projects)"
+
+  windows:
+    desc: "List visible windows on the desktop"
+    cmds:
+      - "{{.KEXEC}} xdotool search --onlyvisible --name '.*' getwindowname %@"
+
+  key:
+    desc: "Send key(s) to the focused window (task key -- Return / ctrl+s)"
+    cmds:
+      - "{{.KEXEC}} xdotool key {{.CLI_ARGS}}"
+
+  type:
+    desc: "Type text into the focused window (task type TEXT='hello')"
+    requires:
+      vars: [TEXT]
+    cmds:
+      - "{{.KEXEC}} xdotool type --delay 50 '{{.TEXT}}'"
+
+  click:
+    desc: "Click at coordinates (task click X=100 Y=200)"
+    requires:
+      vars: [X, Y]
+    cmds:
+      - "{{.KEXEC}} xdotool mousemove {{.X}} {{.Y}} click 1"
+
+  app-restart:
+    desc: "Kill the app under test so the respawn loop relaunches the rebuilt binary"
+    cmds:
+      - "{{.KEXEC}} bash -c 'pkill -f \"${DESKTOP_APP_CMD:-xterm}\"'"

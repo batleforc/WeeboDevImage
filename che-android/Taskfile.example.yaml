@@ -1,0 +1,72 @@
+version: "3"
+
+# Example Taskfile for a project using the che-android sidecar.
+# Copy it into your project (or wire it in via `includes:`). Every task runs in
+# the tools container and hops into the `android` container of the same pod
+# with `kubectl exec $HOSTNAME -c android` — so no adb client is needed in
+# tools, and since both containers mount /projects, apks built in tools are
+# installable straight from their path. In a Che workspace $HOSTNAME is the
+# pod name and the injected kubeconfig already targets the workspace namespace.
+
+vars:
+  # ${DEVWORKSPACE_NAMESPACE:+…} adds -n only when Che exposes the namespace
+  KEXEC: kubectl exec ${DEVWORKSPACE_NAMESPACE:+-n ${DEVWORKSPACE_NAMESPACE}} ${HOSTNAME} -c android --
+  KEXEC_IT: kubectl exec -it ${DEVWORKSPACE_NAMESPACE:+-n ${DEVWORKSPACE_NAMESPACE}} ${HOSTNAME} -c android --
+
+tasks:
+  vnc-password:
+    desc: "Print the noVNC password (shared via /projects/.sidecar, no exec needed)"
+    cmds:
+      - cat /projects/.sidecar/vnc-password-android.txt
+
+  wait-boot:
+    desc: "Block until the emulator finished booting (minutes on cold boot)"
+    cmds:
+      - >-
+        {{.KEXEC}} bash -c 'adb wait-for-device &&
+        until [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r")" = "1" ];
+        do echo "still booting…"; sleep 10; done; echo "boot completed"'
+
+  adb:
+    desc: "Run any adb command in the sidecar (task adb -- devices)"
+    cmds:
+      - "{{.KEXEC}} adb {{.CLI_ARGS}}"
+
+  install:
+    desc: "Install an apk from the shared /projects (task install APK=./app-debug.apk)"
+    requires:
+      vars: [APK]
+    cmds:
+      # realpath resolves on the tools side; the path is identical in the sidecar
+      - "{{.KEXEC}} adb install -r $(realpath {{.APK}})"
+
+  run:
+    desc: "Start an activity (task run COMPONENT=com.example.app/.MainActivity)"
+    requires:
+      vars: [COMPONENT]
+    cmds:
+      - "{{.KEXEC}} adb shell am start -n {{.COMPONENT}}"
+
+  screenshot:
+    desc: "Screenshot the device to the tools side (task screenshot OUT=shot.png)"
+    vars:
+      OUT: '{{.OUT | default "screenshot.png"}}'
+    cmds:
+      - "{{.KEXEC}} adb exec-out screencap -p > {{.OUT}}"
+      - echo "saved {{.OUT}}"
+
+  logcat:
+    desc: "Tail device logs (task logcat -- -s MyTag:D)"
+    cmds:
+      - "{{.KEXEC}} adb logcat {{.CLI_ARGS}}"
+
+  shell:
+    desc: "Interactive adb shell on the emulator"
+    interactive: true
+    cmds:
+      - "{{.KEXEC_IT}} adb shell"
+
+  logs:
+    desc: "Follow the sidecar log (boot progress, appium, emulator respawns)"
+    cmds:
+      - kubectl logs -f ${DEVWORKSPACE_NAMESPACE:+-n ${DEVWORKSPACE_NAMESPACE}} ${HOSTNAME} -c android
