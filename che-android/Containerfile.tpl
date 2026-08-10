@@ -102,7 +102,11 @@ ENV LCD_DENSITY=320
 ENV SCREEN_GEOMETRY=800x1400x24
 # display/ports are staggered across the sidecars (browser :99/5900/6080,
 # android :98/5901/6081, desktop :97/5902/6082) so they can share one pod
-# netns without remapping; override via env if you run several of the same image
+# netns without remapping; override via env if you run several of the same image.
+# XVFB_DISPLAY (not DISPLAY) picks the display: Che's DevWorkspace operator
+# force-injects DISPLAY=:0 into every container, so the entrypoint re-exports
+# DISPLAY from XVFB_DISPLAY.
+ENV XVFB_DISPLAY=:98
 ENV NOVNC_PORT=6081
 ENV VNC_PORT=5901
 # Che pods have a tiny /dev/shm; keep the emulator's Qt UI off MIT-SHM

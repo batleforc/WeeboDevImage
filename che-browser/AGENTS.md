@@ -54,3 +54,6 @@ human asks — you get everything you need over CDP/WebDriver.
 - `NOVNC_PORT` / `VNC_PORT` — defaults `6080`/`5900`, staggered per sidecar so
   browser/android/desktop coexist in one pod; override via env if needed
   (keep the devfile endpoint's `targetPort` in sync)
+- `XVFB_DISPLAY` — X display (default `:99`, staggered per sidecar). Use this,
+  not `DISPLAY`: Che injects `DISPLAY=:0` into every container and the
+  entrypoint re-exports `DISPLAY` from `XVFB_DISPLAY`

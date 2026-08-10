@@ -8,6 +8,11 @@ fi
 
 mkdir -p "${CHROME_PROFILE_DIR}"
 
+# Che's DevWorkspace operator injects DISPLAY=:0 into every workspace container
+# (its ssh-askpass wrapper needs DISPLAY set), which would put all sidecars on
+# the same display. Our Xvfb display is governed by XVFB_DISPLAY instead.
+export DISPLAY="${XVFB_DISPLAY:-:99}"
+
 # VNC password: honor $VNC_PASSWORD, otherwise generate one at boot
 # (classic VNC auth only uses the first 8 chars)
 VNC_PASSWORD="${VNC_PASSWORD:-$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c8)}"

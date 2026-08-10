@@ -80,7 +80,11 @@ ENV SCREEN_GEOMETRY=1920x1080x24
 ENV CHROME_START_URL=about:blank
 # display/ports are staggered across the sidecars (browser :99/5900/6080,
 # android :98/5901/6081, desktop :97/5902/6082) so they can share one pod
-# netns without remapping; override via env if you run several of the same image
+# netns without remapping; override via env if you run several of the same image.
+# XVFB_DISPLAY (not DISPLAY) picks the display: Che's DevWorkspace operator
+# force-injects DISPLAY=:0 into every container, so the entrypoint re-exports
+# DISPLAY from XVFB_DISPLAY.
+ENV XVFB_DISPLAY=:99
 ENV NOVNC_PORT=6080
 ENV VNC_PORT=5900
 

@@ -62,3 +62,6 @@ check belongs to the human via noVNC.
 - `NOVNC_PORT` / `VNC_PORT` — defaults `6082`/`5902`, staggered per sidecar so
   browser/android/desktop coexist in one pod; override via env if needed
   (keep the devfile endpoint's `targetPort` in sync)
+- `XVFB_DISPLAY` — X display (default `:97`, staggered per sidecar). Use this,
+  not `DISPLAY`: Che injects `DISPLAY=:0` into every container and the
+  entrypoint re-exports `DISPLAY` from `XVFB_DISPLAY`
