@@ -79,12 +79,14 @@ RUN chmod +x /entrypoint.sh && \
     chmod g=u /etc/passwd
 
 ENV HOME=/home/user
-ENV DISPLAY=:99
+ENV DISPLAY=:97
 ENV SCREEN_GEOMETRY=1920x1080x24
 ENV XDG_RUNTIME_DIR=/tmp/xdg-runtime
-# remap when several sidecars share one pod: each needs unique noVNC/VNC ports
-ENV NOVNC_PORT=6080
-ENV VNC_PORT=5900
+# display/ports are staggered across the sidecars (browser :99/5900/6080,
+# android :98/5901/6081, desktop :97/5902/6082) so they can share one pod
+# netns without remapping; override via env if you run several of the same image
+ENV NOVNC_PORT=6082
+ENV VNC_PORT=5902
 # App under test: launched from the shared /projects sources and respawned on
 # exit (close it via noVNC to pick up a rebuilt binary). Empty = a respawning
 # xterm instead, so the display stays usable interactively.
@@ -97,7 +99,7 @@ ENV QT_X11_NO_MITSHM=1
 USER 1234
 WORKDIR /home/user
 
-# 6080 noVNC web UI
-EXPOSE 6080
+# 6082 noVNC web UI
+EXPOSE 6082
 
 ENTRYPOINT ["tini", "--", "/entrypoint.sh"]

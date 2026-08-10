@@ -37,7 +37,7 @@ components:
       value: ""
     endpoints:
     - name: novnc
-      targetPort: 6080
+      targetPort: 6082
       exposure: public
       protocol: https
       secure: true

@@ -9,7 +9,7 @@ binary built in the tools container is directly runnable from `/projects`.
 
 | Port | What | Exposure |
 |---|---|---|
-| `6080` | noVNC web UI (the desktop itself) | public endpoint |
+| `6082` | noVNC web UI (the desktop itself) | public endpoint |
 
 There is no network automation endpoint: the primary interface is visual.
 
@@ -42,7 +42,7 @@ check belongs to the human via noVNC.
   installed *in the sidecar*. If you can exec into the `desktop` container
   (terminal in the editor, or `kubectl exec -c desktop` on this pod), save
   screenshots under `/projects` so you can read them from the tools container:
-  `DISPLAY=:99 scrot /projects/shot.png`.
+  `DISPLAY=:97 scrot /projects/shot.png`.
 
 ## Ready-made tasks
 
@@ -59,5 +59,6 @@ check belongs to the human via noVNC.
 - `SCREEN_GEOMETRY` — Xvfb size (default `1920x1080x24`)
 - `VNC_PASSWORD` — fixed noVNC password instead of a generated one (set the
   same value on every sidecar for a single workspace-wide password)
-- `NOVNC_PORT` / `VNC_PORT` — defaults `6080`/`5900`; remap when several
-  sidecars share the pod (keep the devfile endpoint's `targetPort` in sync)
+- `NOVNC_PORT` / `VNC_PORT` — defaults `6082`/`5902`, staggered per sidecar so
+  browser/android/desktop coexist in one pod; override via env if needed
+  (keep the devfile endpoint's `targetPort` in sync)

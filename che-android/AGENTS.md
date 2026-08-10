@@ -9,7 +9,7 @@ tools container as `localhost` via the shared pod network namespace.
 
 | Port | What | Exposure |
 |---|---|---|
-| `6080` | noVNC web UI (emulator screen) | public endpoint |
+| `6081` | noVNC web UI (emulator screen) | public endpoint |
 | `4723` | Appium server (uiautomator2 driver preinstalled) | `localhost` from the pod |
 | `5037` | adb server | `localhost` from the pod |
 
@@ -58,5 +58,6 @@ tools: `wait-boot`, `adb -- <args>`, `install APK=…` (the sidecar mounts
 - `SCREEN_GEOMETRY` — Xvfb size (default `800x1400x24`)
 - `VNC_PASSWORD` — fixed noVNC password instead of a generated one (set the
   same value on every sidecar for a single workspace-wide password)
-- `NOVNC_PORT` / `VNC_PORT` — defaults `6080`/`5900`; remap when several
-  sidecars share the pod (keep the devfile endpoint's `targetPort` in sync)
+- `NOVNC_PORT` / `VNC_PORT` — defaults `6081`/`5901`, staggered per sidecar so
+  browser/android/desktop coexist in one pod; override via env if needed
+  (keep the devfile endpoint's `targetPort` in sync)

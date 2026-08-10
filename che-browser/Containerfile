@@ -79,7 +79,9 @@ ENV DISPLAY=:99
 ENV CHROME_PROFILE_DIR=/tmp/chrome-profile
 ENV SCREEN_GEOMETRY=1920x1080x24
 ENV CHROME_START_URL=about:blank
-# remap when several sidecars share one pod: each needs unique noVNC/VNC ports
+# display/ports are staggered across the sidecars (browser :99/5900/6080,
+# android :98/5901/6081, desktop :97/5902/6082) so they can share one pod
+# netns without remapping; override via env if you run several of the same image
 ENV NOVNC_PORT=6080
 ENV VNC_PORT=5900
 

@@ -37,7 +37,7 @@ components:
     mountSources: true
     endpoints:
     - name: novnc
-      targetPort: 6080
+      targetPort: 6081
       exposure: public
       protocol: https
       secure: true

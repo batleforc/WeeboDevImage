@@ -86,7 +86,7 @@ RUN chmod +x /entrypoint.sh && \
     chmod g=u /etc/passwd
 
 ENV HOME=/home/user
-ENV DISPLAY=:99
+ENV DISPLAY=:98
 ENV PATH=${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/emulator:${PATH}
 # AVD state lives under HOME: GID-0 writable, works for arbitrary UIDs
 ENV ANDROID_USER_HOME=/home/user/.android
@@ -100,17 +100,19 @@ ENV LCD_WIDTH=720
 ENV LCD_HEIGHT=1280
 ENV LCD_DENSITY=320
 ENV SCREEN_GEOMETRY=800x1400x24
-# remap when several sidecars share one pod: each needs unique noVNC/VNC ports
-ENV NOVNC_PORT=6080
-ENV VNC_PORT=5900
+# display/ports are staggered across the sidecars (browser :99/5900/6080,
+# android :98/5901/6081, desktop :97/5902/6082) so they can share one pod
+# netns without remapping; override via env if you run several of the same image
+ENV NOVNC_PORT=6081
+ENV VNC_PORT=5901
 # Che pods have a tiny /dev/shm; keep the emulator's Qt UI off MIT-SHM
 ENV QT_X11_NO_MITSHM=1
 
 USER 1234
 WORKDIR /home/user
 
-# 6080 noVNC web UI, 4723 Appium; adb (5037) and emulator ports (5554/5555)
+# 6081 noVNC web UI, 4723 Appium; adb (5037) and emulator ports (5554/5555)
 # stay on loopback and are reached from the tools container via the shared pod netns
-EXPOSE 6080 4723
+EXPOSE 6081 4723
 
 ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
