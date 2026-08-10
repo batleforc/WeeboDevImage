@@ -8,8 +8,6 @@ components:
     image: @@REGISTRY@@/che-mise-webkit:main
     memoryLimit: 8Gi
     memoryRequest: 1Gi
-    cpuLimit: "2"
-    cpuRequest: "500m"
     mountSources: true
     endpoints:
     - name: base
