@@ -34,6 +34,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     git \
     git-lfs \
     bash-completion \
+    tini \
     libc6 \
     locales \
     uidmap \
@@ -124,5 +125,7 @@ RUN cp -f /home/tooling/.bashrc /home/user/.bashrc && \
     stow . -t /home/user/ -d /home/tooling/ --no-folding
 ENV HOME=/home/user
 WORKDIR /projects
-ENTRYPOINT [ "/entrypoint.sh" ]
+# tini as PID 1: reaps orphaned zombies and forwards SIGTERM so the
+# container stops promptly instead of waiting out the grace period
+ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
 CMD ["sleep","infinity"]

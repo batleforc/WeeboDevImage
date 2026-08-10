@@ -1,0 +1,46 @@
+schemaVersion: 2.3.0
+metadata:
+  name: WeeboDevImageAndroid
+
+components:
+- name: tools
+  container:
+    image: @@REGISTRY@@/che-mise-webkit:main
+    memoryLimit: 8Gi
+    memoryRequest: 1Gi
+    cpuLimit: "2"
+    cpuRequest: "500m"
+    mountSources: true
+    endpoints:
+    - name: base
+      targetPort: 5437
+      exposure: public
+      protocol: https
+      secure: true
+    env:
+    - name: ENV
+      value: "dev-che"
+    - name: "PORT"
+      value: "5437"
+    - name: ADB_SERVER_SOCKET
+      value: "tcp:localhost:5037"
+    - name: APPIUM_URL
+      value: "http://localhost:4723"
+- name: android
+  container:
+    image: @@REGISTRY@@/che-android:main
+    memoryLimit: 8Gi
+    memoryRequest: 2Gi
+    cpuLimit: "4"
+    cpuRequest: "1"
+    mountSources: false
+    endpoints:
+    - name: novnc
+      targetPort: 6080
+      exposure: public
+      protocol: https
+      secure: true
+    - name: appium
+      targetPort: 4723
+      exposure: internal
+      protocol: http

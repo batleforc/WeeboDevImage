@@ -40,6 +40,13 @@ sources:
       image: grafana/otel-lgtm
       versionfilter:
         kind: semver
+  # android_cmdline_tools/android_api stay manual: Google only publishes them
+  # in repository2-3.xml, which has no clean updatecli source
+  appium:
+    kind: json
+    spec:
+      file: https://registry.npmjs.org/appium
+      key: .dist-tags.latest
 
 targets:
   bump_mailpit_version:
@@ -66,6 +73,14 @@ targets:
     spec:
       file: versions.yaml
       key: $.sidecar.lgtm
+  bump_appium_version:
+    kind: yaml
+    name: "Bump Appium version"
+    scmid: default
+    sourceid: appium
+    spec:
+      file: versions.yaml
+      key: $.sidecar.appium
 
 actions:
   bump_sidecar_space:

@@ -12,6 +12,7 @@ vars:
     - che-mailpit
     - che-rustfs
     - che-lgtm
+    - che-android
 
 tasks:
   init:

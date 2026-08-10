@@ -12,6 +12,7 @@ These images are built and pushed to `ghcr.io/batleforc/weebodevimage` on every 
 | `che-mise-pdm` | `che-min-mise` | `che-min-mise` + Podman (rootless nested containers, `containers.conf`/`registries.conf` preconfigured). |
 | `che-mise-webkit` | `che-min-mise` | `che-min-mise` + WebKitGTK dev stack (Tauri Linux prerequisites: `libwebkit2gtk-4.1-dev`, appindicator, xdo, ssl, rsvg), with Xvfb/D-Bus so apps can run headless in the workspace. |
 | `che-vscode` | `quay.io/che-incubator/che-code` | Eclipse Che VS Code editor with a custom volume entrypoint. |
+| `che-android` | `ubuntu:26.04` | Sidecar: Android 15 (API 35) emulator, CPU-only (no KVM/GPU — QEMU TCG + SwiftShader, expect a slow cold boot), viewable via noVNC (`6080`), with adb (`localhost:5037`) and Appium + uiautomator2 (`4723`). amd64 only. |
 | `che-browser` | `ubuntu:26.04` | Sidecar: headed Chrome behind Xvfb, viewable via noVNC (`6080`), with an nginx CDP proxy (`9222`) and webdriver (`9515`). |
 | `che-kubedock` | `ubuntu:26.04` | Sidecar: [kubedock](https://github.com/joyrex2001/kubedock) — a Docker API that spins up containers as Kubernetes pods (`2475`). |
 | `che-lgtm` | `grafana/otel-lgtm` | Sidecar: Grafana LGTM observability stack (Loki, Grafana, Tempo, Mimir + OTel collector). |
