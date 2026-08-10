@@ -41,18 +41,37 @@ nginx -c /etc/che-browser/nginx-cdp.conf -g 'daemon off;' &
 
 # Chrome respawns if closed/crashed (a human can close it via noVNC).
 # CDP stays on loopback:9229; nginx fronts it on 0.0.0.0:9222.
+# NO_START=true parks Chrome at boot to keep the sidecar light at rest;
+# `sidecar-app start|stop|status` (inside this container) toggles it later.
+# The VNC stack stays up either way, and chromedriver can still spawn its
+# own Chrome for WebDriver sessions.
+APP_FLAG=/tmp/.sidecar-app-start
+APP_PIDFILE=/tmp/.sidecar-app.pid
+[ "${NO_START}" != "true" ] && touch "${APP_FLAG}"
+[ -e "${APP_FLAG}" ] || echo "NO_START=true: chrome parked, run 'sidecar-app start' to launch it"
 (
+  # setsid: the app gets its own session/process group, so sidecar-app can
+  # group-kill it without touching the rest of the entrypoint
   while true; do
-    google-chrome \
+    if [ ! -e "${APP_FLAG}" ]; then sleep 2; continue; fi
+    setsid google-chrome \
       --no-sandbox --disable-dev-shm-usage --disable-gpu \
       --no-first-run --no-default-browser-check \
       --user-data-dir="${CHROME_PROFILE_DIR}" \
       --remote-debugging-port=9229 \
       --remote-allow-origins='*' \
       --window-position=0,0 --window-size=1920,1040 \
-      "${CHROME_START_URL}"
-    echo "chrome exited (rc=$?), restarting in 1s" >&2
-    sleep 1
+      "${CHROME_START_URL}" &
+    echo $! > "${APP_PIDFILE}"
+    wait $!
+    rc=$?
+    rm -f "${APP_PIDFILE}"
+    if [ -e "${APP_FLAG}" ]; then
+      echo "chrome exited (rc=${rc}), restarting in 1s" >&2
+      sleep 1
+    else
+      echo "chrome parked via sidecar-app stop" >&2
+    fi
   done
 ) &
 

@@ -19,14 +19,18 @@ RUN curl -fsSL https://github.com/joyrex2001/kubedock/releases/download/${KUBEDO
     chmod +x /usr/local/bin/kubedock
 
 COPY --chown=0:0 entrypoint.sh /entrypoint.sh
+COPY --chown=0:0 sidecar-app /usr/local/bin/sidecar-app
 
-RUN chmod +x /entrypoint.sh && \
+RUN chmod +x /entrypoint.sh /usr/local/bin/sidecar-app && \
     useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
     chgrp -R 0 /home/user && chmod -R g=u /home/user && \
     chmod g=u /etc/passwd
 
 ENV HOME=/home/user
 ENV KUBEDOCK_LISTEN_ADDR=:2475
+# NO_START=true parks kubedock at boot; launch it on demand with
+# `sidecar-app start` inside the container
+ENV NO_START=false
 
 USER 1234
 WORKDIR /home/user

@@ -20,6 +20,8 @@ These images are built and pushed to `ghcr.io/batleforc/weebodevimage` on every 
 | `che-mailpit` | `ubuntu:26.04` | Sidecar: [Mailpit](https://github.com/axllent/mailpit) SMTP testing server with web UI. |
 | `che-rustfs` | `ubuntu:26.04` | Sidecar: [RustFS](https://github.com/rustfs/rustfs) S3-compatible object storage. |
 
+Every sidecar supports `NO_START=true` (env on the component, default `false`): the container boots "parked" — for the noVNC sidecars the display/VNC stack stays up but the heavy main process (Chrome, emulator, app) does not start — and `sidecar-app start|stop|status` inside the sidecar container launches or parks it on demand.
+
 Each sidecar folder ships a `devfile.yaml` combining `che-min-mise` (tools) with the sidecar itself. The `che-browser`, `che-android` and `che-desktop` folders also ship an `AGENTS.md` documenting the sidecar's endpoints and how humans and AI agents should use it — copy it into your project so coding agents pick it up — plus a `Taskfile.example.yaml` with ready-made tasks that hop into the sidecar container via `kubectl exec $HOSTNAME -c <sidecar>`.
 
 ## Disabled images

@@ -64,3 +64,7 @@ tools: `wait-boot`, `adb -- <args>`, `install APK=…` (the sidecar mounts
 - `XVFB_DISPLAY` — X display (default `:98`, staggered per sidecar). Use this,
   not `DISPLAY`: Che injects `DISPLAY=:0` into every container and the
   entrypoint re-exports `DISPLAY` from `XVFB_DISPLAY`
+- `NO_START` — `true` parks the emulator at boot to keep the sidecar light at
+  rest (default `false`; VNC/adb/appium stay up). Toggle later with
+  `sidecar-app start|stop|status` inside the container (`task app-start` from
+  the example Taskfile); expect the usual multi-minute cold boot after start

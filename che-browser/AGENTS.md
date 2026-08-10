@@ -57,3 +57,7 @@ human asks — you get everything you need over CDP/WebDriver.
 - `XVFB_DISPLAY` — X display (default `:99`, staggered per sidecar). Use this,
   not `DISPLAY`: Che injects `DISPLAY=:0` into every container and the
   entrypoint re-exports `DISPLAY` from `XVFB_DISPLAY`
+- `NO_START` — `true` parks Chrome at boot to keep the sidecar light at rest
+  (default `false`; VNC stack stays up, chromedriver can still spawn its own
+  Chrome). Toggle later with `sidecar-app start|stop|status` inside the
+  container (`task app-start` from the example Taskfile)

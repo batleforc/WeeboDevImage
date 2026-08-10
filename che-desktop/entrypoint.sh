@@ -46,17 +46,33 @@ openbox &
 # App under test respawns if it exits (a human can close it via noVNC to pick
 # up a rebuilt binary from /projects). Without DESKTOP_APP_CMD, a respawning
 # xterm keeps the display usable for launching things by hand.
+# NO_START=true parks the app at boot to keep the sidecar light at rest
+# (Xvfb/VNC/openbox stay up); `sidecar-app start|stop|status` toggles it.
+APP_FLAG=/tmp/.sidecar-app-start
+APP_PIDFILE=/tmp/.sidecar-app.pid
+[ "${NO_START}" != "true" ] && touch "${APP_FLAG}"
+[ -e "${APP_FLAG}" ] || echo "NO_START=true: desktop app parked, run 'sidecar-app start' to launch it"
 (
   cd "${DESKTOP_APP_CWD}" 2>/dev/null || cd "${HOME}"
+  # setsid: the app gets its own session/process group, so sidecar-app can
+  # group-kill it (wrapper + children) without touching the entrypoint
   while true; do
+    if [ ! -e "${APP_FLAG}" ]; then sleep 2; continue; fi
     if [ -n "${DESKTOP_APP_CMD}" ]; then
-      bash -c "${DESKTOP_APP_CMD}"
-      echo "desktop app exited (rc=$?), restarting in ${DESKTOP_APP_RESTART_DELAY}s" >&2
+      setsid bash -c "${DESKTOP_APP_CMD}" &
     else
-      xterm -geometry 120x30+40+40 -title "che-desktop — set DESKTOP_APP_CMD or launch your app here"
-      echo "xterm exited (rc=$?), restarting in ${DESKTOP_APP_RESTART_DELAY}s" >&2
+      setsid xterm -geometry 120x30+40+40 -title "che-desktop — set DESKTOP_APP_CMD or launch your app here" &
     fi
-    sleep "${DESKTOP_APP_RESTART_DELAY}"
+    echo $! > "${APP_PIDFILE}"
+    wait $!
+    rc=$?
+    rm -f "${APP_PIDFILE}"
+    if [ -e "${APP_FLAG}" ]; then
+      echo "desktop app exited (rc=${rc}), restarting in ${DESKTOP_APP_RESTART_DELAY}s" >&2
+      sleep "${DESKTOP_APP_RESTART_DELAY}"
+    else
+      echo "desktop app parked via sidecar-app stop" >&2
+    fi
   done
 ) &
 

@@ -70,3 +70,18 @@ tasks:
     desc: "Follow the sidecar log (boot progress, appium, emulator respawns)"
     cmds:
       - kubectl logs -f ${DEVWORKSPACE_NAMESPACE:+-n ${DEVWORKSPACE_NAMESPACE}} ${HOSTNAME} -c android
+
+  app-start:
+    desc: "Launch the parked main process (NO_START=true) on demand"
+    cmds:
+      - "{{.KEXEC}} sidecar-app start"
+
+  app-stop:
+    desc: "Park the main process again to free CPU/RAM"
+    cmds:
+      - "{{.KEXEC}} sidecar-app stop"
+
+  app-status:
+    desc: "Main process state: running, starting, or parked"
+    cmds:
+      - "{{.KEXEC}} sidecar-app status"

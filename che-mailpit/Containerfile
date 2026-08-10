@@ -20,8 +20,9 @@ RUN curl -fsSL https://github.com/axllent/mailpit/releases/download/${MAILPIT_VE
     chmod +x /usr/local/bin/mailpit
 
 COPY --chown=0:0 entrypoint.sh /entrypoint.sh
+COPY --chown=0:0 sidecar-app /usr/local/bin/sidecar-app
 
-RUN chmod +x /entrypoint.sh && \
+RUN chmod +x /entrypoint.sh /usr/local/bin/sidecar-app && \
     useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
     chgrp -R 0 /home/user && chmod -R g=u /home/user && \
     chmod g=u /etc/passwd
@@ -31,6 +32,9 @@ ENV HOME=/home/user
 ENV MP_DATABASE=/tmp/mailpit.db
 ENV MP_SMTP_AUTH_ACCEPT_ANY=1
 ENV MP_SMTP_AUTH_ALLOW_INSECURE=1
+# NO_START=true parks mailpit at boot; launch it on demand with
+# `sidecar-app start` inside the container
+ENV NO_START=false
 
 USER 1234
 WORKDIR /home/user

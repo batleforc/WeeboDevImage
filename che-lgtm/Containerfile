@@ -7,10 +7,11 @@ LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImag
 LABEL org.opencontainers.image.title="Che-LGTMImage"
 
 COPY --chown=0:0 entrypoint.sh /entrypoint.sh
+COPY --chown=0:0 sidecar-app /usr/local/bin/sidecar-app
 
 # UBI-micro base has no useradd: append the passwd entry directly.
 # /otel-lgtm + /data + /etc/lgtm are written by run-all.sh at runtime.
-RUN chmod +x /entrypoint.sh && \
+RUN chmod +x /entrypoint.sh /usr/local/bin/sidecar-app && \
     mkdir -p /home/user /data /etc/lgtm && \
     echo "user:x:1234:0:container user:/home/user:/bin/bash" >> /etc/passwd && \
     chgrp -R 0 /home/user /data /etc/lgtm /otel-lgtm && \
@@ -18,6 +19,9 @@ RUN chmod +x /entrypoint.sh && \
     chmod g=u /etc/passwd
 
 ENV HOME=/home/user
+# NO_START=true parks the LGTM stack at boot; launch it on demand with
+# `sidecar-app start` inside the container
+ENV NO_START=false
 
 USER 1234
 WORKDIR /otel-lgtm

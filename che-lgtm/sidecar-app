@@ -1,0 +1,43 @@
+#!/bin/bash
+# Controls the sidecar's gated main process (NO_START feature).
+# The entrypoint's respawn loop launches the app only while the flag file
+# exists; with NO_START=false (default) the flag is created at boot.
+set -uo pipefail
+
+FLAG=/tmp/.sidecar-app-start
+PIDFILE=/tmp/.sidecar-app.pid
+
+app_pid() { [ -s "${PIDFILE}" ] && cat "${PIDFILE}"; }
+app_running() { PID=$(app_pid) && [ -n "${PID}" ] && kill -0 "${PID}" 2>/dev/null; }
+
+case "${1:-}" in
+  start)
+    touch "${FLAG}"
+    echo "start requested (the respawn loop picks it up within 2s)"
+    ;;
+  stop)
+    rm -f "${FLAG}"
+    if app_running; then
+      PID=$(app_pid)
+      # the app runs in its own process group (set -m in the entrypoint):
+      # group-kill takes down helpers/children too
+      kill -TERM -- "-${PID}" 2>/dev/null || kill -TERM "${PID}" 2>/dev/null
+      echo "stop requested"
+    else
+      echo "already parked"
+    fi
+    ;;
+  status)
+    if app_running; then
+      echo "running (pid $(app_pid))"
+    elif [ -e "${FLAG}" ]; then
+      echo "starting"
+    else
+      echo "parked"
+    fi
+    ;;
+  *)
+    echo "usage: sidecar-app start|stop|status" >&2
+    exit 2
+    ;;
+esac

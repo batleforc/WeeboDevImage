@@ -72,8 +72,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     dbus-uuidgen > /etc/machine-id
 
 COPY --chown=0:0 entrypoint.sh /entrypoint.sh
+COPY --chown=0:0 sidecar-app /usr/local/bin/sidecar-app
 
-RUN chmod +x /entrypoint.sh && \
+RUN chmod +x /entrypoint.sh /usr/local/bin/sidecar-app && \
     useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
     chgrp -R 0 /home/user && chmod -R g=u /home/user && \
     chmod g=u /etc/passwd
@@ -91,6 +92,9 @@ ENV XDG_RUNTIME_DIR=/tmp/xdg-runtime
 ENV XVFB_DISPLAY=:97
 ENV NOVNC_PORT=6082
 ENV VNC_PORT=5902
+# NO_START=true parks the app/xterm at boot (VNC stack stays up); launch it
+# on demand with `sidecar-app start` inside the container
+ENV NO_START=false
 # App under test: launched from the shared /projects sources and respawned on
 # exit (close it via noVNC to pick up a rebuilt binary). Empty = a respawning
 # xterm instead, so the display stays usable interactively.

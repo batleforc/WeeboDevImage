@@ -65,3 +65,18 @@ tasks:
     desc: "Kill the app under test so the respawn loop relaunches the rebuilt binary"
     cmds:
       - "{{.KEXEC}} bash -c 'pkill -f \"${DESKTOP_APP_CMD:-xterm}\"'"
+
+  app-start:
+    desc: "Launch the parked main process (NO_START=true) on demand"
+    cmds:
+      - "{{.KEXEC}} sidecar-app start"
+
+  app-stop:
+    desc: "Park the main process again to free CPU/RAM"
+    cmds:
+      - "{{.KEXEC}} sidecar-app stop"
+
+  app-status:
+    desc: "Main process state: running, starting, or parked"
+    cmds:
+      - "{{.KEXEC}} sidecar-app status"

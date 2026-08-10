@@ -23,8 +23,9 @@ RUN curl -fsSL "https://github.com/rustfs/rustfs/releases/download/${RUSTFS_VERS
     rm -rf /tmp/rustfs.zip /tmp/rustfs-extract
 
 COPY --chown=0:0 entrypoint.sh /entrypoint.sh
+COPY --chown=0:0 sidecar-app /usr/local/bin/sidecar-app
 
-RUN chmod +x /entrypoint.sh && \
+RUN chmod +x /entrypoint.sh /usr/local/bin/sidecar-app && \
     useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
     chgrp -R 0 /home/user && chmod -R g=u /home/user && \
     chmod g=u /etc/passwd
@@ -36,6 +37,9 @@ ENV RUSTFS_ADDRESS=:9000
 ENV RUSTFS_CONSOLE_ENABLE=true
 ENV RUSTFS_ACCESS_KEY=rustfsadmin
 ENV RUSTFS_SECRET_KEY=rustfsadmin
+# NO_START=true parks rustfs at boot; launch it on demand with
+# `sidecar-app start` inside the container
+ENV NO_START=false
 
 USER 1234
 WORKDIR /home/user

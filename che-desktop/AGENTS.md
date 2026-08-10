@@ -65,3 +65,7 @@ check belongs to the human via noVNC.
 - `XVFB_DISPLAY` — X display (default `:97`, staggered per sidecar). Use this,
   not `DISPLAY`: Che injects `DISPLAY=:0` into every container and the
   entrypoint re-exports `DISPLAY` from `XVFB_DISPLAY`
+- `NO_START` — `true` parks the app/xterm at boot to keep the sidecar light at
+  rest (default `false`; VNC stack and openbox stay up). Toggle later with
+  `sidecar-app start|stop|status` inside the container (`task app-start` from
+  the example Taskfile)

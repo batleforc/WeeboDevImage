@@ -79,8 +79,9 @@ RUN npm install -g appium@${APPIUM_VERSION} && \
     chgrp -R 0 ${APPIUM_HOME} && chmod -R g=u ${APPIUM_HOME}
 
 COPY --chown=0:0 entrypoint.sh /entrypoint.sh
+COPY --chown=0:0 sidecar-app /usr/local/bin/sidecar-app
 
-RUN chmod +x /entrypoint.sh && \
+RUN chmod +x /entrypoint.sh /usr/local/bin/sidecar-app && \
     useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
     chgrp -R 0 /home/user && chmod -R g=u /home/user && \
     chmod g=u /etc/passwd
@@ -109,6 +110,9 @@ ENV SCREEN_GEOMETRY=800x1400x24
 ENV XVFB_DISPLAY=:98
 ENV NOVNC_PORT=6081
 ENV VNC_PORT=5901
+# NO_START=true parks the emulator at boot (VNC/adb/appium stay up); launch
+# it on demand with `sidecar-app start` inside the container
+ENV NO_START=false
 # Che pods have a tiny /dev/shm; keep the emulator's Qt UI off MIT-SHM
 ENV QT_X11_NO_MITSHM=1
 

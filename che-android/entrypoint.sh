@@ -66,8 +66,17 @@ appium server --address 0.0.0.0 --port 4723 --allow-cors --relaxed-security &
 # CPU-only: -accel off (QEMU TCG, no /dev/kvm) + swiftshader GPU; expect a
 # multi-minute cold boot. The boot watcher lives INSIDE this subshell so the
 # top-level `wait -n` never sees it exit.
+# NO_START=true parks the emulator at boot to keep the sidecar light at rest
+# (Xvfb/VNC/adb/appium stay up); `sidecar-app start|stop|status` toggles it.
+APP_FLAG=/tmp/.sidecar-app-start
+APP_PIDFILE=/tmp/.sidecar-app.pid
+[ "${NO_START}" != "true" ] && touch "${APP_FLAG}"
+[ -e "${APP_FLAG}" ] || echo "NO_START=true: emulator parked, run 'sidecar-app start' to launch it"
 (
+  # setsid (below): the emulator gets its own session/process group, so
+  # sidecar-app can group-kill it without touching the rest of the entrypoint
   while true; do
+    if [ ! -e "${APP_FLAG}" ]; then sleep 2; continue; fi
     (
       adb wait-for-device 2>/dev/null
       start=${SECONDS}
@@ -79,7 +88,7 @@ appium server --address 0.0.0.0 --port 4723 --allow-cors --relaxed-security &
       echo " android: boot completed in $((SECONDS - start))s"
       echo "=============================================="
     ) &
-    emulator -avd "${AVD_NAME}" \
+    setsid emulator -avd "${AVD_NAME}" \
       -accel off \
       -gpu swiftshader_indirect \
       -no-audio -no-boot-anim -no-snapshot \
@@ -87,9 +96,17 @@ appium server --address 0.0.0.0 --port 4723 --allow-cors --relaxed-security &
       -cores "${EMULATOR_CORES}" \
       -partition-size "${EMULATOR_PARTITION_MB}" \
       -no-metrics \
-      ${EMULATOR_EXTRA_ARGS:-}
-    echo "emulator exited (rc=$?), restarting in 2s" >&2
-    sleep 2
+      ${EMULATOR_EXTRA_ARGS:-} &
+    echo $! > "${APP_PIDFILE}"
+    wait $!
+    rc=$?
+    rm -f "${APP_PIDFILE}"
+    if [ -e "${APP_FLAG}" ]; then
+      echo "emulator exited (rc=${rc}), restarting in 2s" >&2
+      sleep 2
+    else
+      echo "emulator parked via sidecar-app stop" >&2
+    fi
   done
 ) &
 
