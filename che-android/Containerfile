@@ -68,6 +68,11 @@ RUN curl -fsSL "https://dl.google.com/android/repository/commandlinetools-linux-
     "emulator" \
     "platforms;android-${ANDROID_API}" \
     "system-images;android-${ANDROID_API};google_apis;x86_64" && \
+    # cmdline-tools 22 avdmanager opens <sysimg>/devices.xml without checking it
+    # exists, and Google ships none in this image; an empty device list keeps
+    # AVD creation from logging two bogus "Could not load devices" errors
+    printf '<?xml version="1.0"?>\n<d:devices xmlns:d="http://schemas.android.com/sdk/devices/7"/>\n' \
+    > ${ANDROID_SDK_ROOT}/system-images/android-${ANDROID_API}/google_apis/x86_64/devices.xml && \
     chgrp -R 0 ${ANDROID_SDK_ROOT} && chmod -R g=u ${ANDROID_SDK_ROOT}
 
 # APPIUM_HOME is set BEFORE the driver install so uiautomator2 lands in
