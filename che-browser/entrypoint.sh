@@ -13,6 +13,13 @@ mkdir -p "${CHROME_PROFILE_DIR}"
 # the same display. Our Xvfb display is governed by XVFB_DISPLAY instead.
 export DISPLAY="${XVFB_DISPLAY:-:99}"
 
+# Screen size: SCREEN_GEOMETRY accepts "WxH" or "WxHxDEPTH" (depth defaults
+# to 24). Chrome's window is sized to fill it — there is no window manager.
+SCREEN_GEOMETRY="${SCREEN_GEOMETRY:-1920x1080x24}"
+case "${SCREEN_GEOMETRY}" in *x*x*) ;; *) SCREEN_GEOMETRY="${SCREEN_GEOMETRY}x24" ;; esac
+SCREEN_W="${SCREEN_GEOMETRY%%x*}"
+SCREEN_H="${SCREEN_GEOMETRY#*x}"; SCREEN_H="${SCREEN_H%%x*}"
+
 # VNC password: honor $VNC_PASSWORD, otherwise generate one at boot
 # (classic VNC auth only uses the first 8 chars)
 VNC_PASSWORD="${VNC_PASSWORD:-$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c8)}"
@@ -60,7 +67,7 @@ APP_PIDFILE=/tmp/.sidecar-app.pid
       --user-data-dir="${CHROME_PROFILE_DIR}" \
       --remote-debugging-port=9229 \
       --remote-allow-origins='*' \
-      --window-position=0,0 --window-size=1920,1040 \
+      --window-position=0,0 --window-size="${SCREEN_W},${SCREEN_H}" \
       "${CHROME_START_URL}" &
     echo $! > "${APP_PIDFILE}"
     wait $!

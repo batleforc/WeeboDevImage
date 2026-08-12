@@ -6,8 +6,6 @@ if ! whoami &>/dev/null && [ -w /etc/passwd ]; then
   echo "user:x:$(id -u):0:container user:${HOME}:/bin/bash" >> /etc/passwd
 fi
 
-mkdir -p "${ANDROID_AVD_HOME}"
-
 # Che's DevWorkspace operator injects DISPLAY=:0 into every workspace container
 # (its ssh-askpass wrapper needs DISPLAY set), which would put all sidecars on
 # the same display. Our Xvfb display is governed by XVFB_DISPLAY instead.
@@ -23,6 +21,18 @@ SIDECAR_DIR=/projects/.sidecar
 mkdir -p "${SIDECAR_DIR}" 2>/dev/null || SIDECAR_DIR=/tmp
 printf '%s\n' "${VNC_PASSWORD}" > "${SIDECAR_DIR}/vnc-password-android.txt"
 chmod 640 "${SIDECAR_DIR}/vnc-password-android.txt"
+
+# AVD userdata persists on /projects when possible: the first boot under
+# software emulation spends 30+ min in dex2oat and trips the system_server
+# watchdog once along the way; paying that once per workspace instead of on
+# every pod start is the whole game. Costs ~4-5GB of the workspace PVC;
+# AVD_PERSIST=false restores the throwaway-AVD behavior.
+if [ "${AVD_PERSIST:-true}" = "true" ] && [ "${SIDECAR_DIR}" != "/tmp" ]; then
+  export ANDROID_AVD_HOME="${SIDECAR_DIR}/avd"
+fi
+mkdir -p "${ANDROID_AVD_HOME}"
+# a pod killed mid-run leaves emulator lock files that block the next start
+rm -rf "${ANDROID_AVD_HOME}/${AVD_NAME}.avd"/*.lock 2>/dev/null || true
 echo "=============================================="
 echo " noVNC password: ${VNC_PASSWORD}"
 echo " (also stored in ${SIDECAR_DIR}/vnc-password-android.txt)"
@@ -87,6 +97,17 @@ APP_PIDFILE=/tmp/.sidecar-app.pid
       echo "=============================================="
       echo " android: boot completed in $((SECONDS - start))s"
       echo "=============================================="
+      # Watchdog headroom for every later boot: the emulator's -prop flag
+      # cannot set ro.* properties (SELinux blocks qemu-props), but the
+      # google_apis image is debuggable, so seed /data/local.prop once —
+      # init applies it before the framework starts on each following boot.
+      # The first boot stays watchdog-prone (the kill is survivable: the
+      # framework restarts and boot still completes).
+      if ! adb shell test -s /data/local.prop 2>/dev/null; then
+        adb root >/dev/null 2>&1 && sleep 2 && adb wait-for-device 2>/dev/null
+        adb shell "echo ro.hw_timeout_multiplier=${HW_TIMEOUT_MULTIPLIER} > /data/local.prop" 2>/dev/null
+        adb unroot >/dev/null 2>&1
+      fi
     ) &
     setsid emulator -avd "${AVD_NAME}" \
       -accel off \

@@ -56,7 +56,8 @@ check belongs to the human via noVNC.
 - `DESKTOP_APP_CMD` — command to run & respawn (default empty → xterm)
 - `DESKTOP_APP_CWD` — working directory for it (default `/projects`)
 - `DESKTOP_APP_RESTART_DELAY` — seconds between respawns (default `2`)
-- `SCREEN_GEOMETRY` — Xvfb size (default `1920x1080x24`)
+- `SCREEN_GEOMETRY` — screen size, `WxH` or `WxHxDEPTH` (default `1920x1080x24`,
+  depth defaults to 24)
 - `VNC_PASSWORD` — fixed noVNC password instead of a generated one (set the
   same value on every sidecar for a single workspace-wide password)
 - `NOVNC_PORT` / `VNC_PORT` — defaults `6082`/`5902`, staggered per sidecar so

@@ -13,6 +13,10 @@ mkdir -p "${XDG_RUNTIME_DIR}" && chmod 700 "${XDG_RUNTIME_DIR}"
 # the same display. Our Xvfb display is governed by XVFB_DISPLAY instead.
 export DISPLAY="${XVFB_DISPLAY:-:97}"
 
+# Screen size: SCREEN_GEOMETRY accepts "WxH" or "WxHxDEPTH" (depth defaults to 24)
+SCREEN_GEOMETRY="${SCREEN_GEOMETRY:-1920x1080x24}"
+case "${SCREEN_GEOMETRY}" in *x*x*) ;; *) SCREEN_GEOMETRY="${SCREEN_GEOMETRY}x24" ;; esac
+
 # VNC password: honor $VNC_PASSWORD, otherwise generate one at boot
 # (classic VNC auth only uses the first 8 chars)
 VNC_PASSWORD="${VNC_PASSWORD:-$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c8)}"

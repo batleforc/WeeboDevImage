@@ -48,7 +48,8 @@ human asks — you get everything you need over CDP/WebDriver.
 
 - `CHROME_START_URL` — page opened at boot (default `about:blank`)
 - `CHROME_PROFILE_DIR` — profile location (default `/tmp/chrome-profile`, wiped on restart)
-- `SCREEN_GEOMETRY` — Xvfb size (default `1920x1080x24`)
+- `SCREEN_GEOMETRY` — screen size, `WxH` or `WxHxDEPTH` (default `1920x1080x24`,
+  depth defaults to 24). Chrome's window is sized to fill the screen
 - `VNC_PASSWORD` — fixed noVNC password instead of a generated one (set the
   same value on every sidecar for a single workspace-wide password)
 - `NOVNC_PORT` / `VNC_PORT` — defaults `6080`/`5900`, staggered per sidecar so
