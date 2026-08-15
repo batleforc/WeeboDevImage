@@ -68,7 +68,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     curl -fsSL https://github.com/jdx/mise/releases/download/${MISE_VERSION}/mise-${MISE_VERSION}-linux-x64 \
     -o /home/tooling/.local/bin/mise && \
     chmod +x /home/tooling/.local/bin/mise && \
-    echo 'eval "$(~/.local/bin/mise activate bash)"' >> ${GLOBALS_BASHRC} && \
+    echo 'eval "$(~/.local/bin/mise activate bash --shims)"' >> ${GLOBALS_BASHRC} && \
     echo 'export MISE_TRUSTED_CONFIG_PATHS=/home/tooling/.config/mise:/home/user/.config/mise:/mounted/mise:/projects' >> ${GLOBALS_BASHRC} &&\
     curl -fsSLo /usr/local/bin/kubectl \
     https://dl.k8s.io/release/${KUBE_VERSION}/bin/linux/amd64/kubectl && \
