@@ -32,6 +32,9 @@ components:
     # sources are shared so Chrome can open file:///projects/… and tests can
     # exchange files with the tools container
     mountSources: true
+    env:
+      - name: NO_START
+        value: true
     endpoints:
     - name: novnc
       targetPort: 6080

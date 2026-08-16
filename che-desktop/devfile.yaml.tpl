@@ -32,9 +32,11 @@ components:
     # the app under test is built in tools and launched from the shared /projects
     mountSources: true
     env:
-    # e.g. "/projects/myapp/src-tauri/target/release/myapp"; empty = xterm
-    - name: DESKTOP_APP_CMD
-      value: ""
+      - name: NO_START
+        value: true
+      # e.g. "/projects/myapp/src-tauri/target/release/myapp"; empty = xterm
+      - name: DESKTOP_APP_CMD
+        value: ""
     endpoints:
     - name: novnc
       targetPort: 6082
