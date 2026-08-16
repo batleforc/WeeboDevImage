@@ -34,7 +34,7 @@ components:
     mountSources: true
     env:
       - name: NO_START
-        value: true
+        value: "true"
     endpoints:
     - name: novnc
       targetPort: 6080

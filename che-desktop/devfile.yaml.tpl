@@ -33,7 +33,7 @@ components:
     mountSources: true
     env:
       - name: NO_START
-        value: true
+        value: "true"
       # e.g. "/projects/myapp/src-tauri/target/release/myapp"; empty = xterm
       - name: DESKTOP_APP_CMD
         value: ""
