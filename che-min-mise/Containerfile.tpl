@@ -54,6 +54,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     fzf \
     eza \
     libdbus-1-dev \
+    libclang-dev \
     pkg-config &&\
     rm -rf /var/lib/apt/lists/* &&\
     mkdir -p /home/tooling/ &&\
