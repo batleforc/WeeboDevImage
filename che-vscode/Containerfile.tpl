@@ -1,4 +1,4 @@
-FROM quay.io/eclipse/che-machine-exec:7.118.0 as machine-exec
+FROM quay.io/eclipse/che-machine-exec:7.118.0 AS machine-exec
 
 FROM quay.io/che-incubator/che-code:7.120.0
 
@@ -6,7 +6,11 @@ FROM quay.io/che-incubator/che-code:7.120.0
 # at it. Preserve that upstream script as /entrypoint-volume-root.sh, then drop
 # our wrapper in its place: the base ENTRYPOINT now runs entrypoint-weebo, which
 # applies the weebo customizations (fonts, code-oss) and exec's the original.
+# The base image ends on USER 1001, which cannot write to /, so the copy runs as
+# root before dropping back to the upstream user.
+USER root
 RUN cp /entrypoint-volume.sh /entrypoint-volume-root.sh
 COPY --chmod=0755 entrypoint-weebo.sh /entrypoint-volume.sh
+USER 1001
 
 COPY --from=machine-exec --chown=0:0 /go/bin/che-machine-exec /bin/machine-exec
