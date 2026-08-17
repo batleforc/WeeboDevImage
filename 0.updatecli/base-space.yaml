@@ -13,86 +13,12 @@ scms:
       branch: main
 
 sources:
-  helm:
-    kind: githubrelease
-    scmid: default
-    spec:
-      owner: helm
-      repository: helm
-      token: "{{ requiredEnv .github.token }}"
-      username: "{{ .github.username }}"
-      versionFilter:
-        kind: semver
-  task:
-    kind: githubrelease
-    scmid: default
-    spec:
-      owner: go-task
-      repository: task
-      token: "{{ requiredEnv .github.token }}"
-      username: "{{ .github.username }}"
-      versionFilter:
-        kind: semver
-  k9s:
-    kind: githubrelease
-    scmid: default
-    spec:
-      owner: derailed
-      repository: k9s
-      token: "{{ requiredEnv .github.token }}"
-      username: "{{ .github.username }}"
-      versionFilter:
-        kind: latest
-  krew:
-    kind: githubrelease
-    scmid: default
-    spec:
-      owner: kubernetes-sigs
-      repository: krew
-      token: "{{ requiredEnv .github.token }}"
-      username: "{{ .github.username }}"
-      versionFilter:
-        kind: semver
-  gitleaks:
-    kind: githubrelease
-    scmid: default
-    spec:
-      owner: gitleaks
-      repository: gitleaks
-      token: "{{ requiredEnv .github.token }}"
-      username: "{{ .github.username }}"
-      versionFilter:
-        kind: latest
-    transformers:
-    - trimprefix: "v"
   kubedock:
     kind: githubrelease
     scmid: default
     spec:
       owner: joyrex2001
       repository: kubedock
-      token: "{{ requiredEnv .github.token }}"
-      username: "{{ .github.username }}"
-      versionFilter:
-        kind: semver
-    transformers:
-    - trimprefix: "v"
-  buildkit:
-    kind: githubrelease
-    scmid: default
-    spec:
-      owner: moby
-      repository: buildkit
-      token: "{{ requiredEnv .github.token }}"
-      username: "{{ .github.username }}"
-      versionFilter:
-        kind: semver
-  cog:
-    kind: githubrelease
-    scmid: default
-    spec:
-      owner: cocogitto
-      repository: cocogitto
       token: "{{ requiredEnv .github.token }}"
       username: "{{ .github.username }}"
       versionFilter:
@@ -111,46 +37,6 @@ sources:
         kind: latest
 
 targets:
-  bump_helm_version:
-    kind: yaml
-    name: "Bump helm version"
-    scmid: default
-    sourceid: helm
-    spec:
-      file: versions.yaml
-      key: $.base_tools.helm
-  bump_task_version:
-    kind: yaml
-    name: "Bump task version"
-    scmid: default
-    sourceid: task
-    spec:
-      file: versions.yaml
-      key: $.base_tools.taskfile
-  bump_k9s_version:
-    kind: yaml
-    name: "Bump k9s version"
-    scmid: default
-    sourceid: k9s
-    spec:
-      file: versions.yaml
-      key: $.base_tools.k9s
-  bump_krew_version:
-    kind: yaml
-    name: "Bump krew version"
-    scmid: default
-    sourceid: krew
-    spec:
-      file: versions.yaml
-      key: $.base_tools.krew
-  bump_gitleaks_version:
-    kind: yaml
-    name: "Bump gitleaks version"
-    scmid: default
-    sourceid: gitleaks
-    spec:
-      file: versions.yaml
-      key: $.base_tools.gitleaks
   bump_kubedock_version:
     kind: yaml
     name: "Bump kubedock version"
@@ -159,22 +45,6 @@ targets:
     spec:
       file: versions.yaml
       key: $.base_tools.kubedock
-  bump_buildkit_version:
-    kind: yaml
-    name: "Bump buildkit version"
-    scmid: default
-    sourceid: buildkit
-    spec:
-      file: versions.yaml
-      key: $.base_tools.buildkit
-  bump_cog_version:
-    kind: yaml
-    name: "Bump cog version"
-    scmid: default
-    sourceid: cog
-    spec:
-      file: versions.yaml
-      key: $.base_tools.cocogitto
   bump_mise_version:
     kind: yaml
     name: "Bump mise version"

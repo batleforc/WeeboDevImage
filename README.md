@@ -24,11 +24,9 @@ Every sidecar supports `NO_START=true` (env on the component, default `false`): 
 
 Each sidecar folder ships a `devfile.yaml` combining `che-min-mise` (tools) with the sidecar itself. The `che-browser`, `che-android` and `che-desktop` folders also ship an `AGENTS.md` documenting the sidecar's endpoints and how humans and AI agents should use it — copy it into your project so coding agents pick it up — plus a `Taskfile.example.yaml` with ready-made tasks that hop into the sidecar container via `kubectl exec $HOSTNAME -c <sidecar>`.
 
-## Disabled images
+## Removed images
 
-The following images are kept in the repo for reference but are no longer built (see `disabled_images` in [`versions.yaml`](versions.yaml)): `che-min`, `che-base`, `che-base-slim`, `che-golang`, `che-node`, `che-rust`, `che-polyglot`, `che-mise`, `che-ops`.
-
-Their last built tags remain available on ghcr.io but will not receive updates. Remove an entry from `disabled_images` to re-enable a build.
+The legacy `che-base` lineage (`che-min`, `che-base`, `che-base-slim`, `che-golang`, `che-node`, `che-rust`, `che-polyglot`, `che-mise`, `che-ops`) has been removed from the repo. Their last built tags remain available on ghcr.io but will not receive updates; the sources live on in git history.
 
 ## Development
 
@@ -41,7 +39,6 @@ Their last built tags remain available on ghcr.io but will not receive updates. 
 
 - Redo the Web Terminal ide with the ghostty web lib https://github.com/coder/ghostty-web
     - Check wich one is the better redo
-        - https://github.com/tsl0922/ttyd
         - https://github.com/che-incubator/chemuxer
     - Validate the compatibility with ghostty official api
     - For the Fun, do a fastfetch
