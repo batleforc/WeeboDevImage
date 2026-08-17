@@ -20,9 +20,29 @@ if [ ! -d "${HOME}/.config/containers" ]; then
   fi
 fi
 
-# Add current (arbitrary) user to /etc/passwd and /etc/group
+# Register the current (arbitrary) user so tools that resolve UID -> name work.
+#
+# Preferred path: nss_wrapper. We synthesize the passwd/group entry in a per-user
+# file and load it via LD_PRELOAD, which lets /etc/passwd stay root:root 0644 —
+# so it can NOT be edited to inject a fake uid-0 user. Images opt in simply by
+# installing libnss-wrapper (see che-mise-nss); nothing else changes here.
+#
+# Fallback path: append to /etc/passwd if it is writable. This is the legacy UDI
+# behaviour kept for images that do not ship nss_wrapper (che-min-mise, -pdm, -webkit).
 if ! whoami &> /dev/null; then
-  if [ -w /etc/passwd ]; then
+  nss_lib=$(find /usr/lib64 /usr/lib /lib64 /lib -name 'libnss_wrapper.so*' 2>/dev/null | head -n1)
+  if [ -n "${nss_lib}" ]; then
+    : "${HOME:=/home/user}"
+    NSS_WRAPPER_PASSWD="${HOME}/.nss_passwd"
+    NSS_WRAPPER_GROUP="${HOME}/.nss_group"
+    cp /etc/passwd "${NSS_WRAPPER_PASSWD}" 2>/dev/null || : > "${NSS_WRAPPER_PASSWD}"
+    cp /etc/group  "${NSS_WRAPPER_GROUP}"  2>/dev/null || : > "${NSS_WRAPPER_GROUP}"
+    echo "${USER_NAME:-user}:x:$(id -u):0:${USER_NAME:-user} user:${HOME}:/bin/bash" >> "${NSS_WRAPPER_PASSWD}"
+    echo "${USER_NAME:-user}:x:$(id -u):" >> "${NSS_WRAPPER_GROUP}"
+    export NSS_WRAPPER_PASSWD NSS_WRAPPER_GROUP
+    export LD_PRELOAD="${nss_lib}${LD_PRELOAD:+:${LD_PRELOAD}}"
+    echo "Registered ${USER_NAME:-user} ($(id -u)) via nss_wrapper; /etc/passwd left read-only"
+  elif [ -w /etc/passwd ]; then
     echo "${USER_NAME:-user}:x:$(id -u):0:${USER_NAME:-user} user:${HOME}:/bin/bash" >> /etc/passwd
     echo "${USER_NAME:-user}:x:$(id -u):" >> /etc/group
   fi
@@ -122,13 +142,21 @@ if [ $HOME_USER_MOUNTED -eq 0 ] && [ ! -f $STOW_COMPLETE ]; then
     IGNORE_FILES="$(comm -12 /tmp/user.txt /tmp/tooling.txt)"
     # We no longer require the file lists, so remove them
     rm /tmp/user.txt /tmp/tooling.txt
-    # For each file we need to ignore, append them to
-    # /home/tooling/.stow-local-ignore.
-    for f in $IGNORE_FILES; do echo "${f}" >> /home/tooling/.stow-local-ignore;done
+    # Each file to ignore is passed as an --ignore regex instead of being
+    # appended to /home/tooling/.stow-local-ignore: that file lives on the
+    # rootfs, which is read-only in che-mise-nss. --ignore is additive to the
+    # local ignore file. Stow matches the regex against the package-relative
+    # path without a leading slash, anchored only at the end — so strip the
+    # slash, escape regex metacharacters, and anchor the start ourselves.
+    STOW_IGNORE_FLAGS=()
+    for f in $IGNORE_FILES; do
+        escaped=$(printf '%s' "${f#/}" | sed 's/[][\.*^$(){}?+|]/\\&/g')
+        STOW_IGNORE_FLAGS+=("--ignore=^${escaped}")
+    done
     # We are now ready to run stow
     #
     # Create symbolic links from /home/tooling/ -> /home/user/
-    stow . -t /home/user/ -d /home/tooling/ --no-folding -v 2 > /tmp/stow.log 2>&1
+    stow . -t /home/user/ -d /home/tooling/ --no-folding -v 2 "${STOW_IGNORE_FLAGS[@]}" > /tmp/stow.log 2>&1
     touch $STOW_COMPLETE
 fi
 

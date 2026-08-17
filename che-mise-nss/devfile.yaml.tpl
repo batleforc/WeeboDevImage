@@ -1,0 +1,49 @@
+schemaVersion: 2.3.0
+metadata:
+  name: WeeboDevImageMiseNss
+
+components:
+- name: tools
+  container:
+    image: @@REGISTRY@@/che-mise-nss:main
+    memoryLimit: 8Gi
+    memoryRequest: 1Gi
+    cpuLimit: "2"
+    cpuRequest: "500m"
+    mountSources: true
+    endpoints:
+    - name: base
+      targetPort: 5437
+      exposure: public
+      protocol: https
+      secure: true
+    volumeMounts:
+    - name: tmp
+      path: /tmp
+    env:
+    - name: ENV
+      value: "dev-che"
+    - name: "PORT"
+      value: "5437"
+  attributes:
+    pod-overrides:
+      metadata:
+        annotations:
+          io.kubernetes.cri-o.Devices: "/dev/fuse,/dev/net/tun"
+      spec:
+        # Contain in-container root to an unprivileged host UID; combined with the
+        # read-only /etc/passwd this keeps identity spoofing out of the host.
+        hostUsers: false
+    container-overrides:
+      securityContext:
+        procMount: Unmasked
+        # Kernel-enforced immutability: the apt/dpkg removals and the 0644
+        # /etc/passwd cannot be reverted even by uid 0 in the container. All
+        # runtime writes go to /home/user (PVC/persistUserHome) or /tmp below.
+        # Known trade-off: /etc/subuid|subgid can no longer be written, so
+        # rootless podman loses its subordinate ID ranges.
+        readOnlyRootFilesystem: true
+# Writable /tmp: readOnlyRootFilesystem leaves no scratch space otherwise.
+- name: tmp
+  volume:
+    ephemeral: true

@@ -6,6 +6,7 @@ vars:
   IMAGES:
     - che-mise-pdm
     - che-mise-webkit
+    - che-mise-nss
     - che-vscode
     - che-browser
     - che-kubedock

@@ -3,6 +3,11 @@ FROM quay.io/eclipse/che-machine-exec:7.118.0 as machine-exec
 
 FROM quay.io/che-incubator/che-code:7.120.0
 
-COPY entrypoint-volume.sh /entrypoint-volume.sh
+# The che-code base image ships /entrypoint-volume.sh and points its ENTRYPOINT
+# at it. Preserve that upstream script as /entrypoint-volume-root.sh, then drop
+# our wrapper in its place: the base ENTRYPOINT now runs entrypoint-weebo, which
+# applies the weebo customizations (fonts, code-oss) and exec's the original.
+RUN cp /entrypoint-volume.sh /entrypoint-volume-root.sh
+COPY --chmod=0755 entrypoint-weebo.sh /entrypoint-volume.sh
 
 COPY --from=machine-exec --chown=0:0 /go/bin/che-machine-exec /bin/machine-exec
