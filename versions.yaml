@@ -10,7 +10,7 @@ min:
 
 base_tools:
   kubedock: 0.22.0
-  mise: v2026.8.10
+  mise: v2026.8.11
 
 browser:
   chrome: 152.0.7977.42
