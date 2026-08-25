@@ -23,4 +23,4 @@ sidecar:
   # cmdline-tools build id from https://developer.android.com/studio#command-line-tools-only (manual bump)
   android_cmdline_tools: "15859902"
   android_api: "35"
-  appium: 3.6.0
+  appium: 3.7.0
