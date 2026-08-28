@@ -18,7 +18,7 @@ browser:
 # kubedock version intentionally lives in base_tools (used by che-kubedock)
 sidecar:
   mailpit: v1.31.0
-  rustfs: 1.0.0-rc.3
+  rustfs: 1.0.0-rc.4-preview.1
   lgtm: 0.31.0
   # cmdline-tools build id from https://developer.android.com/studio#command-line-tools-only (manual bump)
   android_cmdline_tools: "15859902"
