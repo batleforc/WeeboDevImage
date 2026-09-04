@@ -1,6 +1,6 @@
 FROM quay.io/eclipse/che-machine-exec:7.118.0 AS machine-exec
 
-FROM quay.io/che-incubator/che-code:7.120.0
+FROM quay.io/che-incubator/che-code:7.122.0
 
 # The che-code base image ships /entrypoint-volume.sh and points its ENTRYPOINT
 # at it. Preserve that upstream script as /entrypoint-volume-root.sh, then drop
