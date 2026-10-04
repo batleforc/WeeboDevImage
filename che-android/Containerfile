@@ -8,7 +8,7 @@ LABEL org.opencontainers.image.title="Che-AndroidImage"
 
 ENV ANDROID_CMDLINE_TOOLS_VERSION="15859902"
 ENV ANDROID_API="35"
-ENV APPIUM_VERSION="3.6.0"
+ENV APPIUM_VERSION="3.8.0"
 ENV ANDROID_SDK_ROOT=/opt/android-sdk
 ENV ANDROID_HOME=/opt/android-sdk
 
