@@ -8,7 +8,7 @@ LABEL org.opencontainers.image.title="Che-Min-MiseImage"
 
 ENV KUBE_VERSION="v1.37.1"
 ENV FIRACODE_VERSION="v3.4.0"
-ENV MISE_VERSION="v2026.10.7"
+ENV MISE_VERSION="v2026.10.15"
 
 ENV HOME=/home/tooling
 ENV NVM_DIR=/home/tooling/.nvm
