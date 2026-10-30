@@ -8,6 +8,7 @@ LABEL org.opencontainers.image.title="Che-Min-MiseImage"
 ENV KUBE_VERSION="@@MIN_KUBECTL@@"
 ENV FIRACODE_VERSION="@@MIN_FIRACODE@@"
 ENV MISE_VERSION="@@BASE_TOOLS_MISE@@"
+ENV BATLEHUB_CLI_VERSION="@@MIN_BATLEHUB_CLI@@"
 
 ENV HOME=/home/tooling
 ENV NVM_DIR=/home/tooling/.nvm
@@ -85,6 +86,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     rm FiraCode.zip && \
     fc-cache -f -v && \
     sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /home/tooling/.local/bin && \
+    curl -fsSLO https://github.com/batleforc/batlehub/releases/download/${BATLEHUB_CLI_VERSION}/batlehub-cli-linux-amd64.tar.gz && \
+    curl -fsSLO https://github.com/batleforc/batlehub/releases/download/${BATLEHUB_CLI_VERSION}/checksums.txt && \
+    grep ' batlehub-cli-linux-amd64.tar.gz$' checksums.txt | sha256sum -c - && \
+    tar xzf batlehub-cli-linux-amd64.tar.gz -C /home/tooling/.local/bin batlehub-cli && \
+    /home/tooling/.local/bin/batlehub-cli completion bash > /etc/bash_completion.d/batlehub-cli && \
     rm -rf "${tmpdir}" && cd -
 
 ENV KUBECONFIG=/home/user/.kube/config

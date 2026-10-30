@@ -17,6 +17,15 @@ sources:
     kind: http
     spec:
       url: "https://dl.k8s.io/release/stable.txt"
+  batlehub_cli:
+    kind: githubrelease
+    spec:
+      owner: batleforc
+      repository: batlehub
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: semver
 
 targets:
   bump_kubectl_version:
@@ -27,6 +36,14 @@ targets:
     spec:
       file: versions.yaml
       key: $.min.kubectl
+  bump_batlehub_cli_version:
+    kind: yaml
+    name: "Bump batlehub-cli version"
+    scmid: default
+    sourceid: batlehub_cli
+    spec:
+      file: versions.yaml
+      key: $.min.batlehub_cli
 
 actions:
   bump_min_space:

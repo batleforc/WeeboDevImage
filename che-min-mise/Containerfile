@@ -6,9 +6,10 @@ LABEL org.opencontainers.image.url="https://github.com/batleforc/WeeboDevImage/c
 LABEL org.opencontainers.image.source="https://github.com/batleforc/WeeboDevImage"
 LABEL org.opencontainers.image.title="Che-Min-MiseImage"
 
-ENV KUBE_VERSION="v1.37.1"
-ENV FIRACODE_VERSION="v3.4.0"
-ENV MISE_VERSION="v2026.10.15"
+ENV KUBE_VERSION="v1.37.2"
+ENV FIRACODE_VERSION="v3.5.1"
+ENV MISE_VERSION="v2026.10.24"
+ENV BATLEHUB_CLI_VERSION="v1.4.0"
 
 ENV HOME=/home/tooling
 ENV NVM_DIR=/home/tooling/.nvm
@@ -86,6 +87,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     rm FiraCode.zip && \
     fc-cache -f -v && \
     sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /home/tooling/.local/bin && \
+    curl -fsSLO https://github.com/batleforc/batlehub/releases/download/${BATLEHUB_CLI_VERSION}/batlehub-cli-linux-amd64.tar.gz && \
+    curl -fsSLO https://github.com/batleforc/batlehub/releases/download/${BATLEHUB_CLI_VERSION}/checksums.txt && \
+    grep ' batlehub-cli-linux-amd64.tar.gz$' checksums.txt | sha256sum -c - && \
+    tar xzf batlehub-cli-linux-amd64.tar.gz -C /home/tooling/.local/bin batlehub-cli && \
+    /home/tooling/.local/bin/batlehub-cli completion bash > /etc/bash_completion.d/batlehub-cli && \
     rm -rf "${tmpdir}" && cd -
 
 ENV KUBECONFIG=/home/user/.kube/config
