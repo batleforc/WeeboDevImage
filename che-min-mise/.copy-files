@@ -12,3 +12,4 @@
 # We have to restore bash-related files back onto /home/user/ (since they will have been overwritten by the PVC)
 # but we don't want them to be symbolic links (so that they persist on the PVC)
 .bashrc
+.zshrc

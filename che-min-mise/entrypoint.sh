@@ -29,6 +29,12 @@ fi
 #
 # Fallback path: append to /etc/passwd if it is writable. This is the legacy UDI
 # behaviour kept for images that do not ship nss_wrapper (che-min-mise, -pdm, -webkit).
+# Login shell for the entry written below: USER_SHELL=zsh opts into zsh (+ oh-my-zsh), bash otherwise
+USER_SHELL_PATH=/bin/bash
+if [ "${USER_SHELL:-bash}" = "zsh" ] && command -v zsh &> /dev/null; then
+  USER_SHELL_PATH="$(command -v zsh)"
+fi
+
 if ! whoami &> /dev/null; then
   nss_lib=$(find /usr/lib64 /usr/lib /lib64 /lib -name 'libnss_wrapper.so*' 2>/dev/null | head -n1)
   if [ -n "${nss_lib}" ]; then
@@ -37,13 +43,13 @@ if ! whoami &> /dev/null; then
     NSS_WRAPPER_GROUP="${HOME}/.nss_group"
     cp /etc/passwd "${NSS_WRAPPER_PASSWD}" 2>/dev/null || : > "${NSS_WRAPPER_PASSWD}"
     cp /etc/group  "${NSS_WRAPPER_GROUP}"  2>/dev/null || : > "${NSS_WRAPPER_GROUP}"
-    echo "${USER_NAME:-user}:x:$(id -u):0:${USER_NAME:-user} user:${HOME}:/bin/bash" >> "${NSS_WRAPPER_PASSWD}"
+    echo "${USER_NAME:-user}:x:$(id -u):0:${USER_NAME:-user} user:${HOME}:${USER_SHELL_PATH}" >> "${NSS_WRAPPER_PASSWD}"
     echo "${USER_NAME:-user}:x:$(id -u):" >> "${NSS_WRAPPER_GROUP}"
     export NSS_WRAPPER_PASSWD NSS_WRAPPER_GROUP
     export LD_PRELOAD="${nss_lib}${LD_PRELOAD:+:${LD_PRELOAD}}"
     echo "Registered ${USER_NAME:-user} ($(id -u)) via nss_wrapper; /etc/passwd left read-only"
   elif [ -w /etc/passwd ]; then
-    echo "${USER_NAME:-user}:x:$(id -u):0:${USER_NAME:-user} user:${HOME}:/bin/bash" >> /etc/passwd
+    echo "${USER_NAME:-user}:x:$(id -u):0:${USER_NAME:-user} user:${HOME}:${USER_SHELL_PATH}" >> /etc/passwd
     echo "${USER_NAME:-user}:x:$(id -u):" >> /etc/group
   fi
 fi

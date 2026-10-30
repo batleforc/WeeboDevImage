@@ -44,6 +44,22 @@ sources:
       username: "{{ .github.username }}"
       versionFilter:
         kind: semver
+  ohmyzsh:
+    kind: shell
+    spec:
+      command: git ls-remote https://github.com/ohmyzsh/ohmyzsh refs/heads/master | cut -f1
+  zsh_autosuggestions:
+    kind: gittag
+    spec:
+      url: https://github.com/zsh-users/zsh-autosuggestions
+      versionFilter:
+        kind: semver
+  zsh_syntax_highlighting:
+    kind: gittag
+    spec:
+      url: https://github.com/zsh-users/zsh-syntax-highlighting
+      versionFilter:
+        kind: semver
 
 targets:
   bump_kubectl_version:
@@ -78,6 +94,30 @@ targets:
     spec:
       file: versions.yaml
       key: $.min.chezmoi
+  bump_ohmyzsh_version:
+    kind: yaml
+    name: "Bump ohmyzsh version"
+    scmid: default
+    sourceid: ohmyzsh
+    spec:
+      file: versions.yaml
+      key: $.min.ohmyzsh
+  bump_zsh_autosuggestions_version:
+    kind: yaml
+    name: "Bump zsh_autosuggestions version"
+    scmid: default
+    sourceid: zsh_autosuggestions
+    spec:
+      file: versions.yaml
+      key: $.min.zsh_autosuggestions
+  bump_zsh_syntax_highlighting_version:
+    kind: yaml
+    name: "Bump zsh_syntax_highlighting version"
+    scmid: default
+    sourceid: zsh_syntax_highlighting
+    spec:
+      file: versions.yaml
+      key: $.min.zsh_syntax_highlighting
 
 actions:
   bump_min_space:

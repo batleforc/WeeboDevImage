@@ -1,0 +1,18 @@
+# Global zsh config for USER_SHELL=zsh, sourced from ~/.zshrc (mirrors /globals/bashrc)
+export ZSH=/home/tooling/.oh-my-zsh
+export ZSH_CACHE_DIR="$HOME/.cache/oh-my-zsh"
+ZSH_COMPDUMP="$ZSH_CACHE_DIR/.zcompdump"
+# The image is immutable: no self-update, and its group-writable dirs (arbitrary UID in group 0) are expected
+zstyle ':omz:update' mode disabled
+ZSH_DISABLE_COMPFIX=true
+# The prompt is starship's, as in bash
+ZSH_THEME=""
+# zsh-syntax-highlighting must stay last
+plugins=(git kubectl fzf zsh-autosuggestions zsh-syntax-highlighting)
+mkdir -p "$ZSH_CACHE_DIR/completions"
+source "$ZSH/oh-my-zsh.sh"
+
+source /globals/shellrc
+eval "$(~/.local/bin/mise activate zsh --shims)"
+[[ -o interactive ]] && [ "$STARSHIP_ENABLED" != "false" ] && eval "$(starship init zsh)"
+[ -f "/home/user/.zshrc_perso" ] && source /home/user/.zshrc_perso
