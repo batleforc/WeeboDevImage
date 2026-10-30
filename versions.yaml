@@ -8,6 +8,8 @@ min:
   kubectl: v1.37.2
   firacode: v3.5.1
   batlehub_cli: v1.4.0
+  starship: v1.27.0
+  chezmoi: v2.73.3
 
 base_tools:
   kubedock: 0.23.0

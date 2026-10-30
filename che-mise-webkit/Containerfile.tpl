@@ -12,9 +12,11 @@ USER 0
 # libwebkit2gtk-4.1-dev pulls the GTK 3 headers it sits on, the appindicator/
 # xdo/ssl/rsvg set covers the Tauri Linux prerequisites, and Xvfb + the
 # session/a11y buses (dbus-x11/at-spi2-core) let the app run headless in the
-# workspace. pkg-config/build-essential are already provided by che-min-mise.
+# workspace. build-essential brings the g++ toolchain the lean base dropped;
+# pkg-config is already provided by che-min-mise.
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get install -y --no-install-recommends \
+    build-essential \
     libwebkit2gtk-4.1-dev \
     libayatana-appindicator3-dev \
     libxdo-dev \
