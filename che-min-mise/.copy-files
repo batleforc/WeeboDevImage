@@ -13,3 +13,6 @@
 # but we don't want them to be symbolic links (so that they persist on the PVC)
 .bashrc
 .zshrc
+
+# The starship config is meant to be edited by the user: a real file, not a link into the read-only /home/tooling
+.config/starship.toml

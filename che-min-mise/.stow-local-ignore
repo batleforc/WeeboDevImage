@@ -5,3 +5,6 @@
 \.gnupg
 # oh-my-zsh is used in place from /home/tooling ($ZSH), no need for thousands of symlinks
 \.oh-my-zsh
+
+# copied by .copy-files (user-editable config)
+starship\.toml

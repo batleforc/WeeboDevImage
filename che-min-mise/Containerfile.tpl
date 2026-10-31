@@ -49,6 +49,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     fontconfig \
     zip \
     gnupg2 \
+    pinentry-curses \
     stow \
     net-tools \
     less \
@@ -159,7 +160,9 @@ RUN useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
     echo 'export PATH="/checode/checode-linux-libc/ubi9/bin/remote-cli:$PATH"' >> ${GLOBALS_SHELLRC} && \
     echo '[ -f "/home/user/.bashrc_perso" ] && source /home/user/.bashrc_perso'  >> ${GLOBALS_BASHRC} && \
     chmod g=u /etc/passwd /etc/group && \
-    chgrp 0 /home /home/tooling/.config && chmod g=u /home /home/tooling/.config && \
+    # COPY --chmod=664 above also gave the .config it created mode 664: without x the
+    # arbitrary UID cannot traverse it (starship: "Permission denied"), so set it explicitly
+    chgrp 0 /home /home/tooling/.config && chmod g=u /home && chmod 775 /home/tooling/.config && \
     chgrp -R 0 /home/user && chmod -R g=u /home/user
 
 ENV PATH="/home/user/.local/bin:$PATH"
@@ -170,7 +173,9 @@ ENV PATH="/home/tooling/.local/bin:$PATH"
 USER 1234
 RUN cp -f /home/tooling/.bashrc /home/user/.bashrc && \
     cp -f /home/tooling/.zshrc /home/user/.zshrc && \
-    stow . -t /home/user/ -d /home/tooling/ --no-folding
+    mkdir -p /home/user/.config && cp -f /home/tooling/.config/starship.toml /home/user/.config/starship.toml && \
+    stow . -t /home/user/ -d /home/tooling/ --no-folding && \
+    chgrp -R 0 /home/user && chmod -R g=u /home/user
 ENV HOME=/home/user
 WORKDIR /projects
 # tini as PID 1: reaps orphaned zombies and forwards SIGTERM so the

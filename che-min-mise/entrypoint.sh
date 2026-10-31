@@ -196,6 +196,11 @@ if [ -f "/home/tooling/.copy-files" ]; then
                 target_full="${HOME}/${line}"
                 target_parent=$(dirname "$target_full")
 
+                # A link left into /home/tooling by an older image is replaced by the copy
+                if [ -L "$target_full" ] && [ "$(realpath "$target_full" 2>/dev/null)" = "$tooling_path" ]; then
+                    rm -f "$target_full"
+                fi
+
                 # Skip if target file already exists
                 if [ -e "$target_full" ]; then
                     echo "File $target_full already exists, skipping..."
