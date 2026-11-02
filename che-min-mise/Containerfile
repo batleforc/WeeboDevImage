@@ -76,8 +76,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 ENV KUBE_VERSION="v1.37.2"
 ENV FIRACODE_VERSION="v3.5.1"
 ENV STARSHIP_VERSION="v1.27.0"
-ENV CHEZMOI_VERSION="v2.73.3"
-ENV MISE_VERSION="v2026.10.24"
+ENV CHEZMOI_VERSION="v2.74.0"
+ENV MISE_VERSION="v2026.10.25"
 ENV BATLEHUB_CLI_VERSION="v1.4.0"
 
 # Versioned tools, each checked against the sha256 its release publishes
