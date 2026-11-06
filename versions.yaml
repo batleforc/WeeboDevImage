@@ -7,7 +7,7 @@ base:
 min:
   kubectl: v1.37.2
   firacode: v3.5.1
-  batlehub_cli: v1.8.3
+  batlehub_cli: v1.9.0
   starship: v1.27.0
   chezmoi: v2.74.0
   # oh-my-zsh has no releases: pinned to a master commit
