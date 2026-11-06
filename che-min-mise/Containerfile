@@ -78,7 +78,7 @@ ENV FIRACODE_VERSION="v3.5.1"
 ENV STARSHIP_VERSION="v1.27.0"
 ENV CHEZMOI_VERSION="v2.74.0"
 ENV MISE_VERSION="v2026.10.25"
-ENV BATLEHUB_CLI_VERSION="v1.4.0"
+ENV BATLEHUB_CLI_VERSION="v1.9.0"
 
 # Versioned tools, each checked against the sha256 its release publishes
 RUN tmpdir="$(mktemp -d)" && cd "${tmpdir}" && \
@@ -120,7 +120,7 @@ RUN tmpdir="$(mktemp -d)" && cd "${tmpdir}" && \
 # oh-my-zsh for USER_SHELL=zsh, in its own layer: it is pinned to a master
 # commit and moves far more often than the tools above.
 # Fetched by commit id so git checks the content; .git is dropped afterwards.
-ENV OHMYZSH_COMMIT="17a2b4c3a5855524ad4772a17ada0dc474e2fdf3"
+ENV OHMYZSH_COMMIT="b509b1c6ed0c1ba37de12cbd37f30b2b2f61193a"
 ENV ZSH_AUTOSUGGESTIONS_VERSION="v0.7.1"
 ENV ZSH_SYNTAX_HIGHLIGHTING_VERSION="0.8.0"
 
