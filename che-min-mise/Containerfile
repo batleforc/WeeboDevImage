@@ -78,7 +78,7 @@ ENV FIRACODE_VERSION="v3.5.1"
 ENV STARSHIP_VERSION="v1.27.0"
 ENV CHEZMOI_VERSION="v2.74.0"
 ENV MISE_VERSION="v2026.11.3"
-ENV BATLEHUB_CLI_VERSION="v1.9.0"
+ENV BATLEHUB_CLI_VERSION="v1.10.0"
 
 # Versioned tools, each checked against the sha256 its release publishes
 RUN tmpdir="$(mktemp -d)" && cd "${tmpdir}" && \
