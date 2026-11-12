@@ -20,7 +20,7 @@ base_tools:
   mise: v2026.11.3
 
 browser:
-  chrome: 157.0.8103.38
+  chrome: 157.0.8103.78
 
 # kubedock version intentionally lives in base_tools (used by che-kubedock)
 sidecar:
