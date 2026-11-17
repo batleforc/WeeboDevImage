@@ -11,7 +11,7 @@ min:
   starship: v1.27.0
   chezmoi: v2.74.1
   # oh-my-zsh has no releases: pinned to a master commit
-  ohmyzsh: 6010fb6260f359e71d99ba25f05f9215809b3ed2
+  ohmyzsh: c0140703a53eb0d22be44f7bac318d0baacc927c
   zsh_autosuggestions: v0.7.1
   zsh_syntax_highlighting: 0.8.0
 
