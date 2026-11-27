@@ -55,7 +55,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 
 # Android SDK: pinned cmdline-tools, then platform-tools + emulator + system image.
 # platforms;android-N is installed because the emulator misbehaves without a
-# platforms dir. chgrp/chmod must stay in this same RUN: a separate layer would
+# platforms dir. chown/chmod must stay in this same RUN: a separate layer would
 # duplicate the multi-GB SDK in the image.
 RUN curl -fsSL "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_CMDLINE_TOOLS_VERSION}_latest.zip" -o /tmp/cmdline-tools.zip && \
     mkdir -p ${ANDROID_SDK_ROOT}/cmdline-tools && \
@@ -73,7 +73,7 @@ RUN curl -fsSL "https://dl.google.com/android/repository/commandlinetools-linux-
     # AVD creation from logging two bogus "Could not load devices" errors
     printf '<?xml version="1.0"?>\n<d:devices xmlns:d="http://schemas.android.com/sdk/devices/7"/>\n' \
     > ${ANDROID_SDK_ROOT}/system-images/android-${ANDROID_API}/google_apis/x86_64/devices.xml && \
-    chgrp -R 0 ${ANDROID_SDK_ROOT} && chmod -R g=u ${ANDROID_SDK_ROOT}
+    chown -R 1234:0 ${ANDROID_SDK_ROOT} && chmod -R g=u ${ANDROID_SDK_ROOT}
 
 # APPIUM_HOME is set BEFORE the driver install so uiautomator2 lands in
 # /opt/appium (root-owned, group-0 g=u) instead of root's ~/.appium
@@ -82,14 +82,14 @@ RUN npm install -g appium@${APPIUM_VERSION} && \
     mkdir -p ${APPIUM_HOME} && \
     appium driver install uiautomator2 && \
     npm cache clean --force && \
-    chgrp -R 0 ${APPIUM_HOME} && chmod -R g=u ${APPIUM_HOME}
+    chown -R 1234:0 ${APPIUM_HOME} && chmod -R g=u ${APPIUM_HOME}
 
 COPY --chown=0:0 entrypoint.sh /entrypoint.sh
 COPY --chown=0:0 sidecar-app /usr/local/bin/sidecar-app
 
 RUN chmod +x /entrypoint.sh /usr/local/bin/sidecar-app && \
     useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
-    chgrp -R 0 /home/user && chmod -R g=u /home/user && \
+    chown -R 1234:0 /home/user && chmod -R g=u /home/user && \
     chmod g=u /etc/passwd
 
 ENV HOME=/home/user

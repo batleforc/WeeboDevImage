@@ -14,7 +14,7 @@ ENV GLOBALS_SHELLRC="${GLOBALS_FOLDER}shellrc"
 
 # Group 0 is enough: the arbitrary UID Che runs with is always in the root group
 RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC} ${GLOBALS_SHELLRC} && \
-    chgrp -R 0 ${GLOBALS_FOLDER} && chmod 775 ${GLOBALS_FOLDER} && chmod 664 ${GLOBALS_BASHRC} ${GLOBALS_SHELLRC} && \
+    chown -R 1234:0 ${GLOBALS_FOLDER} && chmod 775 ${GLOBALS_FOLDER} && chmod 664 ${GLOBALS_BASHRC} ${GLOBALS_SHELLRC} && \
     mkdir -p /home/tooling && \
     echo 'source /globals/bashrc' >> ${HOME}/.bashrc && \
     echo '# USER_SHELL=zsh: hand interactive shells over to zsh, whatever the login shell is.' >> ${GLOBALS_BASHRC} && \
@@ -114,7 +114,7 @@ RUN tmpdir="$(mktemp -d)" && cd "${tmpdir}" && \
     mkdir -p /usr/local/share/zsh/site-functions && \
     /home/tooling/.local/bin/batlehub-cli completion zsh > /usr/local/share/zsh/site-functions/_batlehub-cli && \
     cd / && rm -rf "${tmpdir}" && \
-    chgrp -R 0 /home/tooling && chmod -R g=u /home/tooling
+    chown -R 1234:0 /home/tooling && chmod -R g=u /home/tooling
 
 # oh-my-zsh for USER_SHELL=zsh, in its own layer: it is pinned to a master
 # commit and moves far more often than the tools above.
@@ -133,7 +133,7 @@ RUN mkdir -p /home/tooling/.oh-my-zsh && cd /home/tooling/.oh-my-zsh && \
     https://github.com/zsh-users/zsh-syntax-highlighting custom/plugins/zsh-syntax-highlighting && \
     rm -rf .git custom/plugins/*/.git && cd / && \
     echo 'source /globals/zshrc' > /home/tooling/.zshrc && \
-    chgrp -R 0 /home/tooling/.oh-my-zsh /home/tooling/.zshrc && \
+    chown -R 1234:0 /home/tooling/.oh-my-zsh /home/tooling/.zshrc && \
     chmod -R g=u /home/tooling/.oh-my-zsh /home/tooling/.zshrc
 
 ENV KUBECONFIG=/home/user/.kube/config
@@ -162,8 +162,8 @@ RUN useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
     chmod g=u /etc/passwd /etc/group && \
     # COPY --chmod=664 above also gave the .config it created mode 664: without x the
     # arbitrary UID cannot traverse it (starship: "Permission denied"), so set it explicitly
-    chgrp 0 /home /home/tooling/.config && chmod g=u /home && chmod 775 /home/tooling/.config && \
-    chgrp -R 0 /home/user && chmod -R g=u /home/user
+    chown 1234:0 /home /home/tooling/.config && chmod g=u /home && chmod 775 /home/tooling/.config && \
+    chown -R 1234:0 /home/user && chmod -R g=u /home/user
 
 ENV PATH="/home/user/.local/bin:$PATH"
 ENV PATH="/home/tooling/.local/bin:$PATH"

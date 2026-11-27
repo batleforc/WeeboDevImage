@@ -71,7 +71,7 @@ COPY --chown=0:0 sidecar-app /usr/local/bin/sidecar-app
 
 RUN chmod +x /entrypoint.sh /usr/local/bin/sidecar-app && \
     useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
-    chgrp -R 0 /home/user && chmod -R g=u /home/user && \
+    chown -R 1234:0 /home/user && chmod -R g=u /home/user && \
     chmod g=u /etc/passwd
 
 ENV HOME=/home/user
