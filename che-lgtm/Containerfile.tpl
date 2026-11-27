@@ -13,7 +13,7 @@ COPY --chown=0:0 sidecar-app /usr/local/bin/sidecar-app
 RUN chmod +x /entrypoint.sh /usr/local/bin/sidecar-app && \
     mkdir -p /home/user /data /etc/lgtm && \
     echo "user:x:1234:0:container user:/home/user:/bin/bash" >> /etc/passwd && \
-    chgrp -R 0 /home/user /data /etc/lgtm /otel-lgtm && \
+    chown -R 1234:0 /home/user /data /etc/lgtm /otel-lgtm && \
     chmod -R g=u /home/user /data /etc/lgtm /otel-lgtm && \
     chmod g=u /etc/passwd
 
