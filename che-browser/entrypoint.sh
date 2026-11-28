@@ -1,11 +1,6 @@
 #!/bin/bash
 set -uo pipefail
 
-# Che/OpenShift may run us with an arbitrary UID (GID 0): give it a passwd entry
-if ! whoami &>/dev/null && [ -w /etc/passwd ]; then
-  echo "user:x:$(id -u):0:container user:${HOME}:/bin/bash" >> /etc/passwd
-fi
-
 mkdir -p "${CHROME_PROFILE_DIR}"
 
 # Che's DevWorkspace operator injects DISPLAY=:0 into every workspace container

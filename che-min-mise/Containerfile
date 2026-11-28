@@ -151,16 +151,15 @@ COPY --chown=0:0 --chmod=664 .copy-files /home/tooling/
 COPY --chown=0:0 --chmod=775 url.sh /home/tooling/.local/bin/url
 
 
+# /etc/passwd, group, subuid and subgid stay root:root 0644: the identity is
+# baked here (uid 1234), nothing rewrites them at start, and the user cannot.
 RUN useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
-    touch /etc/subgid /etc/subuid  && \
-    chmod g=u /etc/subgid /etc/subuid /etc/passwd  && \
     echo user:10000:65536 > /etc/subuid  && \
     echo user:10000:65536 > /etc/subgid && \
     echo 'export PATH="/home/tooling/.local/bin:$PATH"' >> ${GLOBALS_SHELLRC} && \
     echo 'export PATH="/home/user/.local/bin:$PATH"' >> ${GLOBALS_SHELLRC} && \
     echo 'export PATH="/checode/checode-linux-libc/ubi9/bin/remote-cli:$PATH"' >> ${GLOBALS_SHELLRC} && \
     echo '[ -f "/home/user/.bashrc_perso" ] && source /home/user/.bashrc_perso'  >> ${GLOBALS_BASHRC} && \
-    chmod g=u /etc/passwd /etc/group && \
     # COPY --chmod=664 above also gave the .config it created mode 664: without x the
     # arbitrary UID cannot traverse it (starship: "Permission denied"), so set it explicitly
     chown 1234:0 /home /home/tooling/.config && chmod g=u /home && chmod 775 /home/tooling/.config && \
