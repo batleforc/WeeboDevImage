@@ -70,7 +70,7 @@ fi
 # pod network namespace (ADB_SERVER_SOCKET=tcp:localhost:5037); no route needed
 adb server nodaemon &
 
-appium server --address 0.0.0.0 --port 4723 --allow-cors --relaxed-security &
+appium server --address 0.0.0.0 --port 4723 --relaxed-security &
 
 # Emulator respawns if it exits (a human can close its window via noVNC).
 # CPU-only: -accel off (QEMU TCG, no /dev/kvm) + swiftshader GPU; expect a
