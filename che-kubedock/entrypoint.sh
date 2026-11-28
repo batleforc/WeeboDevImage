@@ -16,14 +16,20 @@ APP_PIDFILE=/tmp/.sidecar-app.pid
 # kubedock (its running containers go with it).
 KCFG="${KUBECONFIG:-${HOME}/.kube/config}"
 # The dashboard points it at the ServiceAccount's ca.crt, which weebo-si's
-# KubeArmor policy blocks (it shares the token's timestamped directory). Che's
-# CA bundle, mounted in every container, holds the cluster CA. /home/user is
-# shared with the tools container, so its kubectl gets the fix too.
+# KubeArmor policy blocks (it shares the token's timestamped directory).
+# che-operator always merges the cluster CA (kube-root-ca.crt) into its CA
+# bundle, mounted in every container: under /etc/pki/ca-trust by default,
+# under /public-certs with disableWorkspaceCaBundleMount. /home/user is shared
+# with the tools container, so its kubectl gets the fix too.
 SA_CA=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-CA_BUNDLE=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
 fix_ca() {
-  [ -r "${CA_BUNDLE}" ] && grep -qs "certificate-authority: ${SA_CA}" "${KCFG}" &&
-    sed -i "s|certificate-authority: ${SA_CA}|certificate-authority: ${CA_BUNDLE}|" "${KCFG}"
+  local ca
+  for ca in /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /public-certs/tls-ca-bundle.pem; do
+    [ -r "${ca}" ] || continue
+    grep -qs "certificate-authority: ${SA_CA}" "${KCFG}" &&
+      sed -i "s|certificate-authority: ${SA_CA}|certificate-authority: ${ca}|" "${KCFG}"
+    return
+  done
 }
 (
   last=""
