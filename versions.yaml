@@ -5,7 +5,7 @@ base:
   ubuntu_registry: "" # optional: e.g. harbor.example.com/dockerhub-proxy
 
 min:
-  kubectl: v1.37.2
+  kubectl: v1.37.3
   firacode: v3.5.1
   batlehub_cli: v1.10.0
   starship: v1.27.0
