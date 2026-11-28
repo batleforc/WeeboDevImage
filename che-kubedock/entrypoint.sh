@@ -15,9 +15,20 @@ APP_PIDFILE=/tmp/.sidecar-app.pid
 # from it; client-go never rereads an inline token, so a changed file restarts
 # kubedock (its running containers go with it).
 KCFG="${KUBECONFIG:-${HOME}/.kube/config}"
+# The dashboard points it at the ServiceAccount's ca.crt, which weebo-si's
+# KubeArmor policy blocks (it shares the token's timestamped directory). Che's
+# CA bundle, mounted in every container, holds the cluster CA. /home/user is
+# shared with the tools container, so its kubectl gets the fix too.
+SA_CA=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+CA_BUNDLE=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+fix_ca() {
+  [ -r "${CA_BUNDLE}" ] && grep -qs "certificate-authority: ${SA_CA}" "${KCFG}" &&
+    sed -i "s|certificate-authority: ${SA_CA}|certificate-authority: ${CA_BUNDLE}|" "${KCFG}"
+}
 (
   last=""
   while sleep 5; do
+    fix_ca
     cur=$(cksum < "${KCFG}" 2>/dev/null) || continue
     if [ -n "${last}" ] && [ "${cur}" != "${last}" ] && [ -s "${APP_PIDFILE}" ]; then
       echo "kubeconfig changed, restarting kubedock" >&2
@@ -40,10 +51,12 @@ while true; do
     sleep 2; continue
   fi
   waiting=""
+  fix_ca
   # shellcheck disable=SC2086
   setsid kubedock server \
     --kubeconfig "${KCFG}" \
     --listen-addr "${KUBEDOCK_LISTEN_ADDR}" \
+    --pod-template "${KUBEDOCK_POD_TEMPLATE}" \
     --reverse-proxy \
     ${KUBEDOCK_EXTRA_ARGS:-} &
   echo $! > "${APP_PIDFILE}"

@@ -22,6 +22,7 @@ RUN mkdir -p ${GLOBALS_FOLDER} && touch ${GLOBALS_BASHRC} ${GLOBALS_SHELLRC} && 
     echo '# USER_SHELL_HANDOFF is inherited, so a `bash` typed from zsh stays bash.' >> ${GLOBALS_BASHRC} && \
     echo '[[ $- == *i* ]] && [ "${USER_SHELL:-bash}" = "zsh" ] && [ -z "${USER_SHELL_HANDOFF:-}" ] && command -v zsh >/dev/null && USER_SHELL_HANDOFF=1 exec zsh' >> ${GLOBALS_BASHRC} && \
     echo 'source /globals/shellrc' >> ${GLOBALS_BASHRC} && \
+    echo '. /globals/kubeconfig-ca.sh' >> ${GLOBALS_SHELLRC} && \
     echo "alias ll='ls -alF'" >> ${GLOBALS_SHELLRC} && \
     echo "alias la='ls -A'" >> ${GLOBALS_SHELLRC} && \
     echo "alias l='ls -CF'" >> ${GLOBALS_SHELLRC} && \
@@ -145,6 +146,7 @@ ENV STARSHIP_ENABLED="true"
 # /home/tooling in a later layer would copy every binary into that layer again
 COPY --chown=0:0 --chmod=664 starship.toml ${HOME}/.config/starship.toml
 COPY --chown=0:0 --chmod=664 zshrc /globals/zshrc
+COPY --chown=0:0 --chmod=644 kubeconfig-ca.sh /globals/kubeconfig-ca.sh
 COPY --chown=0:0 --chmod=664 .stow-local-ignore /home/tooling/
 COPY --chown=0:0 --chmod=755 entrypoint.sh /
 COPY --chown=0:0 --chmod=664 .copy-files /home/tooling/

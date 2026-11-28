@@ -1,0 +1,19 @@
+# Base of every pod kubedock creates (--pod-template): what PodSecurity
+# "restricted" demands, which weebo-si enforces in workspace namespaces.
+# kubedock applies the first container to all of them, init containers
+# included. No runAsUser: weebo-si's pod-identity hands out 1234. Images that
+# insist on running as root still fail; give them --runas-user or a non-root
+# variant.
+apiVersion: v1
+kind: Pod
+spec:
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: main
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: [ALL]
