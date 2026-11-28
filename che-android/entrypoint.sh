@@ -1,11 +1,6 @@
 #!/bin/bash
 set -uo pipefail
 
-# Che/OpenShift may run us with an arbitrary UID (GID 0): give it a passwd entry
-if ! whoami &>/dev/null && [ -w /etc/passwd ]; then
-  echo "user:x:$(id -u):0:container user:${HOME}:/bin/bash" >> /etc/passwd
-fi
-
 # Che's DevWorkspace operator injects DISPLAY=:0 into every workspace container
 # (its ssh-askpass wrapper needs DISPLAY set), which would put all sidecars on
 # the same display. Our Xvfb display is governed by XVFB_DISPLAY instead.

@@ -14,8 +14,7 @@ RUN chmod +x /entrypoint.sh /usr/local/bin/sidecar-app && \
     mkdir -p /home/user /data /etc/lgtm && \
     echo "user:x:1234:0:container user:/home/user:/bin/bash" >> /etc/passwd && \
     chown -R 1234:0 /home/user /data /etc/lgtm /otel-lgtm && \
-    chmod -R g=u /home/user /data /etc/lgtm /otel-lgtm && \
-    chmod g=u /etc/passwd
+    chmod -R g=u /home/user /data /etc/lgtm /otel-lgtm
 
 ENV HOME=/home/user
 # NO_START=true parks the LGTM stack at boot; launch it on demand with

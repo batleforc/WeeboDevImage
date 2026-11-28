@@ -1,11 +1,6 @@
 #!/bin/bash
 set -uo pipefail
 
-# Che/OpenShift may run us with an arbitrary UID (GID 0): give it a passwd entry
-if ! whoami &>/dev/null && [ -w /etc/passwd ]; then
-  echo "user:x:$(id -u):0:container user:${HOME}:/bin/bash" >> /etc/passwd
-fi
-
 # NO_START=true parks kubedock at boot to keep the sidecar light at rest;
 # `sidecar-app start|stop|status` (inside this container) toggles it later.
 APP_FLAG=/tmp/.sidecar-app-start

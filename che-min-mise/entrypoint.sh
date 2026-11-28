@@ -20,15 +20,16 @@ if [ ! -d "${HOME}/.config/containers" ]; then
   fi
 fi
 
-# Register the current (arbitrary) user so tools that resolve UID -> name work.
+# The image bakes uid 1234 (the uid weebo-si forces), so whoami resolves and
+# nothing below runs. For any other uid (OpenShift arbitrary UID), register it
+# so tools that resolve UID -> name work, without touching /etc/passwd: it is
+# root:root 0644 and the user cannot write it.
 #
-# Preferred path: nss_wrapper. We synthesize the passwd/group entry in a per-user
+# nss_wrapper. We synthesize the passwd/group entry in a per-user
 # file and load it via LD_PRELOAD, which lets /etc/passwd stay root:root 0644 —
 # so it can NOT be edited to inject a fake uid-0 user. Images opt in simply by
 # installing libnss-wrapper (see che-mise-nss); nothing else changes here.
-#
-# Fallback path: append to /etc/passwd if it is writable. This is the legacy UDI
-# behaviour kept for images that do not ship nss_wrapper (che-min-mise, -pdm, -webkit).
+
 # Login shell for the entry written below: USER_SHELL=zsh opts into zsh (+ oh-my-zsh), bash otherwise
 USER_SHELL_PATH=/bin/bash
 if [ "${USER_SHELL:-bash}" = "zsh" ] && command -v zsh &> /dev/null; then
@@ -48,74 +49,12 @@ if ! whoami &> /dev/null; then
     export NSS_WRAPPER_PASSWD NSS_WRAPPER_GROUP
     export LD_PRELOAD="${nss_lib}${LD_PRELOAD:+:${LD_PRELOAD}}"
     echo "Registered ${USER_NAME:-user} ($(id -u)) via nss_wrapper; /etc/passwd left read-only"
-  elif [ -w /etc/passwd ]; then
-    echo "${USER_NAME:-user}:x:$(id -u):0:${USER_NAME:-user} user:${HOME}:${USER_SHELL_PATH}" >> /etc/passwd
-    echo "${USER_NAME:-user}:x:$(id -u):" >> /etc/group
   fi
 fi
 
-# The user namespace is created when `UserNamespacesSupport` feature is enabled and `hostUsers` is set to false in Pod spec.
-# See for more details:
-# - https://kubernetes.io/docs/concepts/workloads/pods/user-namespaces/#introduction
-# Assume, that HOST_USERS environment variable is provided and is set to false in that case.
-# If so, update /etc/sub*id files to reflect the valid UID/GID range.
-if [ "${HOST_USERS}" == "false" ]; then
-  echo "Running in a user namespace"
-  if [ -f /proc/self/uid_map ]; then
-    # Typical output of `/proc/self/uid_map`:
-    # 1. When NOT running in a user namespace:
-    #         0          0 4294967295
-    # 2. When running in a user namespace:
-    #         0 1481179136      65536
-    # 3. When container is run in a user namespace:
-    #         0       1000          1
-    #         1       1001      64535
-    # We can use the content of /proc/self/uid_map to detect if we are running in a user namespace.
-    # However, to keep things simple, we will rely on HOST_USERS environment variable only.
-    # This way, we avoid breaking anything.
-    echo "/proc/self/uid_map content: $(cat /proc/self/uid_map)"
-  fi
-
-  # Why do we need to update /etc/sub*id files?
-  # We are already in the user namespace, so we know there are at least 65536 UIDs/GIDs available.
-  # For more details, see:
-  # - https://kubernetes.io/docs/concepts/workloads/pods/user-namespaces/#id-count-for-each-of-pods
-  # Podman needs to create a new user namespace for any container being launched and map the container's user
-  # and group IDs (UID/GID) to the corresponding user on the current namespace.
-  # For the mapping, podman refers to the /etc/sub*id files.
-  # For more details, see:
-  # - https://man7.org/linux/man-pages/man5/subuid.5.html
-  # So if the user ID exceeds 65535, it cannot be mapped if only UIDs/GIDs from 0-65535 are available.
-  # If that's the case, podman commands would fail.
-
-  # Even though the range can be extended using configuration, we can rely on the fact that there are at least 65536 user IDs available in the user namespace.
-  # See for more details:
-  # - https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/#kubelet-config-k8s-io-v1beta1-UserNamespaces
-
-  # To ensure the provided user ID stays within this range, `runAsUser` in the Pod spec should be set to a value below 65536.
-  # In OpenShift, the Container Security Context Constraint (SCC) should be created accordingly.
-  if whoami &> /dev/null; then
-    echo "User information: $(id)"
-
-    USER_ID=$(id -u)
-    if [ ${USER_ID} -lt 65536 ]; then
-      USER_NAME=$(whoami)
-      START_ID=$(( ${USER_ID} + 1 ))
-      COUNT=$(( 65536 - ${START_ID} ))
-      IDS_RANGE="${USER_NAME}:${START_ID}:${COUNT}"
-
-      if [ -w /etc/subuid ]; then
-        echo "${IDS_RANGE}" > /etc/subuid
-        echo "/etc/subuid updated"
-      fi
-      if [ -w /etc/subgid ]; then
-        echo "${IDS_RANGE}" > /etc/subgid
-        echo "/etc/subgid updated"
-      fi
-    fi
-  fi
-fi
-
+# /etc/subuid and /etc/subgid are no longer rewritten for user namespaces:
+# they are read-only, and rootless podman cannot run in a weebo-si workspace
+# anyway (newuidmap is setuid, no_new_privs ignores it).
 
 # Stow
 ## Required for https://github.com/eclipse/che/issues/22412
