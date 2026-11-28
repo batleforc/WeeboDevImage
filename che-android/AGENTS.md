@@ -39,7 +39,7 @@ The devfile already sets `ADB_SERVER_SOCKET=tcp:localhost:5037` and
 - Screenshots: `adb exec-out screencap -p > screen.png` — use this to check UI
   state instead of noVNC.
 - UI automation: Appium at `http://localhost:4723` (driver `uiautomator2`,
-  started with `--allow-cors --relaxed-security`).
+  started with `--relaxed-security`, which also turns on CORS since appium 4).
 - AVD state lives in the sidecar's `$HOME` (ephemeral): assume a factory-reset
   device on every container restart.
 
